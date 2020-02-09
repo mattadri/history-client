@@ -1,0 +1,11 @@
+<div><button (click)="showCreateReference()">Add Reference</button></div>
+
+<div *ngIf="addReference">
+  <app-create-reference></app-create-reference>
+</div>
+
+<app-reference
+  *ngFor="let reference of references"
+  [reference]="reference">
+</app-reference>
+

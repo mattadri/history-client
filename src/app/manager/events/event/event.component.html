@@ -1,0 +1,45 @@
+<h1>Events</h1>
+
+<div class="card">
+  <div class="card-title">{{event.label}}</div>
+  <div class="card-date">{{event.startDay}}</div>
+  <div class="card-info"></div>
+  <hr />
+  <div class="card-reference"></div>
+</div>
+
+<div class="event-container">
+  <span>Event (<button (click)="removeEvent()">Remove</button>)</span>
+  <div><b>Label:</b> {{event.label}}</div>
+  <div *ngIf="event.description"><b>Description:</b> {{event.description}}</div>
+  <div *ngIf="event.startDay"><b>Start Day:</b> {{event.startDay}}</div>
+  <div *ngIf="event.startMonth"><b>Start Month:</b> {{event.startMonth.label}}</div>
+  <div><b>Start Year:</b> {{event.startYear}}</div>
+  <div><b>Start Era:</b> {{event.startEra.label}}</div>
+  <div *ngIf="event.endDay"><b>End Day:</b> {{event.endDay}}</div>
+  <div *ngIf="event.endMonth"><b>End Month:</b> {{event.endMonth.label}}</div>
+  <div *ngIf="event.endYear"><b>End Year:</b> {{event.endYear}}</div>
+  <div *ngIf="event.endEra"><b>End Era:</b> {{event.endEra.label}}</div>
+
+  <hr>
+
+  <div *ngIf="!addNoteComponent"><button (click)="toggleAddNote()">Add Note</button></div>
+  <div *ngIf="addNoteComponent">
+    <form (ngSubmit)="createNote(eventNoteForm)" #eventNoteForm="ngForm">
+      <div>
+        <span>Note: </span>
+        <textarea name="note" required #eventNote="ngModel" [(ngModel)]="note.note" autofocus></textarea>
+      </div>
+
+      <div>
+        <button type="submit">Create</button>
+      </div>
+    </form>
+  </div>
+
+  <app-event-note *ngFor="let note of event.notes" [note]="note" (removeNote)="removeNote($event)"></app-event-note>
+
+  <hr>
+
+  <app-reference *ngIf="event.reference" [reference]="event.reference" [editable]="false"></app-reference>
+</div>

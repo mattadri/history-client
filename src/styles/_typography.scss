@@ -1,0 +1,25 @@
+// Typography
+// ----------
+
+h1, h2, h3, h4, h5, h6 {
+  color: $color-gray-scale-500;
+  margin-bottom: $font-margin-bottom;
+  font-weight: 100;
+}
+
+h1 { font-size: 1.8rem; text-transform: uppercase;}
+h2 { font-size: 1.5rem; text-transform: uppercase;}
+h3 { font-size: 1.2rem;}
+
+p {
+  color: $color-medium;
+}
+
+a {
+  color: $color-link;
+  text-decoration: none;
+  &:hover {
+    color: darken($color-link, 10%);
+    text-decoration: underline;
+  }
+}

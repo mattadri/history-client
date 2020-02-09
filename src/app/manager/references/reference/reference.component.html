@@ -1,0 +1,27 @@
+<div class="reference-container">
+  <span>Reference <span *ngIf="editable">(<button (click)="removeReference()">Remove</button>)</span></span>
+  <div><b>Title:</b> {{reference.title}}</div>
+  <div *ngIf="reference.publishedDay"><b>Published Day:</b> {{reference.publishedDay}}</div>
+  <div *ngIf="reference.publishedMonth"><b>Published Month:</b> {{reference.publishedMonth.label}}</div>
+  <div><b>Published Year:</b> {{reference.publishedYear}}</div>
+  <div><b>Published Era:</b> {{reference.publishedEra.label}}</div>
+
+  <hr>
+
+  <div *ngIf="editable">
+    <div *ngIf="!showAddAuthor">
+      <button (click)="activateAddAuthor()">Add Author</button>
+    </div>
+
+    <div *ngIf="showAddAuthor">
+      <select name="author_select" [(ngModel)]="newAuthor">
+        <option *ngFor="let author of authors" [ngValue]="author">{{author.firstName}} {{author.lastName}}</option>
+      </select>
+
+      <button (click)="addAuthor()">Add</button>
+    </div>
+  </div>
+
+
+  <app-authors [authors]="reference.authors" [isReference]="true" [editable]="editable" (removeAuthor)="removeAuthor($event)"></app-authors>
+</div>

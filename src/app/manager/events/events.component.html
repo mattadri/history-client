@@ -1,0 +1,124 @@
+<div *ngIf="!createEventMode">
+  <button (click)="toggleCreateEvent()">Create New Event</button>
+</div>
+
+<div *ngIf="createEventMode">
+  <form (ngSubmit)="createEvent(eventForm)" #eventForm="ngForm">
+    <div>
+      <span>Label: </span>
+      <input
+        type="text"
+        placeholder="Label"
+        name="event_label"
+        required
+        #eventLabel="ngModel"
+        [(ngModel)]="event.label">
+
+      <div *ngIf="eventLabel.dirty && eventLabel.errors && eventLabel.errors.required">
+        Event Label is mandatory.
+      </div>
+    </div>
+
+    <div>
+      <span>Description: </span>
+      <textarea name="event_description" [(ngModel)]="event.description"></textarea>
+    </div>
+
+    <div>
+      <span>Start Day: </span>
+      <input
+        type="number"
+        placeholder="Start Day"
+        name="event_start_day"
+        max="31"
+        min="1"
+        [(ngModel)]="event.startDay">
+    </div>
+
+    <div>
+      <div>Start Month: </div>
+      <div>
+        <select name="event_start_month" [(ngModel)]="event.startMonth">
+          <option *ngFor="let month of months" [ngValue]="month">{{month.label}}</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <span>Start Year: </span>
+      <input
+        type="number"
+        name="event_start_year"
+        required
+        #eventStartYear="ngModel"
+        [(ngModel)]="event.startYear">
+
+      <div *ngIf="eventStartYear.dirty && eventStartYear.errors && eventStartYear.errors.required">
+        Start Year is required.
+      </div>
+    </div>
+
+    <div>
+      <div>Start Era</div>
+      <select name="event_start_era" [(ngModel)]="event.startEra">
+        <option *ngFor="let era of eras" [ngValue]="era">{{era.label}}</option>
+      </select>
+    </div>
+
+    <div>
+      <span>End Day: </span>
+      <input
+        type="number"
+        placeholder="End Day"
+        name="event_end_day"
+        max="31"
+        min="1"
+        [(ngModel)]="event.endDay">
+    </div>
+
+    <div>
+      <div>End Month: </div>
+      <div>
+        <select name="event_end_month" [(ngModel)]="event.endMonth">
+          <option *ngFor="let month of months" [ngValue]="month">{{month.label}}</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <span>End Year: </span>
+      <input
+        type="number"
+        name="event_end_year"
+        required
+        #eventEndYear="ngModel"
+        [(ngModel)]="event.endYear">
+
+      <div *ngIf="eventEndYear.dirty && eventEndYear.errors && eventEndYear.errors.required">
+        Start Year is required.
+      </div>
+    </div>
+
+    <div>
+      <div>End Era</div>
+      <select name="event_end_era" [(ngModel)]="event.endEra">
+        <option *ngFor="let era of eras" [ngValue]="era">{{era.label}}</option>
+      </select>
+    </div>
+
+    <div>
+      <div>Reference</div>
+      <select name="event_reference" [(ngModel)]="event.reference">
+        <option *ngFor="let reference of references" [ngValue]="reference">{{reference.title}} - {{ reference.authors[0].firstName }} {{ reference.authors[0].lastName }}</option>
+      </select>
+    </div>
+
+    <div>
+      <button type="submit">Create</button>
+    </div>
+  </form>
+</div>
+
+<app-event
+  *ngFor="let event of events" [event]="event">
+</app-event>

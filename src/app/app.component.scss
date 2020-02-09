@@ -1,0 +1,56 @@
+@import '../styles/_variables.scss';
+
+.main-nav {
+  display: flex;
+  justify-content: center;
+  background-color: $color-brand;
+  color: $color-lightest;
+  list-style: none;
+  height: 60px;
+  padding: 0 5%;
+  box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
+
+  nav {
+    display: flex;
+    align-items: center;
+
+    .app-name {
+      color: white;
+      opacity: 1;
+      font-weight: bold;
+      font-size: 1.2rem;
+      width: 9rem;
+      }
+
+    li {
+      height: 100%;
+      margin-right: 82px;
+      a {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        border-bottom: solid 4px transparent;
+        &.active {
+          border-bottom-color: $color-gray-scale-100;
+          opacity: 1;
+        }
+      }
+    }
+
+    a {
+      color: $color-lightest;
+      opacity: 0.7;
+      &:hover {
+        opacity: 1;
+        text-decoration: none;
+      }
+
+    }
+
+  }
+
+}
+
+.main-content {
+  padding: 2rem;
+}

@@ -1,0 +1,15 @@
+<div class="timeline-container">
+  <span>Timeline (<button (click)="removeTimeline()">Remove</button>)</span>
+  <div><b>Label:</b> {{timeline.label}}</div>
+
+  <div class="timeline-box">
+    <app-timeline-event
+      *ngFor="let event of timeline.events" [event]="event">
+    </app-timeline-event>
+  </div>
+
+  <div>
+    <ng5-slider [(value)]="pointerStart" [(highValue)]="pointerEnd" [options]="options" (mouseup)="calculateTimeline()"></ng5-slider>
+  </div>
+
+</div>

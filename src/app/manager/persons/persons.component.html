@@ -1,0 +1,11 @@
+<div *ngIf="!createPersonMode">
+  <button (click)="showCreatePerson()">Create New Person</button>
+</div>
+
+<div *ngIf="createPersonMode">
+  <app-create-person></app-create-person>
+</div>
+
+<app-person
+  *ngFor="let person of persons" [person]="person">
+</app-person>

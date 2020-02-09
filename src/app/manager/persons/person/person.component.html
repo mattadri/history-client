@@ -1,0 +1,22 @@
+<div class="person-container">
+  <span>Person (<button (click)="removePerson()">Remove</button>)</span>
+  <div><b>First Name:</b> {{person.firstName}}</div>
+  <div *ngIf="person.middleName"><b>Middle Name:</b> {{person.middleName}}</div>
+  <div *ngIf="person.lastName"><b>Last Name:</b> {{person.lastName}}</div>
+  <div *ngIf="person.birthDay"><b>Birth Day:</b> {{person.birthDay}}</div>
+  <div *ngIf="person.birthMonth"><b>Birth Month:</b> {{person.birthMonth.label}}</div>
+  <div><b>Birth Year:</b> {{person.birthYear}}</div>
+  <div><b>Birth Era:</b> {{person.birthEra.label}}</div>
+  <div *ngIf="person.deathDay"><b>Death Day:</b> {{person.deathDay}}</div>
+  <div *ngIf="person.deathMonth"><b>Death Month:</b> {{person.deathMonth.label}}</div>
+  <div><b>Death Year:</b> {{person.deathYear}}</div>
+  <div><b>Death Era:</b> {{person.deathEra.label}}</div>
+
+  <br>
+
+  <div *ngIf="personAge"><b>Age at Death:</b> {{personAge}}</div>
+
+  <hr>
+
+  <app-reference *ngIf="person.reference" [reference]="person.reference" [editable]="false"></app-reference>
+</div>

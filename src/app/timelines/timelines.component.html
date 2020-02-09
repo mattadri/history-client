@@ -1,0 +1,24 @@
+<!--<form (ngSubmit)="createTimeline(timelineForm)" #timelineForm="ngForm">-->
+  <!--<div>-->
+    <!--<span>Label: </span>-->
+    <!--<input-->
+      <!--type="text"-->
+      <!--placeholder="Label"-->
+      <!--name="timeline_label"-->
+      <!--required-->
+      <!--#timelineLabel="ngModel"-->
+      <!--[(ngModel)]="timeline.label">-->
+
+    <!--<div *ngIf="timelineLabel.dirty && timelineLabel.errors && timelineLabel.errors.required">-->
+      <!--Timeline Label is mandatory.-->
+    <!--</div>-->
+  <!--</div>-->
+
+  <!--<div>-->
+    <!--<button type="submit">Create New Timeline</button>-->
+  <!--</div>-->
+<!--</form>-->
+
+<app-timeline-card
+  *ngFor="let timeline of timelines" [timeline]="timeline">
+</app-timeline-card>
