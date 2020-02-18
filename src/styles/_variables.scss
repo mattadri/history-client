@@ -12,6 +12,7 @@ $color-gray-scale-100: #DCE3F4;
 
 $color-darkest: #000;
 $color-medium: #5F636D;
+$color-light: #FAFAFA;
 $color-lightest: #FFF;
 
 $color-brand: #2C57BD;
@@ -22,6 +23,8 @@ $color-link: #099FE5;
 $color-success: #74BB29;
 $color-error: #ED1020;
 $color-warning: #FABC12;
+
+$color-icon-actions: $color-gray-scale-500;
 
 $color-timeline-scarlet: #D94139;
 $color-timeline-orange: #EE8420;
@@ -37,7 +40,21 @@ $color-timeline-fucsia: #EC446D;
 // Type
 
 $font-family-sans-serif: Roboto, 'Helvetica Neue', sans-serif;
-$font-size-base: 1rem;
-$font-size-small: 80%;
 $font-line-height: 1.5;
 $font-margin-bottom: 1rem;
+$font-color-default: $color-medium;
+
+$font-size-small: 0.8rem;
+$font-size-base: 1rem;
+$font-size-large-100: 1.2rem;
+$font-size-large-200: 1.4rem;
+$font-size-large-300: 1.7rem;
+
+
+// Shadows
+$shadow-light: 0px 4px 7px 0px rgba(0,0,0,.1);
+
+// Borders
+$border-light: 1px solid rgba($color-gray-scale-500, .2);
+$border-lightest: 1px solid rgba($color-gray-scale-500, .1);
+$border-radius-default: 4px;

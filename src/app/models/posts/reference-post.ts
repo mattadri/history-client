@@ -3,8 +3,7 @@ import { Reference } from '../reference';
 export class ReferencePost {
   data: object;
 
-  mapToPost(reference: Reference) {
-    console.log(reference);
+  mapToPost(reference: Reference, isPatch: boolean) {
     this.data = {
       type: 'reference',
       attributes: {
@@ -20,17 +19,25 @@ export class ReferencePost {
     };
 
     // Optional fields
-    if (reference.publishedDay > 0) {
+    if (reference.subTitle) {
+      this.data.attributes.sub_title = reference.subTitle;
+    }
+
+    if (reference.publishedDay) {
       this.data.attributes.published_day = reference.publishedDay;
     }
 
-    if (reference.publishedMonth.id) {
+    if (reference.publishedMonth && reference.publishedMonth.id) {
       this.data.attributes.published_month_rel = {
         data: {
           type: 'month',
           id: reference.publishedMonth.id
         }
       };
+    }
+
+    if (isPatch) {
+      this.data.id = reference.id;
     }
   }
 }

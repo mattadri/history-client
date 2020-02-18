@@ -3,7 +3,7 @@ import { Event } from '../event';
 export class EventPost {
   data: object;
 
-  mapToPost(event: Event) {
+  mapToPost(event: Event, isPatch: boolean) {
     this.data = {
       type: 'event',
       attributes: {
@@ -27,7 +27,7 @@ export class EventPost {
       this.data.attributes.event_start_day = event.startDay;
     }
 
-    if (event.startMonth) {
+    if (event.startMonth && event.startMonth.id) {
       this.data.attributes.event_start_month_rel = {
         data: {
           type: 'month',
@@ -40,7 +40,7 @@ export class EventPost {
       this.data.attributes.event_end_day = event.endDay;
     }
 
-    if (event.endMonth) {
+    if (event.endMonth && event.endMonth.id) {
       this.data.attributes.event_end_month_rel = {
         data: {
           type: 'month',
@@ -69,6 +69,10 @@ export class EventPost {
           id: event.reference.id
         }
       };
+    }
+
+    if (isPatch) {
+      this.data.id = event.id;
     }
   }
 }

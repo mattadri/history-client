@@ -1,9 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { Options, LabelType } from 'ng5-slider';
+import { Options } from 'ng5-slider';
+
+import { TimelineService } from '../../services/timeline.service';
 
 import { Timeline } from '../../models/timeline';
 import { Event } from '../../models/event';
+import {ActivatedRoute} from '@angular/router';
+import {Era} from '../../models/era';
 
 @Component({
   selector: 'app-timeline',
@@ -11,7 +15,7 @@ import { Event } from '../../models/event';
   styleUrls: ['./timeline.component.scss']
 })
 export class TimelineComponent implements OnInit {
-  @Input() public timeline: Timeline;
+  public timeline: Timeline;
 
   // make a record of the first and last event on the timeline
   private oldestEvent: Event;
@@ -24,28 +28,35 @@ export class TimelineComponent implements OnInit {
   public options: Options;
 
   private timelineLengthInYears: number;
+  private staticLengthInYears: number;
 
   private timelineEvents: Event[] = [];
 
-  constructor() { }
+  constructor(private route: ActivatedRoute, private timelineService: TimelineService) {
+    const timelineId = this.route.snapshot.paramMap.get('id');
 
-  ngOnInit() {
-    this.oldestEvent = this.timeline.events[0];
-    this.newestEvent = this.timeline.events[this.timeline.events.length - 1];
+    this.timelineService.getApiTimeline(timelineId).subscribe(response => {
+      this.timeline = response;
 
-    this.timelineStart = this.convertNumber(this.oldestEvent.startYear, this.oldestEvent);
-    this.timelineEnd = this.convertNumber(this.newestEvent.startYear, this.newestEvent);
+      this.oldestEvent = this.timeline.events[0];
+      this.newestEvent = this.timeline.events[this.timeline.events.length - 1];
 
-    // make a copy of the full list for reference
-    for (const event of this.timeline.events) {
-      this.timelineEvents.push(event);
-    }
+      this.timelineStart = this.convertNumber(this.oldestEvent.startYear, this.oldestEvent);
+      this.timelineEnd = this.convertNumber(this.newestEvent.startYear, this.newestEvent);
 
-    this.pointerStart = this.timelineStart;
-    this.pointerEnd = this.timelineEnd;
+      // make a copy of the full list for reference
+      for (const event of this.timeline.events) {
+        this.timelineEvents.push(event);
+      }
 
-    this.calculateTimeline();
+      this.pointerStart = this.timelineStart;
+      this.pointerEnd = this.timelineEnd;
+
+      this.calculateTimeline();
+    });
   }
+
+  ngOnInit() { }
 
   calculateTimeline() {
     // reset the timeline to the original full list
@@ -69,10 +80,12 @@ export class TimelineComponent implements OnInit {
     this.newestEvent = this.timeline.events[this.timeline.events.length - 1];
 
     this.timelineLengthInYears = this.pointerStart - this.pointerEnd;
+    this.staticLengthInYears = this.timelineStart - this.timelineEnd;
 
     // length in years should always be a positive number
     if (this.timelineLengthInYears < 0) {
       this.timelineLengthInYears = this.timelineLengthInYears * -1;
+      this.staticLengthInYears = this.staticLengthInYears * -1;
     }
 
     for (const event of this.timeline.events) {
@@ -84,14 +97,32 @@ export class TimelineComponent implements OnInit {
     this.options = {
       floor: this.padTimelineDate(this.timelineStart, this.timelineLengthInYears, false),
       ceil: this.padTimelineDate(this.timelineEnd, this.timelineLengthInYears, true),
-      translate: (value: number, label: LabelType): string => {
-        return value.toLocaleString('en') + ' years ago';
+      tickStep: this.staticLengthInYears / 10,
+      showTicks: true,
+      showTicksValues: true,
+      translate: (value: number): string => {
+        const event = new Event();
+        const era = new Era();
+
+        era.initializeNewEra();
+        event.initializeNewEvent();
+
+        era.label = 'AD';
+
+        if (value < 0) {
+          value = value * -1;
+          era.label = 'BC';
+        }
+
+        event.formatYears(true, null, value, era);
+
+        let newValue = event.formattedStartYear;
+
+        newValue = newValue.toLocaleString('en').toString();
+
+        return newValue;
       }
     };
-  }
-
-  removeTimeline() {
-    console.log('Removing timeline: ', this.timeline);
   }
 
   // If the era is BC then make the number a negative
@@ -119,10 +150,8 @@ export class TimelineComponent implements OnInit {
     }
 
     if (increase) {
-      console.log('Adding ' + padding + ' to value ' + yearToPad);
       yearToPad = yearToPad + padding;
     } else {
-      console.log('Subtracting ' + padding + ' to value ' + yearToPad);
       yearToPad = yearToPad - padding;
     }
 

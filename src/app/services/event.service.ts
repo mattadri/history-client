@@ -19,10 +19,14 @@ export class EventService {
 
   constructor(private http: HttpClient) { }
 
-  getApiEvents(): Observable<Event[]> {
+  getApiEvents(path): Observable<Event[]> {
     this.events = [];
 
-    return this.http.get<Event[]>('api/events', {
+    if (!path) {
+      path = '/events';
+    }
+
+    return this.http.get<Event[]>('api' + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'events')
@@ -34,6 +38,17 @@ export class EventService {
     this.eventPost.mapToPost(event);
 
     return this.http.post('/api/events', this.eventPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  patchApiEvent(event: Event): Observable<Event> {
+    this.eventPost = new EventPost();
+    this.eventPost.mapToPost(event, true);
+
+    return this.http.patch('/api/events/' + event.id, this.eventPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')

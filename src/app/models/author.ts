@@ -20,4 +20,10 @@ export class Author {
     this.middleName = author.attributes.middle_name;
     this.lastName = author.attributes.last_name;
   }
+
+  initializeAuthor() {
+    this.firstName = '';
+    this.middleName = '';
+    this.lastName = '';
+  }
 }

@@ -9,6 +9,12 @@ import { Event } from '../../models/event';
 
 @Injectable()
 export class EventInterceptor implements HttpInterceptor {
+  private body = {
+    events: [],
+    total: 0,
+    links: {}
+  };
+
   private events: Event[] = [];
   private event: Event;
 
@@ -35,7 +41,11 @@ export class EventInterceptor implements HttpInterceptor {
             this.events.push(this.event);
           }
 
-          event.body = this.events;
+          this.body.events = this.events;
+          this.body.total = event.body.meta.count;
+          this.body.links = event.body.links;
+
+          event.body = this.body;
         }
       }
     }

@@ -1,3 +1,12 @@
-<div class="timeline-card-container">
-  <div><span>{{timeline.label}}</span></div>
-</div>
+<!--<mat-card (click)="onLoadDetails()">-->
+<mat-card routerLink="/timeline/{{timeline.id}}">
+  <mat-card-title>{{timeline.label}}</mat-card-title>
+  <!--<mat-card-content>-->
+    <!--<div class="mat-card-subtitle">-->
+      <!--<span>{{event.formattedStartYear}}</span>-->
+      <!--<span *ngIf="event.formattedStartYear != event.formattedEndYear"> - {{event.formattedEndYear}}</span>-->
+    <!--</div>-->
+    <!--<div class="mat-card-content" *ngIf="event.description">{{event.description}}</div>-->
+
+  <!--</mat-card-content>-->
+</mat-card>

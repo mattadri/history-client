@@ -7,4 +7,9 @@ export class Era {
     this.label = eraData.attributes.label;
     return this;
   }
+
+  initializeNewEra() {
+    this.id = 0;
+    this.label = '';
+  }
 }

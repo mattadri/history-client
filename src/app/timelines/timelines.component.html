@@ -1,24 +1,14 @@
-<!--<form (ngSubmit)="createTimeline(timelineForm)" #timelineForm="ngForm">-->
-  <!--<div>-->
-    <!--<span>Label: </span>-->
-    <!--<input-->
-      <!--type="text"-->
-      <!--placeholder="Label"-->
-      <!--name="timeline_label"-->
-      <!--required-->
-      <!--#timelineLabel="ngModel"-->
-      <!--[(ngModel)]="timeline.label">-->
+<div class="app-list-content">
+  <h1>Timelines</h1>
 
-    <!--<div *ngIf="timelineLabel.dirty && timelineLabel.errors && timelineLabel.errors.required">-->
-      <!--Timeline Label is mandatory.-->
-    <!--</div>-->
-  <!--</div>-->
+  <!--<button class="material-icons" (click)="activateCreateMode(eventDetails)">add</button>-->
 
-  <!--<div>-->
-    <!--<button type="submit">Create New Timeline</button>-->
-  <!--</div>-->
-<!--</form>-->
+  <div class="app-cards-container">
+    <app-timeline-card
+      *ngFor="let timeline of timelines" [timeline]="timeline"
+      class="app-card">
+    </app-timeline-card>
+  </div>
 
-<app-timeline-card
-  *ngFor="let timeline of timelines" [timeline]="timeline">
-</app-timeline-card>
+  <!--<mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>-->
+</div>

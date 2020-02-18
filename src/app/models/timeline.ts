@@ -7,6 +7,13 @@ export class Timeline {
   events: Event[];
   persons: Person[];
 
+  initializeNewTimeline() {
+    this.id = 0;
+    this.label = '';
+    this.events = [];
+    this.persons = [];
+  }
+
   mapTimeline(timeline) {
     const self = this;
 

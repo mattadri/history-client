@@ -47,11 +47,17 @@ export class ReferenceService {
     }
   }
 
-  getApiReferences(): Observable<Reference[]> {
+  getApiReferences(path): Observable<Reference[]> {
     this.references = [];
 
-    return this.http.get<Reference[]>('api/references', {
-      headers: new HttpHeaders().set('Accept', 'application/vnd.api+json').set('Type', 'references')
+    if (!path) {
+      path = '/references';
+    }
+
+    return this.http.get<Reference[]>('api' + path, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'references')
     });
   }
 
@@ -63,7 +69,17 @@ export class ReferenceService {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
-        .set('Type', 'reference')
+    });
+  }
+
+  patchApiReference(reference: Reference): Observable<Reference> {
+    this.referencePost = new ReferencePost();
+    this.referencePost.mapToPost(reference, true);
+
+    return this.http.patch('/api/references/' + reference.id, this.referencePost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
     });
   }
 

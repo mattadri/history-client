@@ -1,15 +1,17 @@
 // Typography
 // ----------
 
+@import '_variables.scss';
+
 h1, h2, h3, h4, h5, h6 {
   color: $color-gray-scale-500;
   margin-bottom: $font-margin-bottom;
   font-weight: 100;
 }
 
-h1 { font-size: 1.8rem; text-transform: uppercase;}
-h2 { font-size: 1.5rem; text-transform: uppercase;}
-h3 { font-size: 1.2rem;}
+h1 { font-size: $font-size-large-300; text-transform: uppercase;}
+h2 { font-size: $font-size-large-200; text-transform: uppercase;}
+h3 { font-size: $font-size-large-100;}
 
 p {
   color: $color-medium;
@@ -22,4 +24,12 @@ a {
     color: darken($color-link, 10%);
     text-decoration: underline;
   }
+}
+
+label {
+  text-transform: uppercase;
+  font-size: $font-size-small;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: $color-gray-scale-500;
 }

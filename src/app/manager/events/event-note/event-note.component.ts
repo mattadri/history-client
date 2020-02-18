@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
-import { EventNote } from '../../../../models/event-note';
+import { EventNote } from '../../../models/event-note';
 
 @Component({
   selector: 'app-event-note',
@@ -19,7 +19,7 @@ export class EventNoteComponent implements OnInit {
   ngOnInit() {
   }
 
-  onRemoveNote() {
+  doRemoveNote() {
     this.removeNote.emit(this.note);
   }
 }

@@ -9,6 +9,12 @@ import { Reference } from '../../models/reference';
 
 @Injectable()
 export class ReferenceInterceptor implements HttpInterceptor {
+  private body = {
+    references: [],
+    total: 0,
+    links: {}
+  };
+
   private references: Reference[] = [];
   private reference: Reference;
 
@@ -33,13 +39,11 @@ export class ReferenceInterceptor implements HttpInterceptor {
             this.references.push(this.reference);
           }
 
-          event.body = this.references;
+          this.body.references = this.references;
+          this.body.total = event.body.meta.count;
+          this.body.links = event.body.links;
 
-        } else if (req.headers.headers.get('type')[0] === 'reference') {
-          this.reference = new Reference();
-          this.reference.mapReference(event.body.data);
-
-          event.body = this.reference;
+          event.body = this.body;
         }
       }
     }

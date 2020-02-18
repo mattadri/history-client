@@ -5,6 +5,7 @@ import { Era } from './era';
 export class Reference {
   id: number;
   title: string;
+  subTitle: string;
   publishedDay: number;
   publishedMonth: Month;
   publishedYear: number;
@@ -24,6 +25,10 @@ export class Reference {
     self.publishedEra = era.mapEra(reference.attributes.published_era.data);
 
     // optional fields
+    if (reference.attributes.sub_title) {
+      self.subTitle = reference.attributes.sub_title;
+    }
+
     if (reference.attributes.published_day) {
       self.publishedDay = reference.attributes.published_day;
     }
@@ -45,5 +50,15 @@ export class Reference {
     }
 
     return self;
+  }
+
+  initializeReference() {
+    this.title = '';
+    this.subTitle = '';
+    this.publishedDay = null;
+    this.publishedMonth = new Month();
+    this.publishedYear = null;
+    this.publishedEra = new Era();
+    this.authors = [];
   }
 }

@@ -12,6 +12,12 @@ export class AuthorInterceptor implements HttpInterceptor {
   private authors: Author[];
   private author: Author;
 
+  private body = {
+    events: [],
+    total: 0,
+    links: {}
+  };
+
   constructor() {
     this.authors = [];
   }
@@ -32,12 +38,16 @@ export class AuthorInterceptor implements HttpInterceptor {
 
           for (const data of event.body.data) {
             this.author = new Author();
-            this.author.mapAuthor(data, false);
+            this.author.mapAuthor(data);
 
             this.authors.push(this.author);
           }
 
-          event.body = this.authors;
+          this.body.authors = this.authors;
+          this.body.total = event.body.meta.count;
+          this.body.links = event.body.links;
+
+          event.body = this.body;
         }
       }
     }

@@ -24,6 +24,14 @@ export class TimelineService {
     });
   }
 
+  getApiTimeline(timelineId) {
+    return this.http.get<Event>('api/timelines/' + timelineId, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'timeline')
+    });
+  }
+
   createApiTimeline(timeline: Timeline): Observable<any> {
     console.log('Creating new timeline: ', timeline);
   }

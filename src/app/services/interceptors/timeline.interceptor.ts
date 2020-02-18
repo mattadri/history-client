@@ -36,6 +36,12 @@ export class TimelineInterceptor implements HttpInterceptor {
           }
 
           event.body = this.timelines;
+
+        } else if (req.headers.headers.get('type')[0] === 'timeline') {
+          this.timeline = new Timeline();
+          this.timeline.mapTimeline(event.body.data);
+
+          event.body = this.timeline;
         }
       }
     }

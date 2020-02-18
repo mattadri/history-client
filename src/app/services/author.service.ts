@@ -37,8 +37,14 @@ export class AuthorService {
     }
   }
 
-  getApiAuthors(): Observable<Author[]> {
-    return this.http.get('/api/authors', {
+  getApiAuthors(path): Observable<Author[]> {
+    this.authors = [];
+
+    if (!path) {
+      path = '/authors';
+    }
+
+    return this.http.get('/api' + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'authors')
@@ -57,6 +63,17 @@ export class AuthorService {
 
     return this.http.post('/api/authors', this.authorPost, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json').set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  patchApiAuthor(author: Author): Observable<Author> {
+    this.authorPost = new AuthorPost();
+    this.authorPost.mapToPost(author, true);
+
+    return this.http.patch('/api/authors/' + author.id, this.authorPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
     });
   }
 }
