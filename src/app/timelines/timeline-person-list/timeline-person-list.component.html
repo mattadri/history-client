@@ -1,0 +1,16 @@
+<!--<div [ngClass]="person.listEventIsHighlighted ? 'highlight-person' : ''"-->
+     <!--(mouseover)="highlightEvent()"-->
+     <!--(mouseout)="deHighlightEvent()"-->
+     <!--(dblclick)="showDetails()"-->
+     <!--class="timeline-listed-person">-->
+<div [ngClass]="person.listEventIsHighlighted ? 'highlight-person' : ''"
+     (dblclick)="showDetails()"
+     class="grid-list-item">
+  <span [ngClass]="applyColorClass()"></span>
+  <span class="grid-list-item-year">
+     {{person.formattedBirthYear}} - {{person.formattedDeathYear}}
+  </span>
+  <span class="grid-list-item-title">
+    {{person.firstName}} {{person.lastName}}
+  </span>
+</div>

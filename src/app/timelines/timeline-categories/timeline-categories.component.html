@@ -1,0 +1,19 @@
+<button mat-flat-button class="material-icons" color="primary" *ngIf="!isCreateMode" (click)="activateCreateMode()">
+  add
+</button>
+
+<div *ngIf="isCreateMode">
+  <mat-form-field>
+    <input
+      matInput
+      placeholder="Category"
+      name="timeline_category"
+      autofocus
+      [(ngModel)]="newCategory.label" />
+  </mat-form-field>
+
+  <button mat-icon-button class="material-icons" (click)="createNewCategory()">save</button>
+  <button mat-icon-button class="material-icons" (click)="cancelCreateMode()">close</button>
+</div>
+
+<app-timeline-category *ngFor="let category of timeline.categories" [category]="category" (removeCategory)="removeCategory($event)"></app-timeline-category>

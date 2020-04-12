@@ -1,0 +1,41 @@
+@import '../../../styles/_variables.scss';
+
+.timeline-listed-person {
+  padding: 10px 20px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  &.highlight-person,
+  &:hover {
+    background-color: $color-active-light;
+    border-top-color: lighten($color-active, 40);
+    border-bottom-color: lighten($color-active, 40);
+    color: $color-darkest;
+  }
+  &.active {
+    color: red;
+    position: relative;
+    ::after {
+      position: absolute;
+      content:"";
+      width: 5px;
+      height: 100%;
+    }
+  }
+}
+
+.timeline-listed-person-key {
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  background-color: transparent;
+  display: block;
+}
+
+.timeline-listed-person-year {
+  color: $color-gray-scale-600;
+  font-weight: 500;
+  margin-right: 10px;
+}

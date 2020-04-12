@@ -1,0 +1,19 @@
+<div class="timeline-category">{{category.label}}</div>
+
+<div class="timeline-box single-point-events timeline-group" *ngIf="category.singlePointEvents.length">
+  <app-timeline-event
+    *ngFor="let event of category.singlePointEvents" [event]="event">
+  </app-timeline-event>
+</div>
+
+<div *ngIf="category.multiPointEvents.length" class="timeline-group">
+  <div class="timeline-box" *ngFor="let event of category.multiPointEvents">
+    <app-timeline-event [event]="event"></app-timeline-event>
+  </div>
+</div>
+
+<div *ngIf="persons.length && !category.label" class="timeline-group">
+  <div class="timeline-box person" *ngFor="let person of persons">
+    <app-timeline-person [person]="person"></app-timeline-person>
+  </div>
+</div>

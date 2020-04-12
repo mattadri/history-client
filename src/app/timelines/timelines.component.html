@@ -1,14 +1,47 @@
-<div class="app-list-content">
-  <h1>Timelines</h1>
+<mat-sidenav-container>
+  <div class="app-body-content">
+    <div class="app-content-toolbar">
+      <h1>Timelines</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="activateCreateMode(timelineDetails)">add</button>
+    </div>
 
-  <!--<button class="material-icons" (click)="activateCreateMode(eventDetails)">add</button>-->
+    <div class="app-cards-container">
+      <app-timeline-card
+        *ngFor="let timeline of timelines" [timeline]="timeline"
+        class="app-card">
+      </app-timeline-card>
+    </div>
 
-  <div class="app-cards-container">
-    <app-timeline-card
-      *ngFor="let timeline of timelines" [timeline]="timeline"
-      class="app-card">
-    </app-timeline-card>
+    <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
   </div>
 
-  <!--<mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>-->
-</div>
+  <mat-sidenav #timelineDetails mode="side" position="end" class="app-drawer">
+    <div *ngIf="isCreateTimelineMode">
+      <form (ngSubmit)="createTimeline(timelineDetails)" #timelineForm="ngForm">
+        <div class="app-drawer-header">
+          <div class="app-drawer-title">
+            <div class="app-drawer-subheading">New Timeline</div>
+          </div>
+          <div class="app-drawer-tools">
+            <button mat-icon-button class="material-icons">save</button>
+            <button mat-icon-button class="material-icons" (click)="cancelEditCreateModes(timelineDetails)">close</button>
+          </div>
+        </div>
+
+        <div class="app-drawer-content">
+          <section class="app-section">
+            <mat-form-field style="width: 100%">
+              <input
+                matInput
+                placeholder="Label"
+                required
+                name="timeline)_label"
+                #timelineLabel="ngModel"
+                [(ngModel)]="timeline.label" />
+            </mat-form-field>
+          </section>
+        </div>
+      </form>
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>

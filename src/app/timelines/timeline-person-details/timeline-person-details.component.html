@@ -1,0 +1,30 @@
+<div>
+  <div>
+    <span><b>{{data.person.formattedBirthYear}} - {{data.person.formattedDeathYear}}</b></span>
+  </div>
+  <div>
+    <span>
+      <b>Name:</b> {{data.person.firstName}} {{data.person.middleName}} {{data.person.lastName}}
+    </span>
+  </div>
+
+  <div>
+    <span>
+      <b>Birth Date:</b> {{data.person.formattedBirth}}
+    </span>
+  </div>
+
+  <div *ngIf="data.person.formattedDeath !== 'present'">
+    <span>
+      <b>Death Date: </b> {{data.person.formattedDeath}}
+    </span>
+  </div>
+
+  <div>
+    <span>
+      <b>Age: </b> {{data.person.age}}
+    </span>
+  </div>
+
+  <!--<app-timeline-event-detail-note *ngFor="let note of data.event.notes" [note]="note"></app-timeline-event-detail-note>-->
+</div>

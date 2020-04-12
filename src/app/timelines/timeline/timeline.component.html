@@ -1,27 +1,85 @@
-<div class="timeline-container">
-  <span>Timeline (<button (click)="removeTimeline()">Remove</button>)</span>
-  <div><b>Label:</b> {{timeline.label}}</div>
+<div class="app-body-content">
+  <div class="app-content-toolbar">
+    <h1 *ngIf="timeline && !isTimelineEditMode">{{timeline.label}}</h1>
 
-  <div class="timeline-box">
-    <app-timeline-event
-      *ngFor="let event of timeline.events" [event]="event">
-    </app-timeline-event>
+    <span *ngIf="isTimelineEditMode">
+      <mat-form-field style="width: 100%">
+        <input
+          matInput
+          placeholder="Title"
+          required
+          name="timeline_label"
+          #timelineLabel="ngModel"
+          [(ngModel)]="timeline.label" />
+      </mat-form-field>
+
+      <button mat-icon-button class="material-icons" (click)="editTimeline()">
+        save
+      </button>
+
+      <button mat-icon-button class="material-icons" (click)="removeTimeline()">delete</button>
+    </span>
+
+    <button *ngIf="!isTimelineEditMode" mat-icon-button class="material-icons" (click)="activateTimelineEditMode()">
+      edit
+    </button>
   </div>
 
-  <div>
-    <ng5-slider [(value)]="pointerStart" [(highValue)]="pointerEnd" [options]="options" (mouseup)="calculateTimeline()"></ng5-slider>
+  <div id="timeline-container" class="timeline-container" (click)="showCursorLine($event, tooltip)">
+    <app-category *ngFor="let category of categoryEvents" [category]="category" [persons]="persons"></app-category>
+
+    <div class="timeline-timeframe">
+      <div class="segment" *ngFor="let segment of timeframe" [ngStyle]="{left: segment.leftPercentage}">
+        <div class="segment-year">{{segment.year}}</div>
+      </div>
+    </div>
+
+    <div class="timeline-cursor-line"
+        [ngStyle]="cursorLineStyles"
+        #tooltip="matTooltip"
+        matTooltip="{{cursorLineDate}}"
+        [matTooltipPosition]="cursorLineDatePosition"
+        (mouseout)="showCursorTooltip(tooltip)"></div>
+
+    <!--
+    <div>
+      <ng5-slider [(value)]="pointerStart" [(highValue)]="pointerEnd" [options]="options" (mouseup)="calculateTimeline()"></ng5-slider>
+    </div>
+    -->
   </div>
 
+  <mat-tab-group>
+    <mat-tab label="Events">
+      <div class="grid-list" *ngIf="timeline">
+        <app-timeline-event-list
+          *ngFor="let event of timeline.events"
+          [event]="event"
+          [timeline]="timeline"
+          [categoryEvents]="categoryEvents">
+        </app-timeline-event-list>
+      </div>
+    </mat-tab>
 
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <hr>
+    <mat-tab label="People">
+      <div class="grid-list" *ngIf="timeline">
+        <app-timeline-person-list
+          *ngFor="let person of timeline.persons" [person]="person" [timeline]="timeline">
+        </app-timeline-person-list>
+      </div>
+    </mat-tab>
 
-  <p>working</p>
+    <mat-tab label="Categories">
+      <div class="grid-list" *ngIf="timeline">
+        <app-timeline-categories [timeline]="timeline" [categoryEvents]="categoryEvents"></app-timeline-categories>
+      </div>
+    </mat-tab>
 
+    <mat-tab label="What Else?">
+      <div class="grid-list" *ngIf="timeline">
+        <app-timeline-event-list *ngFor="let event of relatedEvents" [event]="event"></app-timeline-event-list>
+        <mat-paginator length="{{relatedEventsTotalResults}}" pageSize="20" (page)="turnRelatedEventsPage($event)"></mat-paginator>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>
+

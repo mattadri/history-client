@@ -1,0 +1,97 @@
+<mat-sidenav-container>
+  <div class="app-body-content">
+    <h1>Authors</h1>
+
+    <button class="material-icons" (click)="activateCreateMode(authorDetails)">add</button>
+
+    <div class="app-cards-container">
+      <app-author-card
+        *ngFor="let author of authors" [author]="author"
+        (loadAuthor)="openAuthorDetails($event, authorDetails)"
+        class="app-card">
+      </app-author-card>
+    </div>
+
+    <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+  </div>
+
+  <mat-sidenav #authorDetails mode="side" position="end" class="app-drawer">
+    <!-- Event Read-Only Mode -->
+    <div *ngIf="!isEditAuthorMode && !isCreateAuthorMode">
+      <div class="app-drawer-header">
+        <div class="app-drawer-title">
+          <div class="app-drawer-subheading">Author</div>
+          <div class="app-drawer-heading">
+            <span>{{author.firstName}}</span>
+            <span *ngIf="author.middleName"> {{author.middleName}}</span>
+            <span *ngIf="author.lastName"> {{author.lastName}}</span>
+          </div>
+        </div>
+        <div class="app-drawer-tools">
+          <button class="material-icons" (click)="isEditAuthorMode = true">edit</button>
+          <button class="material-icons" (click)="closeAuthorDetails(authorDetails)">close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Event Edit/Create Mode -->
+    <div *ngIf="isEditAuthorMode || isCreateAuthorMode">
+      <div class="app-drawer-header">
+        <div class="app-drawer-title">
+          <div class="app-drawer-subheading">Author</div>
+          <div class="app-drawer-heading">
+            <span>{{author.firstName}}</span>
+            <span *ngIf="author.middleName"> {{author.middleName}}</span>
+            <span *ngIf="author.lastName"> {{author.lastName}}</span>
+          </div>
+        </div>
+        <div class="app-drawer-tools" *ngIf="isEditAuthorMode">
+          <button class="material-icons" (click)="removeAuthor(authorDetails)">delete</button>
+        </div>
+      </div>
+
+      <form (ngSubmit)="isEditAuthorMode ? editAuthor() : createAuthor(authorDetails)" #authorForm="ngForm">
+        <div class="app-drawer-content">
+          <section class="app-section">
+            <mat-form-field style="width: 100%">
+              <input
+                matInput
+                placeholder="First Name"
+                required
+                name="author_first_name"
+                #eventLabel="ngModel"
+                [(ngModel)]="author.firstName" />
+            </mat-form-field>
+          </section>
+
+          <section class="app-section">
+            <mat-form-field style="width: 100%">
+              <input
+                matInput
+                placeholder="Middle Name"
+                name="author_middle_name"
+                #eventLabel="ngModel"
+                [(ngModel)]="author.middleName" />
+            </mat-form-field>
+          </section>
+
+          <section class="app-section">
+            <mat-form-field style="width: 100%">
+              <input
+                matInput
+                placeholder="Last Name"
+                name="author_last_name"
+                #eventLabel="ngModel"
+                [(ngModel)]="author.lastName" />
+            </mat-form-field>
+          </section>
+
+          <section class="app-section">
+            <button mat-flat-button color="primary">Save</button>
+            <button mat-flat-button color="secondary" (click)="cancelEditCreateModes(authorDetails)">Cancel</button>
+          </section>
+        </div>
+      </form>
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>

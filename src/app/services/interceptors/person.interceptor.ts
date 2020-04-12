@@ -9,6 +9,12 @@ import { Person } from '../../models/person';
 
 @Injectable()
 export class PersonInterceptor implements HttpInterceptor {
+  private body = {
+    persons: [],
+    total: 0,
+    links: {}
+  };
+
   private persons: Person[] = [];
   private person: Person;
 
@@ -26,7 +32,6 @@ export class PersonInterceptor implements HttpInterceptor {
     if (event.body) {
       if (req.headers.headers.get('type')) {
         if (req.headers.headers.get('type')[0] === 'persons') {
-          console.log('Intercepting Person Request.');
           this.persons = [];
 
           for (const data of event.body.data) {
@@ -36,7 +41,11 @@ export class PersonInterceptor implements HttpInterceptor {
             this.persons.push(this.person);
           }
 
-          event.body = this.persons;
+          this.body.persons = this.persons;
+          this.body.total = event.body.meta.count;
+          this.body.links = event.body.links;
+
+          event.body = this.body;
         }
       }
     }

@@ -5,25 +5,33 @@ import { EventNote } from '../../models/event-note';
 import { Era } from '../../models/era';
 import { Month } from '../../models/month';
 import { Reference } from '../../models/reference';
+import { Timeline } from '../../models/timeline';
+import { TimelineEvent } from '../../models/timeline-event';
 
 import { EventService } from '../../services/event.service';
 import { MonthService } from '../../services/month.service';
 import { EraService } from '../../services/era.service';
 import { ReferenceService } from '../../services/reference.service';
+import { TimelineService } from '../../services/timeline.service';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })
+
 export class EventsComponent implements OnInit {
   public events: Event[];
   public event: Event;
   public eventNote: EventNote;
+  public timelines: Timeline[];
+  public timeline: Timeline;
+  public timelineEvent: TimelineEvent;
 
   public isCreateEventMode: boolean;
   public isEditEventMode: boolean;
   public isAddNoteMode: boolean;
+  public isAddTimelineMode: boolean;
 
   public eras: Era[] = [];
   public months: Month[] = [];
@@ -42,20 +50,26 @@ export class EventsComponent implements OnInit {
   public endEraLabel: string;
 
   public referenceId: number;
+  public timelineId: number;
+
+  public filterQuery: string;
 
   constructor(private eventService: EventService,
               private referenceService: ReferenceService,
               private eraService: EraService,
-              private monthService: MonthService) {
+              private monthService: MonthService,
+              private timelineService: TimelineService) {
 
     this.events = [];
 
     this.initializeNewEvent();
     this.initializeNewNote();
+    this.initializeNewTimeline();
 
     this.isCreateEventMode = false;
     this.isEditEventMode = false;
     this.isAddNoteMode = false;
+    this.isAddTimelineMode = false;
 
     this.eraService.getEras().subscribe(eras => {
       for (const era of eras.data) {
@@ -77,7 +91,15 @@ export class EventsComponent implements OnInit {
       this.references = this.referenceService.getReferences();
     });
 
-    this.getEvents('/events?sort=label');
+    this.timelineService.getApiTimelines('/timelines?sort=modified&fields[timeline]=label').subscribe(response => {
+      for (const timeline of response.timelines) {
+        this.timelineService.setTimeline(timeline);
+      }
+
+      this.timelines = this.timelineService.getTimelines();
+    });
+
+    this.getEvents('/events?sort=-created&page%5Bnumber%5D=1');
   }
 
   ngOnInit() {
@@ -95,8 +117,12 @@ export class EventsComponent implements OnInit {
     this.eventNote = new EventNote();
   }
 
-  getEvents(path) {
-    this.eventService.getApiEvents(path).subscribe(response => {
+  initializeNewTimeline() {
+    this.timeline = new Timeline();
+  }
+
+  getEvents(path, filterTerm, dateFilter) {
+    this.eventService.getApiEvents(path, filterTerm, dateFilter).subscribe(response => {
       for (const event of response.events) {
         this.eventService.setEvent(event);
       }
@@ -109,14 +135,14 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  activateCreateMode(sideNav) {
+  activateCreateMode(contentPanel) {
     this.isCreateEventMode = true;
     this.initializeNewEvent();
 
-    this.openEventDetails(this.event, sideNav, true);
+    this.openEventDetails(this.event, contentPanel, true);
   }
 
-  createEvent(sideNav) {
+  createEvent(contentPanel) {
     // set the era objects
     for (const era of this.eras) {
       if (this.startEraLabel === era.label) {
@@ -154,10 +180,35 @@ export class EventsComponent implements OnInit {
       this.eventService.setEvent(this.event);
 
       this.isCreateEventMode = false;
+      this.isEditEventMode = false;
 
-      this.closeEventDetails(sideNav);
+      this.openEventDetails(this.event, contentPanel);
+    });
+  }
 
-      this.initializeNewEvent();
+  createTimelineEvent() {
+    for (const timeline of this.timelines) {
+      if (this.timelineId === timeline.id) {
+        this.timeline = timeline;
+      }
+    }
+
+    this.timelineEvent = new TimelineEvent();
+    this.timelineEvent.event = this.event;
+    this.timelineEvent.timeline = this.timeline;
+
+    // call service
+    this.timelineService.createEventApiTimeline(this.timelineEvent).subscribe(response => {
+      if (!this.event.timelines) {
+        this.event.timelines = [];
+      }
+
+      this.timelineEvent.id = response.data.id;
+      this.event.timelines.push(this.timeline);
+
+      this.initializeNewTimeline();
+
+      this.isAddTimelineMode = false;
     });
   }
 
@@ -225,7 +276,15 @@ export class EventsComponent implements OnInit {
       }
     }
 
-    return this.eventService.patchApiEvent(this.event).subscribe(response => {
+    if (this.referenceId) {
+      for (const reference of this.references) {
+        if (this.referenceId === reference.id) {
+          this.event.reference = reference;
+        }
+      }
+    }
+
+    return this.eventService.patchApiEvent(this.event).subscribe(() => {
       this.isEditEventMode = false;
 
       if (this.event.startDay === 'null') {
@@ -239,18 +298,28 @@ export class EventsComponent implements OnInit {
   }
 
   removeEvent(sideNav) {
-    this.eventService.removeApiEvent(this.event).subscribe(response => {
+    this.eventService.removeApiEvent(this.event).subscribe(() => {
       this.eventService.removeEvent(this.event);
 
       this.initializeNewEvent();
 
-      this.closeEventDetails(sideNav);
+      EventsComponent.closeEventDetails(sideNav);
     });
   }
 
   removeNote(note) {
-    this.eventService.removeApiNote(note).subscribe(response => {
+    this.eventService.removeApiNote(note).subscribe(() => {
       this.eventService.removeEventNote(this.event, note);
+    });
+  }
+
+  removeTimeline(timeline) {
+    this.timelineService.removeEventApiTimeline(timeline.eventId).subscribe(() => {
+      for (let i = 0; i < this.event.timelines.length; i++) {
+        if (this.event.timelines[i].id === timeline.id) {
+          this.event.timelines.splice(i, 1);
+        }
+      }
     });
   }
 
@@ -260,6 +329,8 @@ export class EventsComponent implements OnInit {
     if (!isCreateMode) {
       isCreateMode = false;
     }
+
+    this.isCreateEventMode = isCreateMode;
 
     if (!isEditMode) {
       isEditMode = false;
@@ -283,10 +354,9 @@ export class EventsComponent implements OnInit {
     this.endEraLabel = this.event.endEra.label;
 
     this.isEditEventMode = isEditMode;
-    this.isCreateEventMode = isCreateMode;
 
     if (sideNav.opened) {
-      sideNav.close().then(done => {
+      sideNav.close().then(() => {
         sideNav.open();
       });
     } else {
@@ -294,18 +364,19 @@ export class EventsComponent implements OnInit {
     }
   }
 
-  closeEventDetails(sideNav) {
-    sideNav.close();
+  closeEventDetails(contentPanel) {
+    contentPanel.close();
   }
 
-  cancelEditCreateModes(sideNav) {
+  cancelEditCreateModes(contentPanel) {
     if (this.isCreateEventMode) {
-      this.closeEventDetails(sideNav);
+      EventsComponent.closeEventDetails(contentPanel);
     }
 
     this.isCreateEventMode = false;
     this.isEditEventMode = false;
     this.isAddNoteMode = false;
+    this.isAddTimelineMode = false;
   }
 
   turnPage(event) {
@@ -316,8 +387,40 @@ export class EventsComponent implements OnInit {
     }
   }
 
+  async activateEventNoteForm() {
+    this.isAddNoteMode = true;
+    this.initializeNewNote();
+
+    await this.sleep(500);
+
+    document.getElementById('event_note').focus();
+  }
+
   cancelEventNoteForm() {
     this.isAddNoteMode = false;
     this.initializeNewNote();
+  }
+
+  cancelEventTimelineForm() {
+    this.isAddTimelineMode = false;
+    this.initializeNewTimeline();
+  }
+
+  filterResults() {
+    const dateFilter = [];
+    let stringFilter = '';
+
+    if (this.filterQuery.split('-').length === 2) {
+      dateFilter.push(this.filterQuery.split('-')[0]);
+      dateFilter.push(this.filterQuery.split('-')[1]);
+    } else if (this.filterQuery) {
+      stringFilter = this.filterQuery;
+    }
+
+    this.getEvents('/events?sort=-created', stringFilter, dateFilter);
+  }
+
+  private sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

@@ -1,0 +1,9 @@
+<mat-card (click)="onLoadDetails()">
+  <mat-card-title>{{person.firstName}} {{person.lastName}}</mat-card-title>
+  <mat-card-content>
+    <div class="mat-card-subtitle">
+      <span>{{person.formattedBirthYear}} - <span>{{person.formattedDeathYear}}</span>
+      </span>
+    </div>
+  </mat-card-content>
+</mat-card>

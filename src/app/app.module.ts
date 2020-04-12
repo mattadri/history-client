@@ -12,8 +12,12 @@ import { MatSidenavModule } from '@angular/material';
 import { MatPaginatorModule } from '@angular/material';
 import { MatInputModule } from '@angular/material';
 import { MatSelectModule } from '@angular/material';
+import { MatCheckboxModule } from '@angular/material';
 import { MatButtonModule } from '@angular/material';
 import { MatDialogModule } from '@angular/material';
+import { MatBottomSheetModule } from '@angular/material';
+import { MatTabsModule } from '@angular/material';
+import { MatTooltipModule } from '@angular/material';
 
 import { EraService } from './services/era.service';
 import { MonthService } from './services/month.service';
@@ -26,8 +30,7 @@ import { ReferencesComponent } from './manager/references/references.component';
 import { ReferenceCardComponent } from './manager/references/reference-card/reference-card.component';
 
 import { PersonsComponent } from './manager/persons/persons.component';
-import { PersonComponent } from './manager/persons/person/person.component';
-import { CreatePersonComponent } from './manager/persons/create-person/create-person.component';
+import { PersonCardComponent } from './manager/persons/person-card/person-card.component';
 
 import { AuthorsComponent } from './manager/authors/authors.component';
 import { AuthorCardComponent } from './manager/authors/author-card/author-card.component';
@@ -41,6 +44,7 @@ import { TimelineCardComponent } from './timelines/timeline-card/timeline-card.c
 import { TimelineComponent } from './timelines/timeline/timeline.component';
 import { TimelineEventComponent } from './timelines/timeline-event/timeline-event.component';
 import { TimelineEventDetailsComponent } from './timelines/timeline-event-details/timeline-event-details.component';
+import { TimelineEventListComponent } from './timelines/timeline-event-list/timeline-event-list.component';
 
 import { ReferenceInterceptor } from './services/interceptors/reference.interceptor';
 import { AuthorInterceptor } from './services/interceptors/author.interceptor';
@@ -50,7 +54,16 @@ import { TimelineInterceptor } from './services/interceptors/timeline.intercepto
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
+import { EventTimelineComponent } from './manager/events/event-timeline/event-timeline.component';
+import { TimelineEventDetailNoteComponent } from './timelines/timeline-event-detail-note/timeline-event-detail-note.component';
+import { TimelinePersonComponent } from './timelines/timeline-person/timeline-person.component';
+import { TimelinePersonListComponent } from './timelines/timeline-person-list/timeline-person-list.component';
+import { TimelinePersonDetailsComponent } from './timelines/timeline-person-details/timeline-person-details.component';
+import { PersonNoteComponent } from './manager/persons/person-note/person-note.component';
+import { TimelineCategoryComponent } from './timelines/timeline-categories/timeline-category/timeline-category.component';
+import { TimelineCategoriesComponent } from './timelines/timeline-categories/timeline-categories.component';
+import { CategoryComponent } from './timelines/category/category.component';
+import { EventDetailsComponent } from './manager/events/event-details/event-details.component';
 
 @NgModule({
   declarations: [
@@ -67,16 +80,26 @@ import { AppComponent } from './app.component';
     EventNoteComponent,
 
     PersonsComponent,
-    PersonComponent,
-    CreatePersonComponent,
+    PersonCardComponent,
 
     TimelineComponent,
     TimelinesComponent,
     TimelineEventComponent,
     TimelineCardComponent,
-    TimelineEventDetailsComponent
+    TimelineEventDetailsComponent,
+    TimelineEventListComponent,
+    EventTimelineComponent,
+    TimelineEventDetailNoteComponent,
+    TimelinePersonComponent,
+    TimelinePersonListComponent,
+    TimelinePersonDetailsComponent,
+    PersonNoteComponent,
+    TimelineCategoryComponent,
+    TimelineCategoriesComponent,
+    CategoryComponent,
+    EventDetailsComponent
   ],
-  entryComponents: [TimelineEventDetailsComponent],
+  entryComponents: [TimelineEventDetailsComponent, TimelinePersonDetailsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -88,8 +111,12 @@ import { AppComponent } from './app.component';
     MatPaginatorModule,
     MatInputModule,
     MatSelectModule,
+    MatCheckboxModule,
     MatButtonModule,
     MatDialogModule,
+    MatBottomSheetModule,
+    MatTabsModule,
+    MatTooltipModule,
     Ng5SliderModule
   ],
   providers: [

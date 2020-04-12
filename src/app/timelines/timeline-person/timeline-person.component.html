@@ -1,0 +1,10 @@
+<div
+  class="person"
+  [ngStyle]="this.positionStyle"
+  (dblclick)="showDetails()"
+  (click)="toggleSelectEvent()"
+  matTooltip="{{person.firstName}} {{person.lastName}}"
+  [matTooltipPosition]="personIconTooltipPosition">
+
+  <div class="person-name">{{person.firstName}} {{person.lastName}}</div>
+</div>

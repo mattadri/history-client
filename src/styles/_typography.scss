@@ -33,3 +33,11 @@ label {
   letter-spacing: 1px;
   color: $color-gray-scale-500;
 }
+
+
+.subheading {
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 1px;
+  font-size: $font-size-small;
+}

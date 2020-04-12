@@ -1,7 +1,18 @@
 <mat-sidenav-container>
-  <div class="app-list-content">
+  <div class="app-body-content">
     <div class="app-content-toolbar">
       <h1>Events</h1>
+
+      <div class="app-search-box">
+        <mat-form-field>
+          <input matInput
+                 placeholder="Search..."
+                 name="eventFilter"
+                 [(ngModel)]="filterQuery"/>
+        </mat-form-field>
+        <button mat-icon-button class="material-icons mat-icon-button mat-button-base" (click)="filterResults()">search</button>
+      </div>
+
       <button mat-flat-button class="material-icons" color="primary" (click)="activateCreateMode(eventDetails)">add</button>
     </div>
 
@@ -24,8 +35,8 @@
           <div class="app-drawer-heading">{{event.label}}</div>
         </div>
         <div class="app-drawer-tools">
-          <button mat-icon-button class="material-icons" (click)="isEditEventMode = true">edit</button>
-          <button mat-icon-button class=" material-icons" (click)="closeEventDetails(eventDetails)">close</button>
+          <button mat-icon-button class="material-icons" type="button" (click)="isEditEventMode = true">edit</button>
+          <button mat-icon-button class=" material-icons" type="button" (click)="closeEventDetails(eventDetails)">close</button>
         </div>
       </div>
 
@@ -54,7 +65,7 @@
         <section class="app-section">
           <div class="app-section-action">
             <label>Notes</label>
-            <button mat-icon-button class="material-icons" (click)="isAddNoteMode = true">add</button>
+            <button mat-icon-button class="material-icons" (click)="activateEventNoteForm()">add</button>
           </div>
 
           <div *ngIf="isAddNoteMode">
@@ -67,6 +78,7 @@
                   cdkAutosizeMinRows="1"
                   cdkAutosizeMaxRows="10"
                   name="event_note"
+                  id="event_note"
                   [(ngModel)]="eventNote.note"></textarea>
               </mat-form-field>
 
@@ -81,6 +93,32 @@
         </section>
 
         <section class="app-section">
+          <div class="app-section-action">
+            <label>Timelines</label>
+            <button mat-icon-button class="material-icons" (click)="isAddTimelineMode = true">add</button>
+          </div>
+
+          <div *ngIf="isAddTimelineMode">
+            <form (ngSubmit)="createTimelineEvent()" #timelineForm="ngForm">
+              <mat-form-field style="width: 100%;">
+                <mat-label>Timelines</mat-label>
+                <mat-select [(ngModel)]="timelineId" name="event_timeline">
+                  <mat-option [value]="null"></mat-option>
+                  <mat-option *ngFor="let timeline of timelines" [value]="timeline.id">{{timeline.label}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button mat-flat-button color="primary">Save</button>
+              <button mat-flat-button color="secondary" (click)="cancelEventTimelineForm()">Cancel</button>
+            </form>
+          </div>
+
+          <div *ngIf="event.timelines && event.timelines.length">
+            <app-event-timeline *ngFor="let timeline of event.timelines" [timeline]="timeline" (removeTimeline)="removeTimeline(timeline)"></app-event-timeline>
+          </div>
+        </section>
+
+        <section class="app-section">
           <label>Reference</label>
           <span *ngIf="event.reference">{{event.reference.title}}</span>
         </section>
@@ -88,7 +126,7 @@
     </div>
 
     <!-- Event Edit/Create Mode -->
-    <div *ngIf="isEditEventMode || isCreateEventMode">
+    <div class="edit-mode" *ngIf="isEditEventMode || isCreateEventMode">
       <form (ngSubmit)="isEditEventMode ? editEvent() : createEvent(eventDetails)" #eventForm="ngForm">
 
         <div class="app-drawer-header">
@@ -97,17 +135,17 @@
             <div class="app-drawer-heading">{{event.label}}</div>
           </div>
           <div class="app-drawer-tools" *ngIf="isEditEventMode">
-            <button mat-icon-button class="material-icons" (click)="removeEvent(eventDetails)">delete</button>
-            <button mat-icon-button class="material-icons">save</button>
-            <button mat-icon-button class="material-icons" (click)="cancelEditCreateModes(eventDetails)">close</button>
+            <button type="button" mat-icon-button class="material-icons" (click)="removeEvent(eventDetails)">delete</button>
+            <button type="submit" mat-icon-button class="material-icons">save</button>
+            <button mat-icon-button type="button" class="material-icons" (click)="cancelEditCreateModes(eventDetails)">close</button>
           </div>
 
           <div class="app-drawer-title" *ngIf="isCreateEventMode">
             <div class="app-drawer-subheading">New Event</div>
           </div>
           <div class="app-drawer-tools" *ngIf="isCreateEventMode">
-            <button mat-icon-button class="material-icons">save</button>
-            <button mat-icon-button class="material-icons" (click)="cancelEditCreateModes(eventDetails)">close</button>
+            <button mat-icon-button type="submit" class="material-icons">save</button>
+            <button mat-icon-button type="button" class="material-icons" (click)="cancelEditCreateModes(eventDetails)">close</button>
           </div>
         </div>
 
@@ -119,88 +157,90 @@
                 matInput
                 placeholder="Title"
                 required
-                required
                 name="event_label"
                 #eventLabel="ngModel"
                 [(ngModel)]="event.label" />
             </mat-form-field>
           </section>
 
-          <section class="app-section horizontal">
-            <section class="app-subsection">
-              <label>Beginning Date</label>
-              <mat-form-field>
-                <input
-                  matInput
-                  placeholder="Start Day"
-                  name="event_start_day"
-                  [(ngModel)]="event.startDay" />
+          <section class="app-section inline">
+            <label>Beginning</label>
+
+            <div class="app-field-group">
+              <mat-form-field class="app-field-era">
+                <mat-label>Era</mat-label>
+                <mat-select [(ngModel)]="startEraLabel" name="event_start_era" required>
+                  <mat-option *ngFor="let era of eras" [value]="era.label">{{era.label}}</mat-option>
+                </mat-select>
               </mat-form-field>
 
-              <mat-form-field>
-                <mat-label>Start Month</mat-label>
+              <mat-form-field class="app-field-year">
+                <input
+                  matInput
+                  placeholder="Year"
+                  name="event_start_year"
+                  required
+                  [(ngModel)]="event.startYear"/>
+              </mat-form-field>
+
+              <mat-form-field class="app-field-day">
+                <input
+                  matInput
+                  placeholder="Day"
+                  name="event_start_day"
+                  [(ngModel)]="event.startDay"/>
+              </mat-form-field>
+
+              <mat-form-field class="app-field-month">
+                <mat-label>Month</mat-label>
                 <mat-select [(ngModel)]="startMonthLabel" name="event_start_month">
                   <mat-option [value]="null"></mat-option>
                   <mat-option *ngFor="let month of months" [value]="month.label">{{month.label}}</mat-option>
                 </mat-select>
               </mat-form-field>
+            </div>
 
-              <mat-form-field>
-                <input
-                  matInput
-                  placeholder="Start Year"
-                  name="event_start_year"
-                  required
-                  [(ngModel)]="event.startYear" />
-              </mat-form-field>
+          </section>
 
-              <mat-form-field>
-                <mat-label>Start Era</mat-label>
-                <mat-select [(ngModel)]="startEraLabel" name="event_start_era" required>
+          <section class="app-section inline">
+            <label>Ending</label>
+            <div class="app-field-group">
+              <mat-form-field class="app-field-era">
+                <mat-label>Era</mat-label>
+                <mat-select [(ngModel)]="endEraLabel" name="event_end_era">
                   <mat-option *ngFor="let era of eras" [value]="era.label">{{era.label}}</mat-option>
                 </mat-select>
               </mat-form-field>
-            </section>
 
-            <section class="app-subsection">
-              <label>Ending Date</label>
-              <mat-form-field>
+              <mat-form-field class="app-field-year">
                 <input
                   matInput
-                  placeholder="End Day"
+                  placeholder="Year"
+                  name="event_end_year"
+                  [(ngModel)]="event.endYear" />
+              </mat-form-field>
+
+              <mat-form-field class="app-field-day">
+                <input
+                  matInput
+                  placeholder="Day"
                   name="event_end_day"
                   [(ngModel)]="event.endDay" />
               </mat-form-field>
 
-              <mat-form-field>
-                <mat-label>End Month</mat-label>
+              <mat-form-field class="app-field-month">
+                <mat-label>Month</mat-label>
                 <mat-select [(ngModel)]="endMonthLabel" name="event_end_month">
                   <mat-option [value]="null"></mat-option>
                   <mat-option *ngFor="let month of months" [value]="month.label">{{month.label}}</mat-option>
                 </mat-select>
               </mat-form-field>
-
-              <mat-form-field>
-                <input
-                  matInput
-                  placeholder="End Year"
-                  name="event_end_year"
-                  required
-                  [(ngModel)]="event.endYear" />
-              </mat-form-field>
-
-              <mat-form-field>
-                <mat-label>End Era</mat-label>
-                <mat-select [(ngModel)]="endEraLabel" name="event_end_era" required>
-                  <mat-option *ngFor="let era of eras" [value]="era.label">{{era.label}}</mat-option>
-                </mat-select>
-              </mat-form-field>
-            </section>
+            </div>
           </section>
 
-          <section class="app-section">
+          <section class="app-section inline field-description">
             <label>Description</label>
-            <mat-form-field style="width: 100%">
+            <mat-form-field class="app-field-description">
               <textarea
                 matInput
                 cdkTextareaAutosize
@@ -212,11 +252,14 @@
             </mat-form-field>
           </section>
 
-          <section class="app-section">
+          <section class="app-section inline">
             <label>Reference</label>
-            <mat-select [(ngModel)]="referenceId" name="event_reference" required>
-              <mat-option *ngFor="let reference of references" [value]="reference.id">{{reference.title}}</mat-option>
-            </mat-select>
+            <mat-form-field class="app-field-reference">
+              <mat-label>Source</mat-label>
+              <mat-select [(ngModel)]="referenceId" name="event_reference" required>
+                <mat-option *ngFor="let reference of references" [value]="reference.id">{{reference.title}}</mat-option>
+              </mat-select>
+            </mat-form-field>
           </section>
 
         </div>
@@ -224,125 +267,3 @@
     </div>
   </mat-sidenav>
 </mat-sidenav-container>
-
-
-<!--<div *ngIisCreateEventModeMode">-->
-  <!--<button (click)="toggleCreateEvent()">Create New Event</button>-->
-<!--</div>-->
-
-<!--<div *ngisCreateEventModeMode">-->
-  <!--<form (ngSubmit)="createEvent(eventForm)" #eventForm="ngForm">-->
-    <!--<div>-->
-      <!--<span>Label: </span>-->
-      <!--<input-->
-        <!--type="text"-->
-        <!--placeholder="Label"-->
-        <!--name="event_label"-->
-        <!--required-->
-        <!--#eventLabel="ngModel"-->
-        <!--[(ngModel)]="event.label">-->
-
-      <!--<div *ngIf="eventLabel.dirty && eventLabel.errors && eventLabel.errors.required">-->
-        <!--Event Label is mandatory.-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<span>Description: </span>-->
-      <!--<textarea name="event_description" [(ngModel)]="event.description"></textarea>-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<span>Start Day: </span>-->
-      <!--<input-->
-        <!--type="number"-->
-        <!--placeholder="Start Day"-->
-        <!--name="event_start_day"-->
-        <!--max="31"-->
-        <!--min="1"-->
-        <!--[(ngModel)]="event.startDay">-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<div>Start Month: </div>-->
-      <!--<div>-->
-        <!--<select name="event_start_month" [(ngModel)]="event.startMonth">-->
-          <!--<option *ngFor="let month of months" [ngValue]="month">{{month.label}}</option>-->
-        <!--</select>-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<span>Start Year: </span>-->
-      <!--<input-->
-        <!--type="number"-->
-        <!--name="event_start_year"-->
-        <!--required-->
-        <!--#eventStartYear="ngModel"-->
-        <!--[(ngModel)]="event.startYear">-->
-
-      <!--<div *ngIf="eventStartYear.dirty && eventStartYear.errors && eventStartYear.errors.required">-->
-        <!--Start Year is required.-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<div>Start Era</div>-->
-      <!--<select name="event_start_era" [(ngModel)]="event.startEra">-->
-        <!--<option *ngFor="let era of eras" [ngValue]="era">{{era.label}}</option>-->
-      <!--</select>-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<span>End Day: </span>-->
-      <!--<input-->
-        <!--type="number"-->
-        <!--placeholder="End Day"-->
-        <!--name="event_end_day"-->
-        <!--max="31"-->
-        <!--min="1"-->
-        <!--[(ngModel)]="event.endDay">-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<div>End Month: </div>-->
-      <!--<div>-->
-        <!--<select name="event_end_month" [(ngModel)]="event.endMonth">-->
-          <!--<option *ngFor="let month of months" [ngValue]="month">{{month.label}}</option>-->
-        <!--</select>-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<span>End Year: </span>-->
-      <!--<input-->
-        <!--type="number"-->
-        <!--name="event_end_year"-->
-        <!--required-->
-        <!--#eventEndYear="ngModel"-->
-        <!--[(ngModel)]="event.endYear">-->
-
-      <!--<div *ngIf="eventEndYear.dirty && eventEndYear.errors && eventEndYear.errors.required">-->
-        <!--Start Year is required.-->
-      <!--</div>-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<div>End Era</div>-->
-      <!--<select name="event_end_era" [(ngModel)]="event.endEra">-->
-        <!--<option *ngFor="let era of eras" [ngValue]="era">{{era.label}}</option>-->
-      <!--</select>-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<div>Reference</div>-->
-      <!--<select name="event_reference" [(ngModel)]="event.reference">-->
-        <!--<option *ngFor="let reference of references" [ngValue]="reference">{{reference.title}} - {{ reference.authors[0].firstName }} {{ reference.authors[0].lastName }}</option>-->
-      <!--</select>-->
-    <!--</div>-->
-
-    <!--<div>-->
-      <!--<button type="submit">Create</button>-->
-    <!--</div>-->
-  <!--</form>-->
-<!--</div>-->

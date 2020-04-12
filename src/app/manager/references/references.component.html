@@ -1,5 +1,5 @@
 <mat-sidenav-container>
-  <div class="app-list-content">
+  <div class="app-body-content">
     <div class="app-content-toolbar">
       <h1>References</h1>
       <button mat-flat-button color="primary" class="material-icons" (click)="activateCreateMode(referenceDetails)">add</button>
@@ -58,7 +58,7 @@
               </mat-form-field>
 
               <button mat-flat-button color="primary">Save</button>
-              <button mat-flat-button color="secondary" (click)="cancelEventNoteForm()">Cancel</button>
+              <button mat-flat-button color="secondary" (click)="cancelAddAuthorMode()">Cancel</button>
             </form>
           </div>
 
@@ -146,7 +146,7 @@
               </mat-form-field>
 
               <mat-form-field>
-                <mat-label>Start Era</mat-label>
+                <mat-label>Published Era</mat-label>
                 <mat-select [(ngModel)]="publishedEraLabel" name="reference_published_era" required>
                   <mat-option *ngFor="let era of eras" [value]="era.label">{{era.label}}</mat-option>
                 </mat-select>

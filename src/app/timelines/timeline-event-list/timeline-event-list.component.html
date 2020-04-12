@@ -1,0 +1,35 @@
+<div *ngIf="!listOnly"
+     [ngClass]="pinHighlight()"
+     (mouseover)="highlightEvent()"
+     (mouseout)="deHighlightEvent()"
+     (click)="toggleSelectEvent()"
+     (dblclick)="showDetails()"
+     class="grid-list-item">
+
+  <span [ngClass]="applyColorClass()" [ngStyle]="styles"></span>
+
+  <span class="grid-list-item-year">
+     {{event.formattedStartDate}}
+    <span *ngIf="event.formattedStartDate !== event.formattedEndDate">- {{event.formattedEndDate}}</span>
+  </span>
+
+  <span class="grid-list-item-title">
+    {{event.label}}
+  </span>
+
+</div>
+
+<div *ngIf="listOnly" class="grid-list-item">
+
+  <span class="grid-list-item-key" [ngStyle]="styles"></span>
+
+  <span class="grid-list-item-year">
+     {{event.formattedStartYear}}
+    <span *ngIf="event.formattedStartYear !== event.formattedEndYear">- {{event.formattedEndYear}}</span>
+  </span>
+
+  <span class="grid-list-item-title">
+    {{event.label}}
+  </span>
+
+</div>

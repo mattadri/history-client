@@ -1,4 +1,5 @@
-import { EventNote } from './event-note';
+import { EventNote } from '../event-note';
+import { Event } from '../event';
 
 export class EventNotePost {
   data: object;

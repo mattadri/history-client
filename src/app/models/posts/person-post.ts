@@ -3,42 +3,39 @@ import { Person } from '../person';
 export class PersonPost {
   data: object;
 
-  mapToPost(person: Person) {
+  mapToPost(person: Person, isPatch: boolean) {
     this.data = {
       type: 'person',
       attributes: {
         first_name: person.firstName,
-        middle_name: person.middleName,
-        last_name: person.lastName,
         birth_year: person.birthYear,
         birth_era_rel: {
           data: {
             type: 'era',
             id: person.birthEra.id
           }
-        },
-        death_year: person.deathYear,
-        death_era_rel: {
-          data: {
-            type: 'era',
-            id: person.deathEra.id
-          }
-        },
-        reference_rel: {
-          data: {
-            type: 'reference',
-            id: person.reference.id
-          }
         }
       }
     };
 
     // optional fields
+    if (person.description) {
+      this.data.attributes.description = person.description;
+    }
+
+    if (person.middleName) {
+      this.data.attributes.middle_name = person.middleName;
+    }
+
+    if (person.lastName) {
+      this.data.attributes.last_name = person.lastName;
+    }
+
     if (person.birthDay > 0) {
       this.data.attributes.birth_day = person.birthDay;
     }
 
-    if (person.birthMonth.id) {
+    if (person.birthMonth && person.birthMonth.id) {
       this.data.attributes.birth_month_rel = {
         data: {
           type: 'month',
@@ -51,13 +48,39 @@ export class PersonPost {
       this.data.attributes.death_day = person.deathDay;
     }
 
-    if (person.deathMonth.id) {
+    if (person.deathMonth && person.deathMonth.id) {
       this.data.attributes.death_month_rel = {
         data: {
           type: 'month',
           id: person.deathMonth.id
         }
       };
+    }
+
+    if (person.deathYear) {
+      this.data.attributes.death_year = person.deathYear;
+    }
+
+    if (person.deathEra && person.deathEra.id) {
+      this.data.attributes.death_era_rel = {
+        data: {
+          type: 'era',
+          id: person.deathEra.id
+        }
+      };
+    }
+
+    if ( person.reference && person.reference.id) {
+      this.data.attributes.reference_rel = {
+        data: {
+          type: 'reference',
+          id: person.reference.id
+        }
+      };
+    }
+
+    if (isPatch) {
+      this.data.id = person.id;
     }
   }
 }

@@ -1,5 +1,24 @@
-<div class="event" [ngStyle]="{left: event.timelineLocation + '%'}" (click)="showDetails()">a</div>
+<!--<div-->
+  <!--class="event"-->
+  <!--[ngStyle]="this.positionStyle"-->
+  <!--[ngClass]="applyEventClasses()"-->
+  <!--(dblclick)="showDetails()"-->
+  <!--(click)="toggleSelectEvent()"-->
+  <!--(mouseover)="highlightEvent()"-->
+  <!--(mouseout)="deHighlightEvent()"-->
+  <!--matTooltip="{{event.label}}"-->
+  <!--[matTooltipPosition]="eventIconTooltipPosition">-->
 
-<!--<div>-->
-  <!--{{event.label}} - {{event.timelineLocation}}<br>-->
-<!--</div>-->
+
+<div
+  class="event"
+  [ngStyle]="this.positionStyle"
+  [ngClass]="applyEventClasses()"
+  (dblclick)="showDetails()"
+  (click)="toggleSelectEvent()"
+  (mouseover)="highlightEvent()"
+  (mouseout)="deHighlightEvent()"
+  matTooltip="{{event.label}}"
+  [matTooltipPosition]="eventIconTooltipPosition">
+</div>
+

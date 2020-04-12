@@ -1,0 +1,60 @@
+// Side Drawer
+// ----
+
+@import '_variables.scss';
+
+.app-drawer-header {
+  padding: 30px 20px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba($color-gray-scale-100, .2);
+  border-bottom: $border-light;
+}
+
+.app-drawer-title {
+  max-width: 70%;
+}
+
+.app-drawer-heading {
+  font-size: $font-size-large-300;
+  color: $color-gray-scale-600;
+}
+
+.app-drawer-subheading {
+  text-transform: uppercase;
+  font-weight: 500;
+  letter-spacing: 1px;
+  font-size: $font-size-small;
+  color: $color-gray-scale-400;
+}
+
+.app-drawer-subtitle {
+  font-size: $font-size-base;
+  color: $color-gray-scale-600;
+  font-weight: 300;
+  margin-top: 5px;
+}
+
+.app-drawer-content {
+  padding: 30px;
+  height: calc(100vh - 156px);
+  overflow: auto;
+}
+
+.app-drawer-tools {
+  color: $color-icon-actions;
+  button {
+    margin-left: 10px;
+  }
+}
+
+// Overwrites to the material design card component styles.
+
+.mat-drawer {
+  width: 40%;
+  color: $font-color-default;
+}
+.mat-drawer-container {
+  height: calc(100vh - 60px);
+}

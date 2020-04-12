@@ -223,6 +223,10 @@ export class ReferencesComponent implements OnInit {
     sideNav.close();
   }
 
+  cancelAddAuthorMode() {
+    this.isAddAuthorMode = false;
+  }
+
   activateCreateMode(sideNav) {
     this.isCreateReferenceMode = true;
     this.initializeNewReference();

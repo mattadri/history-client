@@ -1,0 +1,15 @@
+// Search
+// ------
+
+
+.app-search-box {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  mat-form-field {
+    flex-grow: 1;
+  }
+  button {
+    color: $color-gray-scale-500;
+  }
+}

@@ -1,0 +1,31 @@
+@import '../../../styles/_variables.scss';
+
+
+.person {
+  // Styles the event ranges
+  position: absolute;
+  background-color: $color-gray-scale-600;
+  height: 100%;
+  bottom: 0px;
+
+  &.highlight-event-marker {
+    border: 2px solid $color-gray-scale-600;
+    .timeline-icon {
+      top: -5px;
+    }
+  }
+  &:hover {
+    opacity: 0.5;
+  }
+
+  .person-name {
+    position: absolute;
+    left: 2px;
+    bottom: 0px;
+    color: $color-lightest;
+    font-size: 0.4rem;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+}

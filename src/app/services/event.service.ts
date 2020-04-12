@@ -17,13 +17,74 @@ export class EventService {
   private eventNotePost: EventNotePost;
   private eventPost: EventPost;
 
-  constructor(private http: HttpClient) { }
+  private filterObject: array;
 
-  getApiEvents(path): Observable<Event[]> {
+  constructor(private http: HttpClient) {
+    this.filterObject = [];
+  }
+
+  getApiEvents(path, filterTerm, dateFilter, isPageLink): Observable<Event[]> {
+    this.filterObject = [];
+
     this.events = [];
 
-    if (!path) {
-      path = '/events';
+    // if this is a page link the path is already fully formed. as such skip.
+    if (!isPageLink) {
+      if (!path) {
+        path = '/events';
+
+        if ((filterTerm) || (!filterTerm && dateFilter)) {
+          path = path + '?';
+        }
+      } else {
+        if (filterTerm || dateFilter) {
+          path = path + '&';
+        }
+      }
+
+      if (filterTerm) {
+        const searchFilter = {
+          or: [
+            {
+              name: 'description',
+              op: 'ilike',
+              val: '%' + filterTerm + '%'
+            },
+            {
+              name: 'label',
+              op: 'ilike',
+              val: '%' + filterTerm + '%'
+            }
+          ]
+        };
+
+        this.filterObject.push(searchFilter);
+      }
+
+      if (dateFilter) {
+        if (dateFilter.length === 2) {
+          const startDateFilter = {
+            name: 'event_start_year',
+            op: 'gt',
+            val: dateFilter[0]
+          };
+
+          const endDateFilter = {
+            name: 'event_end_year',
+            op: 'lt',
+            val: dateFilter[1]
+          };
+
+          this.filterObject.push(startDateFilter);
+          this.filterObject.push(endDateFilter);
+        }
+      }
+
+      if (this.filterObject.length) {
+        const filterQuery = JSON.stringify(this.filterObject);
+
+        path = path + 'filter=' + filterQuery;
+      }
     }
 
     return this.http.get<Event[]>('api' + path, {

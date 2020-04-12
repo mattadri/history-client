@@ -1,0 +1,11 @@
+<mat-card (click)="onLoadDetails()">
+  <mat-card-title>{{event.label}}</mat-card-title>
+  <mat-card-content>
+    <div class="mat-card-subtitle">
+      <span>{{event.formattedStartYear}}</span>
+      <span *ngIf="event.formattedStartYear != event.formattedEndYear"> - {{event.formattedEndYear}}</span>
+    </div>
+    <div class="mat-card-content" *ngIf="event.description">{{event.description}}</div>
+
+  </mat-card-content>
+</mat-card>

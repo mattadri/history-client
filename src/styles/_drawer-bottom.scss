@@ -1,0 +1,66 @@
+// Bottom Drawer
+// ----
+
+@import '_variables.scss';
+
+
+.app-drawer-bottom-body {
+  padding: 2rem 2rem 0 2rem;
+  min-width: 600px;
+}
+
+
+
+.app-drawer-bottom {
+  .app-drawer-heading {
+    font-size: $font-size-large-200;
+    color: $color-gray-scale-600;
+  }
+
+  .app-drawer-subheading {
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 1px;
+    font-size: $font-size-small;
+    color: $color-gray-scale-400;
+  }
+
+  .app-drawer-year {
+    font-size: $font-size-large-100;
+    color: $color-gray-scale-500;
+    margin: 8px 0;
+  }
+
+  .app-drawer-content {
+    display: grid;
+  }
+
+  .app-drawer-description {
+    font-size: $font-size-base;
+    margin: 10px 0;
+    max-width: 600px;
+  }
+
+  .app-drawer-notes {
+    grid-area: 1 / 2;
+    margin-left: 3rem;
+    li {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .app-drawer-settings {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: $border-light;
+    .mat-form-field {
+      margin-right: 1rem;
+    }
+  }
+}
+
+

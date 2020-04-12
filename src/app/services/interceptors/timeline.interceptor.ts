@@ -9,6 +9,12 @@ import { Timeline } from '../../models/timeline';
 
 @Injectable()
 export class TimelineInterceptor implements HttpInterceptor {
+  private body = {
+    timelines: [],
+    total: 0,
+    links: {}
+  };
+
   private timelines: Timeline[] = [];
   private timeline: Timeline;
 
@@ -35,7 +41,11 @@ export class TimelineInterceptor implements HttpInterceptor {
             this.timelines.push(this.timeline);
           }
 
-          event.body = this.timelines;
+          this.body.timelines = this.timelines;
+          this.body.total = event.body.meta.count;
+          this.body.links = event.body.links;
+
+          event.body = this.body;
 
         } else if (req.headers.headers.get('type')[0] === 'timeline') {
           this.timeline = new Timeline();

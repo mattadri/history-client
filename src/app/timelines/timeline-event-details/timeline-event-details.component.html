@@ -1,0 +1,51 @@
+<div class="app-drawer-bottom">
+  <div class="app-drawer-bottom-body">
+    <div class="app-drawer-bottom-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">Event</div>
+        <div class="app-drawer-heading">{{data.event.label}}</div>
+        <div class="app-drawer-year">
+          <span>{{data.event.formattedStartYear}}</span>
+          <span *ngIf="!data.event.isSinglePointEvent">- {{data.event.formattedEndYear}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-drawer-content">
+      <div class="app-drawer-description">
+        {{data.event.description}}
+      </div>
+
+      <div class="app-drawer-notes" *ngIf="data.event.notes">
+        <div class="app-drawer-subheading">Notes</div>
+        <ul>
+          <app-timeline-event-detail-note *ngFor="let note of data.event.notes" [note]="note"></app-timeline-event-detail-note>
+        </ul>
+       </div>
+
+    </div>
+
+    <div class="app-drawer-settings">
+
+      <div class="app-drawer-category">
+
+      <!-- If the event is not assigned to any category -->
+      <div>
+        <mat-form-field>
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="selectedCategoryId" [(value)]="selectedCategoryId" name="timeline_selected_category" (selectionChange)="addToCategory()">
+            <mat-option value="0"></mat-option>
+            <mat-option *ngFor="let category of data.timeline.categories" [value]="category.id">{{category.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <mat-checkbox [(ngModel)]="isShadow"
+                    (click)="updateShadowState(checkbox, isShadow)"
+                    #checkbox="matCheckbox">Shadow Event
+      </mat-checkbox>
+    </div>
+
+
+  </div>
+</div>

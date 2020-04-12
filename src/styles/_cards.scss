@@ -1,0 +1,47 @@
+// Cards
+// ----
+
+@import '_variables.scss';
+
+.app-cards-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: auto;
+  grid-gap: 30px 2%;
+  margin: 35px 0;
+
+  .app-card {
+    background-color: $color-lightest;
+    border: $border-light;
+    box-shadow: $shadow-light;
+  }
+}
+
+
+
+// Overwrites to the material design card component styles.
+
+.mat-card {
+  background-color: transparent;
+  border: none;
+  padding: 25px 20px;
+}
+
+.mat-card:not([class*=mat-elevation-z]) {
+  box-shadow: none;
+}
+
+.mat-card-title {
+  font-size: $font-size-large-200;
+  font-weight: 400;
+  color: $color-gray-scale-600;
+  margin-bottom: 4px;
+}
+.mat-card-subtitle {
+  color: rgba($color-gray-scale-500, .7);
+}
+
+.mat-card-content {
+  color: $font-color-default;
+  line-height: $font-line-height;
+}

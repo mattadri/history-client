@@ -1,11 +1,282 @@
-<div *ngIf="!createPersonMode">
-  <button (click)="showCreatePerson()">Create New Person</button>
-</div>
+<mat-sidenav-container>
+  <div class="app-body-content">
+    <div class="app-content-toolbar">
+      <h1>People</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="activateCreateMode(personDetails)">add</button>
+    </div>
 
-<div *ngIf="createPersonMode">
-  <app-create-person></app-create-person>
-</div>
+    <div class="app-cards-container">
+      <app-person-card
+        *ngFor="let person of persons" [person]="person" (loadPerson)="openPersonDetails($event, personDetails)"
+        class="app-card">
+      </app-person-card>
+    </div>
 
-<app-person
-  *ngFor="let person of persons" [person]="person">
-</app-person>
+    <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+  </div>
+
+  <mat-sidenav #personDetails mode="side" position="end" class="app-drawer">
+    <!-- Person Read-Only Mode -->
+    <div *ngIf="!isEditPersonMode && !isCreatePersonMode">
+      <div class="app-drawer-header">
+        <div class="app-drawer-title">
+          <div class="app-drawer-subheading">Person</div>
+          <div class="app-drawer-heading">{{person.firstName}} {{person.middleName}} {{person.lastName}}</div>
+        </div>
+        <div class="app-drawer-tools">
+          <button mat-icon-button class="material-icons" (click)="isEditPersonMode = true">edit</button>
+          <button mat-icon-button class=" material-icons" (click)="closePersonDetails(personDetails)">close</button>
+        </div>
+      </div>
+
+      <div class="app-drawer-content">
+        <section class="app-section horizontal">
+          <section class="app-subsection">
+            <label>Birth Date</label>
+            <span *ngIf="person.birthMonth">{{person.birthMonth.label}} </span>
+            <span *ngIf="person.birthDay">{{person.birthDay}}, </span>
+            <span>{{person.birthYear}}</span>
+            <span *ngIf="person.birthEra.label === 'BC'"> {{person.birthEra.label}}</span>
+          </section>
+
+          <section class="app-subsection">
+            <label>Death Date</label>
+            <span *ngIf="person.deathMonth">{{person.deathMonth.label}} </span>
+            <span *ngIf="person.deathDay">{{person.deathDay}}, </span>
+            <span>{{person.deathYear}}</span>
+            <span *ngIf="person.deathEra && person.deathEra.label === 'BC'"> {{person.deathEra.label}}</span>
+          </section>
+        </section>
+
+        <section class="app-section">
+          <label>Description</label>
+          <span *ngIf="person.description">{{person.description}}</span>
+        </section>
+
+        <section class="app-section">
+          <div class="app-section-action">
+            <label>Notes</label>
+            <button mat-icon-button class="material-icons" (click)="activatePersonNoteForm()">add</button>
+          </div>
+
+          <div *ngIf="isAddNoteMode">
+            <form (ngSubmit)="createNote()" #noteForm="ngForm">
+              <mat-form-field style="width: 100%">
+                <textarea
+                  matInput
+                  cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize"
+                  cdkAutosizeMinRows="1"
+                  cdkAutosizeMaxRows="10"
+                  id="person_note"
+                  name="person_note"
+                  [(ngModel)]="personNote.note"></textarea>
+              </mat-form-field>
+
+              <button mat-flat-button color="primary">Save</button>
+              <button mat-flat-button color="secondary" (click)="cancelPersonNoteForm()">Cancel</button>
+            </form>
+          </div>
+
+          <div *ngIf="person.notes && person.notes.length">
+            <app-person-note *ngFor="let note of person.notes" [note]="note" (removeNote)="removeNote(note)"></app-person-note>
+          </div>
+        </section>
+
+        <section class="app-section">
+          <div class="app-section-action">
+            <label>Timelines</label>
+            <button mat-icon-button class="material-icons" (click)="isAddTimelineMode = true">add</button>
+          </div>
+
+          <div *ngIf="isAddTimelineMode">
+            <form (ngSubmit)="createTimelinePerson()" #timelineForm="ngForm">
+              <mat-form-field style="width: 100%;">
+                <mat-label>Timelines</mat-label>
+                <mat-select [(ngModel)]="timelineId" name="person_timeline">
+                  <mat-option [value]="null"></mat-option>
+                  <mat-option *ngFor="let timeline of timelines" [value]="timeline.id">{{timeline.label}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button mat-flat-button color="primary">Save</button>
+              <button mat-flat-button color="secondary" (click)="cancelPersonTimelineForm()">Cancel</button>
+            </form>
+          </div>
+
+          <div *ngIf="person.timelines && person.timelines.length">
+            <app-event-timeline *ngFor="let timeline of person.timelines" [timeline]="timeline" (removeTimeline)="removeTimeline(timeline)"></app-event-timeline>
+          </div>
+        </section>
+
+        <section class="app-section">
+          <label>Reference</label>
+          <span *ngIf="person.reference">{{ person.reference.title}}</span>
+        </section>
+      </div>
+    </div>
+
+    <!-- Person Edit/Create Mode -->
+    <div class="edit-mode" *ngIf="isEditPersonMode || isCreatePersonMode">
+      <form (ngSubmit)="isEditPersonMode ? editPerson() : createPerson(personDetails)" #personForm="ngForm">
+
+        <div class="app-drawer-header">
+          <div class="app-drawer-title" *ngIf="isEditPersonMode">
+            <div class="app-drawer-subheading">Person</div>
+            <div class="app-drawer-heading">{{person.firstName}} {{person.lastName}}</div>
+          </div>
+          <div class="app-drawer-tools" *ngIf="isEditPersonMode">
+            <button mat-icon-button class="material-icons" (click)="removePerson(personDetails)">delete</button>
+            <button mat-icon-button class="material-icons">save</button>
+            <button mat-icon-button class="material-icons" (click)="cancelEditCreateModes(personDetails)">close</button>
+          </div>
+
+          <div class="app-drawer-title" *ngIf="isCreatePersonMode">
+            <div class="app-drawer-subheading">New Person</div>
+          </div>
+          <div class="app-drawer-tools" *ngIf="isCreatePersonMode">
+            <button mat-icon-button class="material-icons">save</button>
+            <button mat-icon-button class="material-icons" (click)="cancelEditCreateModes(personDetails)">close</button>
+          </div>
+        </div>
+
+        <div class="app-drawer-content">
+          <section class="app-section inline">
+            <mat-form-field style="width: 30%">
+              <input
+                matInput
+                placeholder="First Name"
+                required
+                name="person_first_name"
+                #personFirstName="ngModel"
+                [(ngModel)]="person.firstName" />
+            </mat-form-field>
+
+            <mat-form-field style="width: 30%">
+              <input
+                matInput
+                placeholder="Middle Name"
+                name="person_middle_name"
+                #personFirstName="ngModel"
+                [(ngModel)]="person.middleName" />
+            </mat-form-field>
+
+            <mat-form-field style="width: 30%">
+              <input
+                matInput
+                placeholder="Last Name"
+                name="person_last_name"
+                #personFirstName="ngModel"
+                [(ngModel)]="person.lastName" />
+            </mat-form-field>
+          </section>
+
+          <section class="app-section inline">
+              <label>Birth Date</label>
+
+              <div class="app-field-group">
+                <mat-form-field class="app-field-era">
+                  <mat-label>Era</mat-label>
+                  <mat-select [(ngModel)]="birthEraLabel" name="person_birth_era" required>
+                    <mat-option *ngFor="let era of eras" [value]="era.label">{{era.label}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="app-field-year">
+                  <input
+                    matInput
+                    placeholder="Year"
+                    name="person_birth_year"
+                    required
+                    [(ngModel)]="person.birthYear" />
+                </mat-form-field>
+
+
+                <mat-form-field class="app-field-day">
+                  <input
+                    matInput
+                    placeholder="Day"
+                    name="person_birth_day"
+                    [(ngModel)]="person.birthDay" />
+                </mat-form-field>
+
+                <mat-form-field class="app-field-month">
+                  <mat-label>Month</mat-label>
+                  <mat-select [(ngModel)]="birthMonthLabel" name="person_birth_month">
+                    <mat-option [value]="null"></mat-option>
+                    <mat-option *ngFor="let month of months" [value]="month.label">{{month.label}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+
+            </section>
+
+          <section class="app-section inline">
+              <label>Death Date</label>
+
+              <div class="app-field-group">
+                <mat-form-field class="app-field-era">
+                  <mat-label>Era</mat-label>
+                  <mat-select [(ngModel)]="deathEraLabel" name="person_death_era">
+                    <mat-option *ngFor="let era of eras" [value]="era.label">{{era.label}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="app-field-year">
+                  <input
+                    matInput
+                    placeholder="Year"
+                    name="person_death_year"
+                    [(ngModel)]="person.deathYear" />
+                </mat-form-field>
+
+                <mat-form-field class="app-field-day">
+                  <input
+                    matInput
+                    placeholder="Day"
+                    name="person_death_day"
+                    [(ngModel)]="person.deathDay" />
+                </mat-form-field>
+
+                <mat-form-field class="app-field-month">
+                  <mat-label>Month</mat-label>
+                  <mat-select [(ngModel)]="deathMonthLabel" name="person_death_month">
+                    <mat-option [value]="null"></mat-option>
+                    <mat-option *ngFor="let month of months" [value]="month.label">{{month.label}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+            </section>
+
+
+          <section class="app-section inline field-description">
+            <label>Description</label>
+            <mat-form-field class="app-field-description">
+              <textarea
+                matInput
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="10"
+                name="person_description"
+                [(ngModel)]="person.description"></textarea>
+            </mat-form-field>
+          </section>
+
+          <section class="app-section inline">
+            <label>Reference</label>
+            <mat-form-field class="app-field-reference">
+              <mat-label>Source</mat-label>
+              <mat-select [(ngModel)]="referenceId" name="person_reference" required>
+                <mat-option *ngFor="let reference of references" [value]="reference.id">{{reference.title}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </section>
+
+        </div>
+      </form>
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>

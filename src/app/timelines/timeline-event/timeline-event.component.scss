@@ -1,3 +1,63 @@
+@import '../../../styles/_variables.scss';
+
 .event {
+  // Styles the event ranges
   position: absolute;
+  background-color: $color-gray-scale-300;
+  height: 100%;
+  bottom: 0px;
+  &.highlight-event-marker {
+    border: 2px solid $color-gray-scale-600;
+    .timeline-icon {
+      top: -5px;
+      background-color: $color-gray-scale-600;
+    }
+  }
+  &:hover {
+    opacity: 0.5;
+  }
+
+  // Styles the single point events
+  &.single-point {
+    height: 24px;
+    cursor: pointer;
+    bottom: 4px;
+    border: solid $color-gray-scale-400 1px;
+
+    // Draws the round pin in the event
+    &::after {
+      content: "";
+      position: absolute;
+      top: -1px;
+      right: -3px;
+      width: 6px;
+      height: 6px;
+      background-color: $color-gray-scale-400;
+      border-radius: 100%;
+    }
+
+    // Styles the interactive states on the pin
+    &:hover {
+      z-index: 1050;
+      height: 27px;
+      opacity: 0.5;
+      &::after {
+        top: -9px;
+        transition: top 0.1s ease-out;
+      }
+    }
+
+    &.highlight-event-marker {
+      border-color: $color-gray-scale-600;
+      z-index: 1055;
+      height: 25px;
+      &::after {
+        background-color: $color-gray-scale-600;
+        top: -9px;
+        transition: top 0.1s ease-out;
+      }
+    }
+
+  }
 }
+

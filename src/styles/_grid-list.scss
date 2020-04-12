@@ -1,0 +1,71 @@
+// Grid List
+// ----
+
+.grid-list {
+  margin-top: 2rem;
+  display: grid;
+  grid-column: 3;
+  grid-row: 1;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 7px;
+
+  .subheading {
+    column-span: all;
+  }
+}
+
+
+.grid-list-item {
+  background-color: $color-gray-scale-50;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 16px auto;
+  align-items: center;
+  padding: 10px;
+  font-size: $font-size-small;
+  height: 100%;
+
+  &.highlight-item, &.highlight-range {
+    border-left-width: 5px;
+    border-left-style: solid;
+    border-top: 0;
+    border-bottom: 0;
+    border-right: 0;
+    border-color: $color-gray-scale-600;
+    background-color: $color-gray-scale-100;
+  }
+
+  &:hover {
+    opacity: 0.6;
+  }
+
+  &.active {
+    color: red;
+    position: relative;
+    ::after {
+      position: absolute;
+      content:"";
+      width: 5px;
+      height: 100%;
+    }
+  }
+}
+
+.grid-list-item-title {
+  grid-area: 2 / 2 / span 2;
+}
+
+.grid-list-item-year {
+  color: $color-gray-scale-600;
+  font-weight: 500;
+  margin-right: 10px;
+}
+
+.grid-list-item-key {
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  background-color: transparent;
+  display: block;
+}

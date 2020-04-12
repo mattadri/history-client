@@ -1,0 +1,25 @@
+@import '../../../styles/_variables.scss';
+
+.timeline-box {
+  display: flex;
+  margin: 2px 0;
+  height: 8px;
+  position: relative;
+  background-color: $color-gray-scale-100;
+  opacity: 0.8;
+  &.single-point-events {
+    margin: 40px 0 1px;
+  }
+  &.person {
+    background-color: $color-gray-scale-200;
+    height: 10px;
+  }
+}
+
+.timeline-category {
+  padding-top: 10px;
+  text-transform: uppercase;
+  font-size: $font-size-smallest;
+  color: $color-gray-scale-500;
+  font-weight: 500;
+}

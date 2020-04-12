@@ -4,6 +4,7 @@ export class EventPost {
   data: object;
 
   mapToPost(event: Event, isPatch: boolean) {
+    console.log(event);
     this.data = {
       type: 'event',
       attributes: {
@@ -53,7 +54,7 @@ export class EventPost {
       this.data.attributes.event_end_year = event.endYear;
     }
 
-    if (event.endEra) {
+    if (event.endEra.id) {
       this.data.attributes.event_end_era_rel = {
         data: {
           type: 'era',
