@@ -1,7 +1,5 @@
-<div>
-  <span>Id: {{essayTimeline.id}}</span>
-</div>
-
-<div>
-  <span>Label: {{essayTimeline.timeline.label}}</span>
+<div id="timeline-container" (click)="onSelectTimeline()">
+  <div>
+    {{essayTimeline.timeline.label}}
+  </div>
 </div>

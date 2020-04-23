@@ -16,16 +16,19 @@ import {EssayTimelineDetailsComponent} from '../essay-timeline-details/essay-tim
 import {Essay} from '../../models/essay';
 import {EssayNote} from '../../models/essay-note';
 import {Source} from '../../models/source';
-
-import {EssayService} from '../../services/essay.service';
-import {SourceService} from '../../services/source.service';
-import {EssayReferenceSelectorComponent} from '../essay-reference-selector/essay-reference-selector.component';
 import {EssayReference} from '../../models/essay-reference';
 import {Event} from '../../models/event';
 import {Person} from '../../models/person';
 import {Timeline} from '../../models/timeline';
 import {EssayEvent} from '../../models/essay-event';
 import {EventService} from '../../services/event.service';
+import {EssayPerson} from '../../models/essay-person';
+import {EssayTimeline} from '../../models/essay-timeline';
+
+import {EssayService} from '../../services/essay.service';
+import {SourceService} from '../../services/source.service';
+import {TimelineService} from '../../services/timeline.service';
+import {PersonService} from '../../services/person.service';
 
 @Component({
   selector: 'app-essay',
@@ -41,6 +44,8 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
   public selectedEssayReference: EssayReference;
   public selectedEssayEvent: EssayEvent;
+  public selectedEssayPerson: EssayPerson;
+  public selectedEssayTimeline: EssayTimeline;
 
   public isAbstractEditMode: boolean;
   public isEssayEditMode: boolean;
@@ -54,6 +59,8 @@ export class EssayComponent implements OnInit, AfterViewInit {
   public essayNote: EssayNote;
   public essayReference: EssayReference;
   public essayEvent: EssayEvent;
+  public essayPerson: EssayPerson;
+  public essayTimeline: EssayTimeline;
 
   public essayScreenSize: string;
 
@@ -83,6 +90,14 @@ export class EssayComponent implements OnInit, AfterViewInit {
   public eventsFilteredOptions: Observable<string[]>;
   public eventFieldDisplayValue: string;
 
+  public personsAutocompleteControl = new FormControl();
+  public personsFilteredOptions: Observable<string[]>;
+  public personFieldDisplayValue: string;
+
+  public timelinesAutocompleteControl = new FormControl();
+  public timelinesFilteredOptions: Observable<string[]>;
+  public timelineFieldDisplayValue: string;
+
   private referenceRegex = /\(\(r (\d+) ([^))]*)\)\)/ig;
   private eventRegex = /\(\(e (\d+) ([^))]*)\)\)/ig;
   private personRegex = /\(\(p (\d+) ([^))]*)\)\)/ig;
@@ -94,6 +109,8 @@ export class EssayComponent implements OnInit, AfterViewInit {
               private essayService: EssayService,
               private sourceService: SourceService,
               private eventService: EventService,
+              private personService: PersonService,
+              private timelineService: TimelineService,
               public bottomSheet: MatBottomSheet) {
 
     const essayId = this.route.snapshot.paramMap.get('id');
@@ -141,7 +158,25 @@ export class EssayComponent implements OnInit, AfterViewInit {
       this.eventsFilteredOptions = this.eventsAutocompleteControl.valueChanges.pipe(
         startWith(''),
         map(event => this._filterEvents(event))
-      )
+      );
+    });
+
+    this.personService.getApiPersons('persons?page[size]=0&fields[person]=first_name,middle_name,last_name').subscribe(response => {
+      this.persons = response.persons;
+
+      this.personsFilteredOptions = this.personsAutocompleteControl.valueChanges.pipe(
+        startWith(''),
+        map(person => this._filterPersons(person))
+      );
+    });
+
+    this.timelineService.getApiTimelines('timelines?page[size]=0&fields[timeline]=label').subscribe(response => {
+      this.timelines = response.timelines;
+
+      this.timelinesFilteredOptions = this.timelinesAutocompleteControl.valueChanges.pipe(
+        startWith(''),
+        map(timeline => this._filterTimelines(timeline))
+      );
     });
   }
 
@@ -195,12 +230,11 @@ export class EssayComponent implements OnInit, AfterViewInit {
       refreshAfterCallback: true,
       icon: 'personIcon',
       callback: () => {
-        console.log('Making Person');
-        // const selectedText = this.essayEditor.selection.text();
-        // const referenceId = this.selectedEssayReference.id;
-        // const insertValue = '((r ' + referenceId + ' ' + selectedText + '))';
-        //
-        // this.essayEditor.html.insert(insertValue, false);
+        const selectedText = this.essayEditor.selection.text();
+        const personId = this.selectedEssayPerson.id;
+        const insertValue = '((p ' + personId + ' ' + selectedText + '))';
+
+        this.essayEditor.html.insert(insertValue, false);
       }
     });
 
@@ -211,12 +245,11 @@ export class EssayComponent implements OnInit, AfterViewInit {
       refreshAfterCallback: true,
       icon: 'timelineIcon',
       callback: () => {
-        console.log('Making Timeline');
-        // const selectedText = this.essayEditor.selection.text();
-        // const referenceId = this.selectedEssayReference.id;
-        // const insertValue = '((r ' + referenceId + ' ' + selectedText + '))';
-        //
-        // this.essayEditor.html.insert(insertValue, false);
+        const selectedText = this.essayEditor.selection.text();
+        const timelineId = this.selectedEssayTimeline.id;
+        const insertValue = '((t ' + timelineId + ' ' + selectedText + '))';
+
+        this.essayEditor.html.insert(insertValue, false);
       }
     });
   }
@@ -539,6 +572,16 @@ export class EssayComponent implements OnInit, AfterViewInit {
     this.essayEvent.initializeNewEssayEvent();
   }
 
+  initializeNewEssayPerson() {
+    this.essayPerson = new EssayPerson();
+    this.essayPerson.initializeNewEssayPerson();
+  }
+
+  initializeNewEssayTimeline() {
+    this.essayTimeline = new EssayTimeline();
+    this.essayTimeline.initializeNewEssayTimeline();
+  }
+
   deselectAllEssayReferences() {
     this.elementRef.nativeElement.querySelectorAll('.essay-reference-selected').forEach(item => {
       this.renderer.removeClass(item, 'essay-reference-selected');
@@ -551,12 +594,32 @@ export class EssayComponent implements OnInit, AfterViewInit {
     });
   }
 
+  deselectAllEssayPersons() {
+    this.elementRef.nativeElement.querySelectorAll('.essay-person-selected').forEach(item => {
+      this.renderer.removeClass(item, 'essay-person-selected');
+    });
+  }
+
+  deselectAllEssayTimelines() {
+    this.elementRef.nativeElement.querySelectorAll('.essay-timeline-selected').forEach(item => {
+      this.renderer.removeClass(item, 'essay-timeline-selected');
+    });
+  }
+
   selectEssayReference(reference) {
     this.selectedEssayReference = reference;
   }
 
   selectEssayEvent(event) {
     this.selectedEssayEvent = event;
+  }
+
+  selectEssayPerson(person) {
+    this.selectedEssayPerson = person;
+  }
+
+  selectEssayTimeline(timeline) {
+    this.selectedEssayTimeline = timeline;
   }
 
   handleReferenceClick(event) {
@@ -736,6 +799,28 @@ export class EssayComponent implements OnInit, AfterViewInit {
     });
   }
 
+  addPerson() {
+    this.essayPerson.person = this.person;
+
+    this.essayService.createApiEssayPerson(this.essay, this.essayPerson).subscribe(response => {
+      this.essayPerson.id = response.data.id;
+      this.essay.essayPeople.push(this.essayPerson);
+
+      this.cancelAddEssayPersonMode();
+    });
+  }
+
+  addTimeline() {
+    this.essayTimeline.timeline = this.timeline;
+
+    this.essayService.createApiEssayTimeline(this.essay, this.essayTimeline).subscribe(response => {
+      this.essayTimeline.id = response.data.id;
+      this.essay.essayTimelines.push(this.essayTimeline);
+
+      this.cancelAddEssayTimelineMode();
+    });
+  }
+
   addNote() {
     this.essayNote.source = this.source;
 
@@ -766,6 +851,16 @@ export class EssayComponent implements OnInit, AfterViewInit {
     this.initializeNewEssayEvent();
   }
 
+  setAddEssayPersonMode() {
+    this.isAddEssayPersonMode = true;
+    this.initializeNewEssayPerson();
+  }
+
+  setAddEssayTimelineMode() {
+    this.isAddEssayTimelineMode = true;
+    this.initializeNewEssayTimeline();
+  }
+
   cancelAddEssayNoteMode() {
     this.initializeNewEssayNote();
     this.isAddEssayNoteMode = false;
@@ -779,6 +874,16 @@ export class EssayComponent implements OnInit, AfterViewInit {
   cancelAddEssayEventMode() {
     this.initializeNewEssayEvent();
     this.isAddEssayEventMode = false;
+  }
+
+  cancelAddEssayPersonMode() {
+    this.initializeNewEssayPerson();
+    this.isAddEssayPersonMode = false;
+  }
+
+  cancelAddEssayTimelineMode() {
+    this.initializeNewEssayTimeline();
+    this.isAddEssayTimelineMode = false;
   }
 
   async addClickEvents() {
@@ -852,11 +957,34 @@ export class EssayComponent implements OnInit, AfterViewInit {
   }
 
   displayEvent(event: Event) {
-    console.log(event);
     if (event) {
       this.eventFieldDisplayValue = event.label;
 
       return this.eventFieldDisplayValue;
+    }
+  }
+
+  displayPerson(person: Person) {
+    if (person) {
+      this.personFieldDisplayValue = person.firstName;
+
+      if (person.middleName) {
+        this.personFieldDisplayValue = this.personFieldDisplayValue + ' ' + person.middleName;
+      }
+
+      if (person.lastName) {
+        this.personFieldDisplayValue = this.personFieldDisplayValue + ' ' + person.lastName;
+      }
+
+      return this.personFieldDisplayValue;
+    }
+  }
+
+  displayTimeline(timeline: Timeline) {
+    if (timeline) {
+      this.timelineFieldDisplayValue = timeline.label;
+
+      return this.timelineFieldDisplayValue;
     }
   }
 
@@ -866,6 +994,14 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
   saveEvent() {
     this.event = this.eventsAutocompleteControl.value;
+  }
+
+  savePerson() {
+    this.person = this.personsAutocompleteControl.value;
+  }
+
+  saveTimeline() {
+    this.timeline = this.timelinesAutocompleteControl.value;
   }
 
   private sleep(ms) {
@@ -893,6 +1029,50 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     return this.events.filter(event => {
       return event.label.toLowerCase().includes(filterValue);
+    });
+  }
+
+  private _filterPersons(filterValue: string): Person[] {
+    let valueToFilterOn = filterValue;
+
+    if (filterValue.firstName) {
+      valueToFilterOn = filterValue.firstName;
+    }
+
+    if (filterValue.middleName) {
+      valueToFilterOn = valueToFilterOn + ' ' + filterValue.middleName;
+    }
+
+    if (filterValue.lastName) {
+      valueToFilterOn = valueToFilterOn + ' ' + filterValue.lastName;
+    }
+
+    valueToFilterOn = valueToFilterOn.toLowerCase();
+
+    return this.persons.filter(person => {
+      let personFullName = person.firstName;
+
+      if (person.middleName) {
+        personFullName = personFullName + ' ' + person.middleName;
+      }
+
+      if (person.lastName) {
+        personFullName = personFullName + ' ' + person.lastName;
+      }
+
+      return personFullName.toLowerCase().includes(valueToFilterOn);
+    });
+  }
+
+  private _filterTimelines(filterValue: string): Timeline[] {
+    if (filterValue.label) {
+      filterValue = filterValue.label;
+    }
+
+    filterValue = filterValue.toLowerCase();
+
+    return this.timelines.filter(timeline => {
+      return timeline.label.toLowerCase().includes(filterValue);
     });
   }
 }

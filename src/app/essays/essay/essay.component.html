@@ -193,7 +193,7 @@
             <button mat-icon-button class="material-icons" (click)="setAddEssayEventMode()">add</button>
 
             <div *ngIf="isAddEssayEventMode">
-              <form (ngSubmit)="addEvent()" #referenceForm="ngForm">
+              <form (ngSubmit)="addEvent()" #eventForm="ngForm">
                 <section class="app-section inline">
                   <label>Event</label>
                   <mat-form-field class="app-field-reference">
@@ -230,14 +230,82 @@
           </mat-tab>
 
           <mat-tab label="People">
+            <button mat-icon-button class="material-icons" (click)="setAddEssayPersonMode()">add</button>
+
+            <div *ngIf="isAddEssayPersonMode">
+              <form (ngSubmit)="addPerson()" #personForm="ngForm">
+                <section class="app-section inline">
+                  <label>Person</label>
+                  <mat-form-field class="app-field-reference">
+                    <input
+                      type="text"
+                      placeholder="Select Person"
+                      aria-label="Person"
+                      matInput
+                      [formControl]="personsAutocompleteControl"
+                      [matAutocomplete]="autoPerson">
+
+                    <mat-autocomplete #autoPerson="matAutocomplete" [displayWith]="displayPerson" (optionSelected)="savePerson()">
+                      <mat-option *ngFor="let person of personsFilteredOptions | async" [value]="person">
+                        {{person.firstName}}
+                        <span *ngIf="person.middleName"> {{person.middleName}}</span>
+                        <span *ngIf="person.lastName"> {{person.lastName}}</span>
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </section>
+
+                <button type="submit" mat-flat-button color="primary">Save</button>
+                <button type="button" mat-flat-button color="secondary" (click)="cancelAddEssayPersonMode()">Cancel</button>
+              </form>
+            </div>
+
             <div class="grid-list">
-              <app-essay-person *ngFor="let essayPerson of essay.essayPeople" [essayPerson]="essayPerson"></app-essay-person>
+              <app-essay-person
+                *ngFor="let essayPerson of essay.essayPeople"
+                [essayPerson]="essayPerson"
+                (personSelected)="selectEssayPerson(essayPerson)"
+                (delselectAllEssayPersons)="deselectAllEssayPersons()">
+              </app-essay-person>
             </div>
           </mat-tab>
 
           <mat-tab label="Timelines">
+            <button mat-icon-button class="material-icons" (click)="setAddEssayTimelineMode()">add</button>
+
+            <div *ngIf="isAddEssayTimelineMode">
+              <form (ngSubmit)="addTimeline()" #timelineForm="ngForm">
+                <section class="app-section inline">
+                  <label>Timeline</label>
+                  <mat-form-field class="app-field-reference">
+                    <input
+                      type="text"
+                      placeholder="Select Timeline"
+                      aria-label="Timeline"
+                      matInput
+                      [formControl]="timelinesAutocompleteControl"
+                      [matAutocomplete]="autoTimeline">
+
+                    <mat-autocomplete #autoTimeline="matAutocomplete" [displayWith]="displayTimeline" (optionSelected)="saveTimeline()">
+                      <mat-option *ngFor="let timeline of timelinesFilteredOptions | async" [value]="timeline">
+                        {{timeline.label}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </section>
+
+                <button type="submit" mat-flat-button color="primary">Save</button>
+                <button type="button" mat-flat-button color="secondary" (click)="cancelAddEssayTimelineMode()">Cancel</button>
+              </form>
+            </div>
+
             <div class="grid-list">
-              <app-essay-timeline *ngFor="let essayTimeline of essay.essayTimelines" [essayTimeline]="essayTimeline"></app-essay-timeline>
+              <app-essay-timeline
+                *ngFor="let essayTimeline of essay.essayTimelines"
+                [essayTimeline]="essayTimeline"
+                (timelineSelected)="selectEssayTimeline(essayTimeline)"
+                (delselectAllEssayTimelines)="deselectAllEssayTimelines()">
+              </app-essay-timeline>
             </div>
           </mat-tab>
         </mat-tab-group>

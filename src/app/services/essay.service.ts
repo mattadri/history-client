@@ -11,6 +11,10 @@ import {EssayReference} from '../models/essay-reference';
 import {EssayReferencePost} from '../models/posts/essay-reference-post';
 import {EssayEvent} from '../models/essay-event';
 import {EssayEventPost} from '../models/posts/essay-event-post';
+import {EssayPerson} from '../models/essay-person';
+import {EssayPersonPost} from '../models/posts/essay-person-post';
+import {EssayTimelinePost} from '../models/posts/essay-timeline-post';
+import {EssayTimeline} from '../models/essay-timeline';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +26,8 @@ export class EssayService {
   public essayNotePost: EssayNotePost;
   public essayReferencePost: EssayReferencePost;
   public essayEventPost: EssayEventPost;
+  public essayPersonPost: EssayPersonPost;
+  public essayTimelinePost: EssayTimelinePost;
 
   constructor(private http: HttpClient) {
     this.essays = [];
@@ -83,6 +89,28 @@ export class EssayService {
     this.essayEventPost.mapToPost(essay, essayEvent);
 
     return this.http.post('/api/essay_events', this.essayEventPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  createApiEssayPerson(essay: Essay, essayPerson: EssayPerson) {
+    this.essayPersonPost = new EssayPersonPost();
+    this.essayPersonPost.mapToPost(essay, essayPerson);
+
+    return this.http.post('/api/essay_persons', this.essayPersonPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  createApiEssayTimeline(essay: Essay, essayTimeline: EssayTimeline) {
+    this.essayTimelinePost = new EssayTimelinePost();
+    this.essayTimelinePost.mapToPost(essay, essayTimeline);
+
+    return this.http.post('/api/essay_timelines', this.essayTimelinePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')

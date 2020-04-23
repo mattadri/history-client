@@ -1,12 +1,12 @@
+import {EssayPerson} from '../essay-person';
 import {Essay} from '../essay';
-import {EssayEvent} from '../essay-event';
 
-export class EssayEventPost {
+export class EssayPersonPost {
   data: object;
 
-  mapToPost(essay: Essay, essayEvent: EssayEvent) {
+  mapToPost(essay: Essay, essayPerson: EssayPerson) {
     this.data = {
-      type: 'essay_event',
+      type: 'essay_person',
       attributes: {
         essay_rel: {
           data: {
@@ -15,10 +15,10 @@ export class EssayEventPost {
           }
         },
 
-        event_rel: {
+        person_rel: {
           data: {
-            type: 'event',
-            id: essayEvent.event.id
+            type: 'person',
+            id: essayPerson.person.id
           }
         }
       }

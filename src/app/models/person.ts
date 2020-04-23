@@ -75,8 +75,14 @@ export class Person {
 
     self.id = person.id;
     self.firstName = person.attributes.first_name;
-    self.birthYear = person.attributes.birth_year;
-    self.birthEra = birthEra.mapEra(person.attributes.birth_era.data);
+
+    if (person.attributes.birth_year) {
+      self.birthYear = person.attributes.birth_year;
+    }
+
+    if (person.attributes.birth_era) {
+      self.birthEra = birthEra.mapEra(person.attributes.birth_era.data);
+    }
 
     // optional fields
     if (person.attributes.description) {
@@ -119,7 +125,7 @@ export class Person {
       self.source = source.mapSource(person.attributes.reference.data);
     }
 
-    if (person.attributes.person_note.data.length) {
+    if (person.attributes.person_note && person.attributes.person_note.data.length) {
       self.notes = [];
 
       for (const returnedNote of person.attributes.person_note.data) {
@@ -129,7 +135,7 @@ export class Person {
       }
     }
 
-    if (person.attributes.timeline_person.data.length) {
+    if (person.attributes.timeline_person && person.attributes.timeline_person.data.length) {
       self.timelines = [];
 
       for (const returnedTimeline of person.attributes.timeline_person.data) {
@@ -141,9 +147,11 @@ export class Person {
       }
     }
 
-    this.formatYears();
-    this.formatBirthAndDeath();
-    this.setAge();
+    if (person.attributes.birth_era) {
+      this.formatYears();
+      this.formatBirthAndDeath();
+      this.setAge();
+    }
   }
 
   formatYears() {
