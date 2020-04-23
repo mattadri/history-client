@@ -9,8 +9,8 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 100;
 }
 
-h1 { font-size: $font-size-large-300; text-transform: uppercase;}
-h2 { font-size: $font-size-large-200; text-transform: uppercase;}
+h1 { font-size: $font-size-large-300;}
+h2 { font-size: $font-size-large-200;}
 h3 { font-size: $font-size-large-100;}
 
 p {
@@ -26,12 +26,14 @@ a {
   }
 }
 
-label {
+label,
+.mat-tab-label {
   text-transform: uppercase;
   font-size: $font-size-small;
   font-weight: 500;
   letter-spacing: 1px;
   color: $color-gray-scale-500;
+  opacity: 1 !important;
 }
 
 
@@ -41,3 +43,5 @@ label {
   letter-spacing: 1px;
   font-size: $font-size-small;
 }
+
+

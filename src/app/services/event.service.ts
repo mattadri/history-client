@@ -94,6 +94,14 @@ export class EventService {
     });
   }
 
+  getApiEvent(eventId): Observable<Event> {
+    return this.http.get<Event>('api/events/' + eventId, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'event')
+    });
+  }
+
   createApiEvent(event: Event): Observable<Event> {
     this.eventPost = new EventPost();
     this.eventPost.mapToPost(event);

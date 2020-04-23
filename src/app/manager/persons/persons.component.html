@@ -110,8 +110,8 @@
         </section>
 
         <section class="app-section">
-          <label>Reference</label>
-          <span *ngIf="person.reference">{{ person.reference.title}}</span>
+          <label>Source</label>
+          <span *ngIf="person.source">{{ person.source.title}}</span>
         </section>
       </div>
     </div>
@@ -266,11 +266,11 @@
           </section>
 
           <section class="app-section inline">
-            <label>Reference</label>
+            <label>Source</label>
             <mat-form-field class="app-field-reference">
               <mat-label>Source</mat-label>
-              <mat-select [(ngModel)]="referenceId" name="person_reference" required>
-                <mat-option *ngFor="let reference of references" [value]="reference.id">{{reference.title}}</mat-option>
+              <mat-select [(ngModel)]="sourceId" name="person_source" required>
+                <mat-option *ngFor="let source of sources" [value]="source.id">{{source.title}}</mat-option>
               </mat-select>
             </mat-form-field>
           </section>

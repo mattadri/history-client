@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 
-import {MatDialog} from '@angular/material';
+import { MatBottomSheet } from '@angular/material';
 
 import {Person} from '../../models/person';
 import {Timeline} from '../../models/timeline';
@@ -18,7 +18,7 @@ export class TimelinePersonListComponent implements OnInit {
 
   public isSelected: boolean;
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public bottomSheet: MatBottomSheet) { }
 
   ngOnInit() {
     this.isSelected = false;
@@ -35,7 +35,7 @@ export class TimelinePersonListComponent implements OnInit {
   }
 
   showDetails() {
-    this.dialog.open(TimelinePersonDetailsComponent, {
+    this.bottomSheet.open(TimelinePersonDetailsComponent, {
       width: '500px',
       data: {
         person: this.person,

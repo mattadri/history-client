@@ -1,6 +1,7 @@
 <div class="app-body-content">
   <div class="app-content-toolbar">
     <h1 *ngIf="timeline && !isTimelineEditMode">{{timeline.label}}</h1>
+    <h3 *ngIf="timeline && !isTimelineEditMode">Spans {{this.timelineSpanInYears}} years</h3>
 
     <span *ngIf="isTimelineEditMode">
       <mat-form-field style="width: 100%">

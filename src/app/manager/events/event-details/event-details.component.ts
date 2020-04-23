@@ -1,17 +1,15 @@
-import { Component, OnInit, Input } from '@angular/core';
-
-import {Event} from '../../models/event';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 import {TimelineService} from '../../../services/timeline.service';
-import {MonthService} from '../../../services/month.service';
-import {ReferenceService} from '../../../services/reference.service';
-import {EraService} from '../../../services/era.service';
+import {EventService} from '../../../services/event.service';
 
 import {Month} from '../../../models/month';
 import {Era} from '../../../models/era';
-import {Reference} from '../../../models/reference';
+import {Event} from '../../../models/event';
+import {Source} from '../../../models/source';
 import {Timeline} from '../../../models/timeline';
 import {EventNote} from '../../../models/event-note';
+import {TimelineEvent} from '../../../models/timeline-event';
 
 @Component({
   selector: 'app-event-details',
@@ -22,85 +20,43 @@ import {EventNote} from '../../../models/event-note';
 export class EventDetailsComponent implements OnInit {
   @Input() public event: Event;
   @Input() public editOnly: boolean;
-  @Input() public createOnly: boolean;
-  @Input() public contentPanel;
+  @Input() public allowDelete: boolean;
+  @Input() public contentPanel: object;
 
-  public isCreateEventMode: boolean;
-  public isEditEventMode: boolean;
-  public isAddNoteMode: boolean;
-  public isAddTimelineMode: boolean;
-
-  public eras: Era[] = [];
-  public months: Month[] = [];
-  public references: Reference[] = [];
+  @Input() public eras: Era[];
+  @Input() public months: Month[];
+  @Input() public sources: Source[];
+  @Input() public timelines: Timeline[];
 
   // these labels are for the select options in create/edit modes.
   // they are transformed to the Month model on the event object on submit.
-  public startMonthLabel: string;
-  public endMonthLabel: string;
+  @Input() public startMonthLabel: string;
+  @Input() public endMonthLabel: string;
 
-  public startEraLabel: string;
-  public endEraLabel: string;
+  @Input() public startEraLabel: string;
+  @Input() public endEraLabel: string;
 
-  public referenceId: number;
-  public timelineId: number;
+  @Input() public sourceId: number;
+  @Input() public timelineId: number;
 
-  constructor(private referenceService: ReferenceService,
-              private eraService: EraService,
-              private monthService: MonthService,
+  @Output() private fullyCancelEditMode: EventEmitter;
+  @Output() private doCleanupRemovedEvent: EventEmitter;
+
+  public timelineEvent: TimelineEvent;
+
+  public isAddNoteMode: boolean;
+  public isAddTimelineMode: boolean;
+  public eventNote: EventNote;
+  public timeline: Timeline;
+
+  constructor(private eventService: EventService,
               private timelineService: TimelineService) {
 
-    this.isCreateEventMode = this.createOnly;
-
-    this.eraService.getEras().subscribe(eras => {
-      for (const era of eras.data) {
-        this.eras.push(new Era().mapEra(era));
-      }
-    });
-
-    this.monthService.getMonths().subscribe(months => {
-      for (const month of months.data) {
-        this.months.push(new Month().mapMonth(month));
-      }
-    });
-
-    this.referenceService.getApiReferences('/references?sort=title').subscribe(references => {
-      for (const reference of references.references) {
-        this.referenceService.setReference(reference);
-      }
-
-      this.references = this.referenceService.getReferences();
-    });
-
-    this.timelineService.getApiTimelines('/timelines?sort=modified&fields[timeline]=label').subscribe(response => {
-      for (const timeline of response.timelines) {
-        this.timelineService.setTimeline(timeline);
-      }
-
-      this.timelines = this.timelineService.getTimelines();
-    });
-
-    console.log('Boolean: ', this.isCreateEventMode);
+    this.fullyCancelEditMode = new EventEmitter();
+    this.doCleanupRemovedEvent = new EventEmitter();
   }
 
-  ngOnInit() {
-    if (!this.isCreateEventMode) {
-      if (this.event.startMonth) {
-        this.startMonthLabel = this.event.startMonth.label;
-      }
-
-      if (this.event.endMonth) {
-        this.endMonthLabel = this.event.endMonth.label;
-      }
-
-      if (this.event.reference) {
-        this.referenceId = this.event.reference.id;
-      }
-
-      this.startEraLabel = this.event.startEra.label;
-      this.endEraLabel = this.event.endEra.label;
-    }
-  }
+  ngOnInit() { }
 
   initializeNewNote() {
     this.eventNote = new EventNote();
@@ -110,8 +66,86 @@ export class EventDetailsComponent implements OnInit {
     this.timeline = new Timeline();
   }
 
-  createEvent(contentPanel) {
-    // set the era objects
+  createTimelineEvent() {
+    for (const timeline of this.timelines) {
+      if (this.timelineId === timeline.id) {
+        this.timeline = timeline;
+      }
+    }
+
+    this.timelineEvent = new TimelineEvent();
+    this.timelineEvent.event = this.event;
+    this.timelineEvent.timeline = this.timeline;
+
+    // call service
+    this.timelineService.createEventApiTimeline(this.timelineEvent).subscribe(response => {
+      if (!this.event.timelines) {
+        this.event.timelines = [];
+      }
+
+      this.timelineEvent.id = response.data.id;
+      this.timeline.eventId = this.timelineEvent.id;
+
+      this.event.timelines.push(this.timeline);
+
+      this.initializeNewTimeline();
+
+      this.isAddTimelineMode = false;
+    });
+  }
+
+  createNote() {
+    this.eventService.createApiEventNote(this.eventNote, this.event).subscribe(result => {
+      if (!this.event.notes) {
+        this.event.notes = [];
+      }
+
+      this.eventNote.id = result.data.id;
+      this.event.notes.push(this.eventNote);
+
+      this.initializeNewNote();
+
+      this.isAddNoteMode = false;
+    });
+  }
+
+  editEvent() {
+    if (!this.event.startDay || !this.event.startDay.length) {
+      this.event.startDay = 'null';
+    }
+
+    if (!this.event.endDay || !this.event.endDay.length) {
+      this.event.endDay = 'null';
+    }
+
+    if (this.startMonthLabel === null) {
+      this.event.startMonth = new Month();
+      this.event.startMonth.label = '';
+      this.event.startMonth.id = 'null';
+    }
+
+    if (this.startMonthLabel) {
+      for (const month of this.months) {
+        if (this.startMonthLabel === month.label) {
+          this.event.startMonth = month;
+        }
+      }
+    }
+
+    if (this.endMonthLabel === null) {
+      this.event.endMonth = new Month();
+      this.event.endMonth.label = '';
+      this.event.endMonth.id = 'null';
+    }
+
+    if (this.endMonthLabel) {
+      for (const month of this.months) {
+        if (this.endMonthLabel === month.label) {
+          this.event.endMonth = month;
+        }
+      }
+    }
+
     for (const era of this.eras) {
       if (this.startEraLabel === era.label) {
         this.event.startEra = era;
@@ -124,33 +158,79 @@ export class EventDetailsComponent implements OnInit {
       }
     }
 
-    for (const month of this.months) {
-      if (this.startMonthLabel === month.label) {
-        this.event.startMonth = month;
+    if (this.sourceId) {
+      for (const source of this.sources) {
+        if (this.sourceId === source.id) {
+          this.event.source = source;
+        }
       }
     }
 
-    for (const month of this.months) {
-      if (this.endMonthLabel === month.label) {
-        this.event.endMonth = month;
+    return this.eventService.patchApiEvent(this.event).subscribe(() => {
+      if (this.event.startDay === 'null') {
+        this.event.startDay = '';
       }
-    }
 
-    for (const reference of this.references) {
-      if (this.referenceId === reference.id) {
-        this.event.reference = reference;
+      if (this.event.endDay === 'null') {
+        this.event.endDay = '';
       }
-    }
 
-    return this.eventService.createApiEvent(this.event).subscribe(response => {
-      this.event.id = response.data.id;
-
-      this.eventService.setEvent(this.event);
-
-      this.isCreateEventMode = false;
-      this.isEditEventMode = false;
-
-      this.openEventDetails(this.event, contentPanel);
+      this.cancelEditMode();
     });
+  }
+
+  removeEvent(contentPanel) {
+    this.eventService.removeApiEvent(this.event).subscribe(() => {
+      this.eventService.removeEvent(this.event);
+
+      // call parent to close the content panel and initialize a new event
+      this.doCleanupRemovedEvent.emit(contentPanel);
+    });
+  }
+
+  removeNote(note) {
+    this.eventService.removeApiNote(note).subscribe(() => {
+      this.eventService.removeEventNote(this.event, note);
+    });
+  }
+
+  removeTimeline(timeline) {
+    this.timelineService.removeEventApiTimeline(timeline.eventId).subscribe(() => {
+      for (let i = 0; i < this.event.timelines.length; i++) {
+        if (this.event.timelines[i].id === timeline.id) {
+          this.event.timelines.splice(i, 1);
+        }
+      }
+    });
+  }
+
+  async activateEventNoteForm() {
+    this.isAddNoteMode = true;
+    this.initializeNewNote();
+
+    await this.sleep(500);
+
+    document.getElementById('event_note').focus();
+  }
+
+  cancelEditMode() {
+    this.editOnly = false;
+
+    // send back to parent to update the edit mode there.
+    this.fullyCancelEditMode.emit();
+  }
+
+  cancelEventNoteForm() {
+    this.isAddNoteMode = false;
+    this.initializeNewNote();
+  }
+
+  cancelEventTimelineForm() {
+    this.isAddTimelineMode = false;
+    this.initializeNewTimeline();
+  }
+
+  private sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

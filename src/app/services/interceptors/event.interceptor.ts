@@ -46,6 +46,11 @@ export class EventInterceptor implements HttpInterceptor {
           this.body.links = event.body.links;
 
           event.body = this.body;
+        } else if (req.headers.headers.get('type')[0] === 'event') {
+          this.event = new Event();
+          this.event.mapEvent(event.body.data);
+
+          event.body = this.event;
         }
       }
     }

@@ -1,4 +1,4 @@
-import { Reference } from './reference';
+import { Source } from './source';
 import { Month } from './month';
 import { Era } from './era';
 import { Timeline } from './timeline';
@@ -18,7 +18,7 @@ export class Person {
   deathMonth: Month;
   deathYear: number;
   deathEra: Era;
-  reference: Reference;
+  source: Source;
   timelines: Timeline[];
   notes: PersonNote[];
 
@@ -48,7 +48,7 @@ export class Person {
     this.deathMonth = new Month();
     this.deathYear = null;
     this.deathEra = new Era();
-    this.reference = new Reference();
+    this.source = new Source();
     this.notes = [];
 
     this.timelineStartLocation = '';
@@ -71,7 +71,7 @@ export class Person {
     const deathMonth = new Month();
     const deathEra = new Era();
 
-    const reference = new Reference();
+    const source = new Source();
 
     self.id = person.id;
     self.firstName = person.attributes.first_name;
@@ -116,7 +116,7 @@ export class Person {
     }
 
     if (person.attributes.reference) {
-      self.reference = reference.mapReference(person.attributes.reference.data);
+      self.source = source.mapSource(person.attributes.reference.data);
     }
 
     if (person.attributes.person_note.data.length) {

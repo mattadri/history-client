@@ -11,6 +11,7 @@ import { TimelineEventDetailsComponent } from '../timeline-event-details/timelin
   templateUrl: './timeline-event-list.component.html',
   styleUrls: ['./timeline-event-list.component.scss']
 })
+
 export class TimelineEventListComponent implements OnInit {
   @Input() public event: Event;
   @Input() public timeline: Timeline;
@@ -50,9 +51,7 @@ export class TimelineEventListComponent implements OnInit {
   }
 
   applyColorClass() {
-    const classes = 'grid-list-item-key';
-
-    return classes;
+    return 'grid-list-item-key';
   }
 
   applyStyles() {
@@ -62,12 +61,16 @@ export class TimelineEventListComponent implements OnInit {
   }
 
   highlightEvent() {
+    this.showEditButton = true;
+
     if (!this.isSelected) {
       this.event.timelineEventIsHighlighted = true;
     }
   }
 
   deHighlightEvent() {
+    this.showEditButton = false;
+
     if (!this.isSelected) {
       this.event.timelineEventIsHighlighted = false;
     }

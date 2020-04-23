@@ -61,6 +61,14 @@ export class PersonService {
     });
   }
 
+  getApiPerson(personId): Observable<Person> {
+    return this.http.get<Person>('api/persons/' + personId, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'person')
+    });
+  }
+
   createApiPersonNote(note: PersonNote, person: Person): Observable<any> {
     this.personNotePost = new PersonNotePost();
     this.personNotePost.mapToNotePost(note, person);

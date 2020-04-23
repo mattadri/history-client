@@ -29,9 +29,13 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/froala-editor/css/froala_editor.pkgd.min.css",
+              "./node_modules/froala-editor/css/froala_style.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "./node_modules/froala-editor/js/froala_editor.pkgd.min.js"
+            ]
           },
           "configurations": {
             "production": {

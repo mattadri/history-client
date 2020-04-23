@@ -9,17 +9,17 @@ import { Author } from '../../../models/author';
 })
 export class AuthorCardComponent implements OnInit {
   @Input() public author: Author;
-  @Input() public isReferenceAttachment: boolean;
+  @Input() public isSourceAttachment: boolean;
 
   @Output() private loadAuthor: EventEmitter<Author>;
-  @Output() private removeAuthorFromReference: EventEmitter<Author>;
+  @Output() private removeAuthorFromSource: EventEmitter<Author>;
 
   constructor() {
     this.loadAuthor = new EventEmitter<Author>();
-    this.removeAuthorFromReference = new EventEmitter<Author>();
+    this.removeAuthorFromSource = new EventEmitter<Author>();
 
-    if (!this.isReferenceAttachment) {
-      this.isReferenceAttachment = false;
+    if (!this.isSourceAttachment) {
+      this.isSourceAttachment = false;
     }
   }
 
@@ -30,7 +30,7 @@ export class AuthorCardComponent implements OnInit {
     this.loadAuthor.emit(this.author);
   }
 
-  doRemoveAuthorFromReference() {
-    this.removeAuthorFromReference.emit(this.author);
+  doRemoveAuthorFromSource() {
+    this.removeAuthorFromSource.emit(this.author);
   }
 }

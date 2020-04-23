@@ -3,13 +3,13 @@
 
 // Colors
 
-$color-gray-scale-600:      #232F4C;
-$color-gray-scale-500:      #344672;
-$color-gray-scale-400:      #596EA0;
-$color-gray-scale-300:      #9BADD7;
-$color-gray-scale-200:      #C4CFE9;
-$color-gray-scale-100:      #DCE3F4;
-$color-gray-scale-50:       #F4F5F9;
+$color-gray-scale-600:      #210356;
+$color-gray-scale-500:      #332872;
+$color-gray-scale-400:      #5e59a0;
+$color-gray-scale-300:      #9c9dd7;
+$color-gray-scale-200:      #c5cee9;
+$color-gray-scale-100:      #e3e3f4;
+$color-gray-scale-50:       #edf0fb;
 
 
 $color-darkest:             #000;
@@ -21,18 +21,18 @@ $color-light-50:            #EEE;
 $color-light:               #FAFAFA;
 $color-lightest:            #FFF;
 
-$color-brand:               #2C57BD;
+$color-brand:               #673ab7;
 $color-active:              #29BB5F;
 $color-active-light:        rgba(31,177,76,0.08);
 $color-active-light-100:    rgba(31,177,76,0.15);
-$color-highlight:           #ED105D;
+$color-highlight:           #7740da;
 
 $color-link:                #099FE5;
 $color-success:             #74BB29;
 $color-error:               #ED1020;
 $color-warning:             #FABC12;
 
-$color-icon-actions:        $color-gray-scale-500;
+$color-icon-actions:        $color-brand;
 
 
 // Colors Utility
@@ -66,6 +66,7 @@ $font-color-default:         $color-medium;
 
 $font-size-smallest:         0.7rem;
 $font-size-small:            0.8rem;
+$font-size-smaller:          0.9rem;
 $font-size-base:             1rem;
 $font-size-large-100:        1.2rem;
 $font-size-large-200:        1.4rem;

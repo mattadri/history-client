@@ -3,14 +3,14 @@ import { Component, OnInit } from '@angular/core';
 import { Person } from '../../models/person';
 import { Era } from '../../models/era';
 import { Month } from '../../models/month';
-import { Reference } from '../../models/reference';
+import { Source } from '../../models/reference';
 import { Timeline } from '../../models/timeline';
 import { TimelinePerson } from '../../models/timeline-person';
 
 import { PersonService } from '../../services/person.service';
 import { MonthService } from '../../services/month.service';
 import { EraService } from '../../services/era.service';
-import { ReferenceService } from '../../services/reference.service';
+import { SourceService } from '../../services/source.service';
 import { TimelineService } from '../../services/timeline.service';
 import {PersonNote} from '../../models/person-note';
 
@@ -41,19 +41,19 @@ export class PersonsComponent implements OnInit {
 
   public eras: Era[] = [];
   public months: Month[] = [];
-  public references: Reference[] = [];
+  public sources: Source[] = [];
 
   public totalResults: number;
   public nextPage: string;
   public previousPage: string;
 
-  public referenceId: number;
+  public sourceId: number;
   public timelineId: number;
 
   public isAddTimelineMode: boolean;
 
   constructor(private personService: PersonService,
-              private referenceService: ReferenceService,
+              private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
               private timelineService: TimelineService) {
@@ -79,12 +79,12 @@ export class PersonsComponent implements OnInit {
       }
     });
 
-    this.referenceService.getApiReferences('/references?sort=title').subscribe(references => {
-      for (const reference of references.references) {
-        this.referenceService.setReference(reference);
+    this.sourceService.getApiSources('/references?sort=title').subscribe(sources => {
+      for (const source of sources.sources) {
+        this.sourceService.setSource(source);
       }
 
-      this.references = this.referenceService.getReferences();
+      this.sources = this.sourceService.getSources();
     });
 
     this.timelineService.getApiTimelines('/timelines?sort=modified&fields[timeline]=label').subscribe(response => {
@@ -165,9 +165,9 @@ export class PersonsComponent implements OnInit {
       }
     }
 
-    for (const reference of this.references) {
-      if (this.referenceId === reference.id) {
-        this.person.reference = reference;
+    for (const source of this.sources) {
+      if (this.sourceId === source.id) {
+        this.person.source = source;
       }
     }
 
@@ -274,10 +274,10 @@ export class PersonsComponent implements OnInit {
       }
     }
 
-    if (this.referenceId) {
-      for (const reference of this.references) {
-        if (this.referenceId === reference.id) {
-          this.person.reference = reference;
+    if (this.sourceId) {
+      for (const source of this.sources) {
+        if (this.sourceId === source.id) {
+          this.person.source = source;
         }
       }
     }
@@ -340,8 +340,8 @@ export class PersonsComponent implements OnInit {
       this.deathMonthLabel = this.person.deathMonth.label;
     }
 
-    if (this.person.reference) {
-      this.referenceId = this.person.reference.id;
+    if (this.person.source) {
+      this.sourceId = this.person.source.id;
     }
 
     this.birthEraLabel = this.person.birthEra.label;

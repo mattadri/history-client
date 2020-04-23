@@ -1,4 +1,4 @@
-import { Reference } from './reference';
+import { Source } from './source';
 import { Month } from './month';
 import { Era } from './era';
 import { EventNote } from './event-note';
@@ -20,7 +20,7 @@ export class Event {
   formattedEndYear: string;
   formattedEndDate: string;
   endEra: Era;
-  reference: Reference;
+  source: Source;
   notes: EventNote[];
   timelines: Timeline[];
   colorClass: string;
@@ -35,6 +35,8 @@ export class Event {
   isShadow: boolean;
   priority: number;
 
+  eventLength: number;
+
   initializeNewEvent() {
     this.label = '';
     this.description = '';
@@ -48,7 +50,7 @@ export class Event {
     this.endEra = new Era();
     this.notes = [];
     this.timelines = [];
-    this.reference = new Reference();
+    this.source = new Source();
 
     this.timelineStartLocation = '';
     this.listEventIsHighlighted = false;
@@ -56,6 +58,8 @@ export class Event {
     this.isSinglePointEvent = false;
     this.isShadow = false;
     this.priority = 0;
+
+    this.eventLength = 1;
   }
 
   mapEvent(event, isShadow, priority, timelineEventId) {
@@ -72,15 +76,22 @@ export class Event {
     const endMonth = new Month();
     const endEra = new Era();
 
-    const reference = new Reference();
+    const newSource = new Source();
 
-    self.id = event.id;
-    self.label = event.attributes.label;
-    self.startYear = event.attributes.event_start_year;
-    self.startEra = startEra.mapEra(event.attributes.event_start_era.data);
     self.isShadow = isShadow;
     self.priority = priority;
     self.timelineEventId = timelineEventId;
+
+    self.id = event.id;
+    self.label = event.attributes.label;
+
+    if (event.attributes.event_start_year) {
+      self.startYear = event.attributes.event_start_year;
+    }
+
+    if (event.attributes.event_start_era) {
+      self.startEra = startEra.mapEra(event.attributes.event_start_era.data);
+    }
 
     // optional fields
     if (event.attributes.description) {
@@ -112,10 +123,10 @@ export class Event {
     }
 
     if (event.attributes.reference) {
-      self.reference = reference.mapReference(event.attributes.reference.data);
+      self.source = newSource.mapSource(event.attributes.reference.data);
     }
 
-    if (event.attributes.event_note.data.length) {
+    if (event.attributes.event_note && event.attributes.event_note.data.length) {
       self.notes = [];
 
       for (const returnedNote of event.attributes.event_note.data) {
@@ -125,7 +136,7 @@ export class Event {
       }
     }
 
-    if (event.attributes.timeline_event.data.length) {
+    if (event.attributes.timeline_event && event.attributes.timeline_event.data.length) {
       self.timelines = [];
 
       for (const returnedTimeline of event.attributes.timeline_event.data) {
@@ -136,6 +147,8 @@ export class Event {
         self.timelines.push(timeline);
       }
     }
+
+    this.setEventLength();
   }
 
   // in the case that an event has no month and the year is greater than 999,999 the formatter will shorten with 'MYA' or 'BYA'
@@ -237,6 +250,19 @@ export class Event {
 
     if (!this.endEra) {
       this.formattedEndDate = 'present';
+    }
+  }
+
+  setEventLength() {
+    if (this.endYear) {
+      this.eventLength = (this.endYear - this.startYear).toString();
+    } else {
+      const dateObj = new Date();
+      this.eventLength = (dateObj.getFullYear() - this.startYear).toString();
+    }
+
+    if (this.eventLength < 0) {
+      this.eventLength = this.eventLength * -1;
     }
   }
 }

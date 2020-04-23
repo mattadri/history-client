@@ -16,11 +16,9 @@
   <span class="grid-list-item-title">
     {{event.label}}
   </span>
-
 </div>
 
 <div *ngIf="listOnly" class="grid-list-item">
-
   <span class="grid-list-item-key" [ngStyle]="styles"></span>
 
   <span class="grid-list-item-year">
@@ -32,4 +30,7 @@
     {{event.label}}
   </span>
 
+  <span>
+    <button mat-icon-button *ngIf="showEditButton" class="material-icons" type="button" (click)="activateEditEventMode()">edit</button>
+  </span>
 </div>

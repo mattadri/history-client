@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 
@@ -18,16 +18,24 @@ import { MatDialogModule } from '@angular/material';
 import { MatBottomSheetModule } from '@angular/material';
 import { MatTabsModule } from '@angular/material';
 import { MatTooltipModule } from '@angular/material';
+import { MatExpansionModule } from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material';
+
+import 'froala-editor/js/plugins.pkgd.min.js';
+import 'froala-editor/js/froala_editor.pkgd.min.js';
+import {FroalaEditorModule, FroalaViewModule} from 'angular-froala-wysiwyg';
+
+import {SafeHtmlPipe} from './pipes/htmlSanitizer';
 
 import { EraService } from './services/era.service';
-import { MonthService } from './services/month.service';
-import { ReferenceService } from './services/reference.service';
+import { SourceService} from './services/source.service';
 import { AuthorService } from './services/author.service';
 import { PersonService } from './services/person.service';
 import { EventService } from './services/event.service';
+import { MonthService } from './services/month.service';
 
-import { ReferencesComponent } from './manager/references/references.component';
-import { ReferenceCardComponent } from './manager/references/reference-card/reference-card.component';
+import { SourcesComponent } from './manager/sources/sources.component';
+import { SourceCardComponent } from './manager/sources/source-card/source-card.component';
 
 import { PersonsComponent } from './manager/persons/persons.component';
 import { PersonCardComponent } from './manager/persons/person-card/person-card.component';
@@ -46,11 +54,12 @@ import { TimelineEventComponent } from './timelines/timeline-event/timeline-even
 import { TimelineEventDetailsComponent } from './timelines/timeline-event-details/timeline-event-details.component';
 import { TimelineEventListComponent } from './timelines/timeline-event-list/timeline-event-list.component';
 
-import { ReferenceInterceptor } from './services/interceptors/reference.interceptor';
+import { SourceInterceptor } from './services/interceptors/source.interceptor';
 import { AuthorInterceptor } from './services/interceptors/author.interceptor';
 import { PersonInterceptor } from './services/interceptors/person.interceptor';
 import { EventInterceptor } from './services/interceptors/event.interceptor';
 import { TimelineInterceptor } from './services/interceptors/timeline.interceptor';
+import { EssayInterceptor } from './services/interceptors/essay.interceptor';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -64,13 +73,27 @@ import { TimelineCategoryComponent } from './timelines/timeline-categories/timel
 import { TimelineCategoriesComponent } from './timelines/timeline-categories/timeline-categories.component';
 import { CategoryComponent } from './timelines/category/category.component';
 import { EventDetailsComponent } from './manager/events/event-details/event-details.component';
+import { EssaysComponent } from './essays/essays.component';
+import { EssayReferenceDetailsComponent } from './essays/essay-reference-details/essay-reference-details.component';
+import { EssayEventDetailsComponent } from './essays/essay-event-details/essay-event-details.component';
+import { EssayPersonDetailsComponent } from './essays/essay-person-details/essay-person-details.component';
+import { EssayTimelineDetailsComponent } from './essays/essay-timeline-details/essay-timeline-details.component';
+import { EssayComponent } from './essays/essay/essay.component';
+import { EssayCardComponent } from './essays/essay-card/essay-card.component';
+import { EssayNoteComponent } from './essays/essay-note/essay-note.component';
+import { EssayReferenceComponent } from './essays/essay-reference/essay-reference.component';
+import { EssayEventComponent } from './essays/essay-event/essay-event.component';
+import { EssayPersonComponent } from './essays/essay-person/essay-person.component';
+import { EssayTimelineComponent } from './essays/essay-timeline/essay-timeline.component';
 
 @NgModule({
   declarations: [
     AppComponent,
 
-    ReferencesComponent,
-    ReferenceCardComponent,
+    SafeHtmlPipe,
+
+    SourcesComponent,
+    SourceCardComponent,
 
     AuthorsComponent,
     AuthorCardComponent,
@@ -97,14 +120,34 @@ import { EventDetailsComponent } from './manager/events/event-details/event-deta
     TimelineCategoryComponent,
     TimelineCategoriesComponent,
     CategoryComponent,
-    EventDetailsComponent
+    EventDetailsComponent,
+    EssaysComponent,
+    EssayReferenceDetailsComponent,
+    EssayEventDetailsComponent,
+    EssayPersonDetailsComponent,
+    EssayTimelineDetailsComponent,
+    EssayComponent,
+    EssayCardComponent,
+    EssayNoteComponent,
+    EssayReferenceComponent,
+    EssayEventComponent,
+    EssayPersonComponent,
+    EssayTimelineComponent,
   ],
-  entryComponents: [TimelineEventDetailsComponent, TimelinePersonDetailsComponent],
+  entryComponents: [
+    TimelineEventDetailsComponent,
+    TimelinePersonDetailsComponent,
+    EssayReferenceDetailsComponent,
+    EssayEventDetailsComponent,
+    EssayPersonDetailsComponent,
+    EssayTimelineDetailsComponent
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     BrowserAnimationsModule,
     MatCardModule,
     MatSidenavModule,
@@ -117,18 +160,22 @@ import { EventDetailsComponent } from './manager/events/event-details/event-deta
     MatBottomSheetModule,
     MatTabsModule,
     MatTooltipModule,
-    Ng5SliderModule
+    MatExpansionModule,
+    MatAutocompleteModule,
+    Ng5SliderModule,
+    FroalaViewModule.forRoot(),
+    FroalaEditorModule.forRoot()
   ],
   providers: [
     EraService,
     MonthService,
-    ReferenceService,
+    SourceService,
     AuthorService,
     PersonService,
     EventService,
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: ReferenceInterceptor,
+      useClass: SourceInterceptor,
       multi: true
     },
     {
@@ -149,6 +196,11 @@ import { EventDetailsComponent } from './manager/events/event-details/event-deta
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TimelineInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: EssayInterceptor,
       multi: true
     }
   ],

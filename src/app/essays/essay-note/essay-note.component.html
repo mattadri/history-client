@@ -1,0 +1,15 @@
+<p>{{note.note}}</p>
+
+<div *ngIf="note.source">
+  <div>{{note.source.title}}</div>
+  <div *ngIf="note.referenceChapter">Chapter: {{note.referenceChapter}}</div>
+  <div *ngIf="note.referencePage">Page: {{note.referencePage}}</div>
+</div>
+
+<div>
+  <button mat-flat-button class="material-icons" (click)="deleteEssayNote()">delete</button>
+</div>
+
+<br>
+<hr>
+<br>

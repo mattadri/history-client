@@ -1,0 +1,23 @@
+<div class="app-drawer-bottom">
+  <div class="app-drawer-bottom-body">
+    <div class="app-drawer-bottom-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">Person</div>
+        <div class="app-drawer-heading">{{data.person.person.firstName}}
+          <span *ngIf="data.person.person.middleName">{{data.person.person.middleName}} </span>
+          <span *ngIf="data.person.person.lastName">{{data.person.person.lastName}}</span>
+        </div>
+        <div class="app-drawer-year">
+          <span>{{data.person.person.formattedBirth}}</span>
+          <span> - {{data.person.person.formattedDeath}} ({{data.person.person.age}} years)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="app-drawer-content">
+      <div *ngIf="data.person.person.description" class="app-drawer-description">
+        {{data.person.person.description}}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,247 @@
+<mat-sidenav-container>
+  <div class="app-body-content">
+
+    <div class="app-card-content">
+      <div class="app-content-toolbar">
+        <h1 *ngIf="essay.title">{{essay.title}}</h1>
+        <button mat-flat-button class="material-icons" (click)="toggleContentPanel(essayManager)">{{essayScreenSize}}</button>
+      </div>
+
+
+      <!-- ABSTRACT VIEW-->
+      <div class="app-essay-section" *ngIf="!isAbstractEditMode">
+        <h3><span *ngIf="essay.abstract" [innerHtml]="essay.abstract | safeHtml"></span></h3>
+        <button mat-flat-button class="material-icons" *ngIf="!isAbstractEditMode" (click)="setAbstractEditMode()">edit</button>
+      </div>
+
+      <!-- ABSTRACT EDIT-->
+      <div *ngIf="isAbstractEditMode" class="app-essay-edit-mode">
+        <div class="app-content-toolbar">
+          <h2>Abstract</h2>
+          <button mat-flat-button class="material-icons" *ngIf="isAbstractEditMode" (click)="saveAbstractContent()">save</button>
+          <button mat-flat-button class="material-icons" *ngIf="isAbstractEditMode" (click)="setAbstractViewMode()">close</button>
+        </div>
+
+        <!--<div [froalaEditor] [(froalaModel)]="essay.abstract" *ngIf="isAbstractEditMode"></div>-->
+
+        <div [(froalaModel)]="essay.abstract"
+             [froalaEditor]></div>
+      </div>
+
+
+      <!-- ESSAY CONTENT VIEW-->
+      <div class="app-essay-section essay-content" *ngIf="!isEssayEditMode" >
+        <div *ngIf="essayContent" [innerHtml]="essayContent | safeHtml"></div>
+        <button mat-flat-button class="material-icons" *ngIf="!isEssayEditMode" (click)="setEssayEditMode()">edit</button>
+      </div>
+
+
+      <!-- ESSAY CONTENT EDIT-->
+      <div *ngIf="isEssayEditMode" class="app-essay-edit-mode">
+        <div class="app-content-toolbar">
+          <h2>Content</h2>
+          <button mat-flat-button class="material-icons" *ngIf="isEssayEditMode" (click)="saveEssayContent()">save</button>
+          <button mat-flat-button class="material-icons" *ngIf="isEssayEditMode" (click)="setEssayViewMode()">close</button>
+        </div>
+
+        <div id="essay-editor"
+             (froalaInit)="initializeEssayEditor($event)"
+             [(froalaModel)]="essay.essay"
+             [froalaEditor]></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ESSAY RESEARCH -->
+  <mat-sidenav #essayManager mode="side" position="end" class="app-drawer">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <button mat-icon-button class="material-icons" (click)="setAddEssayNoteMode().then()">add</button>
+
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Notes
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div *ngIf="isAddEssayNoteMode">
+          <form (ngSubmit)="addNote()" #noteForm="ngForm">
+            <mat-form-field style="width: 100%">
+              <textarea
+                matInput
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="10"
+                name="essay_note"
+                id="essay_note"
+                [(ngModel)]="essayNote.note"></textarea>
+            </mat-form-field>
+
+            <section class="app-section inline">
+              <label>Source</label>
+              <mat-form-field class="app-field-reference">
+                <input
+                  type="text"
+                  placeholder="Select Source"
+                  aria-label="Source"
+                  matInput
+                  [formControl]="sourcesAutocompleteControl"
+                  [matAutocomplete]="auto">
+
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
+                  <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+                    {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="Chapter"
+                  name="reference_chapter"
+                  [(ngModel)]="essayNote.referenceChapter" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Page"
+                  name="reference_page"
+                  [(ngModel)]="essayNote.referencePage" />
+              </mat-form-field>
+            </section>
+
+            <button mat-flat-button color="primary">Save</button>
+            <button mat-flat-button color="secondary" (click)="cancelAddEssayNoteMode()">Cancel</button>
+          </form>
+        </div>
+
+        <app-essay-note *ngFor="let essayNote of essay.essayNotes" [note]="essayNote" [essay]="essay"></app-essay-note>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel expanded>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Research
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <mat-tab-group>
+          <mat-tab label="References">
+            <button mat-icon-button class="material-icons" (click)="setAddEssayReferenceMode()">add</button>
+
+            <div *ngIf="isAddEssayReferenceMode">
+              <form (ngSubmit)="addReference()" #referenceForm="ngForm">
+                <section class="app-section inline">
+                  <label>Source</label>
+                  <mat-form-field class="app-field-reference">
+                    <input
+                      type="text"
+                      placeholder="Select Source"
+                      aria-label="Source"
+                      matInput
+                      [formControl]="sourcesAutocompleteControl"
+                      [matAutocomplete]="autoReference">
+
+                    <mat-autocomplete #autoReference="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
+                      <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+                        {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <input
+                      matInput
+                      type="text"
+                      placeholder="Chapter"
+                      name="reference_chapter"
+                      [(ngModel)]="essayReference.sourceChapter" />
+                  </mat-form-field>
+
+                  <mat-form-field>
+                    <input
+                      matInput
+                      type="number"
+                      placeholder="Page"
+                      name="reference_page"
+                      [(ngModel)]="essayReference.sourcePage" />
+                  </mat-form-field>
+                </section>
+
+                <button type="submit" mat-flat-button color="primary">Save</button>
+                <button type="button" mat-flat-button color="secondary" (click)="cancelAddEssayReferenceMode()">Cancel</button>
+              </form>
+            </div>
+
+            <div class="grid-list">
+              <app-essay-reference
+                *ngFor="let essayReference of essay.essayReferences"
+                [essayReference]="essayReference"
+                (referenceSelected)="selectEssayReference(essayReference)"
+                (delselectAllEssayReferences)="deselectAllEssayReferences()">
+              </app-essay-reference>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="Events">
+            <button mat-icon-button class="material-icons" (click)="setAddEssayEventMode()">add</button>
+
+            <div *ngIf="isAddEssayEventMode">
+              <form (ngSubmit)="addEvent()" #referenceForm="ngForm">
+                <section class="app-section inline">
+                  <label>Event</label>
+                  <mat-form-field class="app-field-reference">
+                    <input
+                      type="text"
+                      placeholder="Select Event"
+                      aria-label="Event"
+                      matInput
+                      [formControl]="eventsAutocompleteControl"
+                      [matAutocomplete]="autoEvent">
+
+                    <mat-autocomplete #autoEvent="matAutocomplete" [displayWith]="displayEvent" (optionSelected)="saveEvent()">
+                      <mat-option *ngFor="let event of eventsFilteredOptions | async" [value]="event">
+                        {{event.label}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </section>
+
+                <button type="submit" mat-flat-button color="primary">Save</button>
+                <button type="button" mat-flat-button color="secondary" (click)="cancelAddEssayEventMode()">Cancel</button>
+              </form>
+            </div>
+
+            <div class="grid-list">
+              <app-essay-event
+                *ngFor="let essayEvent of essay.essayEvents"
+                [essayEvent]="essayEvent"
+                (eventSelected)="selectEssayEvent(essayEvent)"
+                (delselectAllEssayEvents)="deselectAllEssayEvents()">>
+
+              </app-essay-event>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="People">
+            <div class="grid-list">
+              <app-essay-person *ngFor="let essayPerson of essay.essayPeople" [essayPerson]="essayPerson"></app-essay-person>
+            </div>
+          </mat-tab>
+
+          <mat-tab label="Timelines">
+            <div class="grid-list">
+              <app-essay-timeline *ngFor="let essayTimeline of essay.essayTimelines" [essayTimeline]="essayTimeline"></app-essay-timeline>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-sidenav>
+</mat-sidenav-container>

@@ -96,7 +96,7 @@ export class TimelinesComponent implements OnInit {
 
     this.initializeNewTimeline();
 
-    this.openCreateDialog(this.timeline, sideNav, true);
+    this.openCreateDialog(this.timeline, sideNav, true, false);
   }
 
   createTimeline(sideNav) {

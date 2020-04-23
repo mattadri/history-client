@@ -4,7 +4,6 @@ export class EventPost {
   data: object;
 
   mapToPost(event: Event, isPatch: boolean) {
-    console.log(event);
     this.data = {
       type: 'event',
       attributes: {
@@ -63,11 +62,11 @@ export class EventPost {
       };
     }
 
-    if (event.reference) {
+    if (event.source) {
       this.data.attributes.reference_rel = {
         data: {
           type: 'reference',
-          id: event.reference.id
+          id: event.source.id
         }
       };
     }

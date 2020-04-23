@@ -1,5 +1,5 @@
 <!-- shows if on the authors page -->
-<mat-card (click)="onLoadDetails()" *ngIf="!isReferenceAttachment">
+<mat-card (click)="onLoadDetails()" *ngIf="!isSourceAttachment">
   <mat-card-title>
     {{author.firstName}}
     <span *ngIf="author.middleName"> {{author.middleName}}</span>
@@ -8,8 +8,8 @@
 </mat-card>
 
 <!-- shows if displayed on the reference -->
-<div class="app-section list-item" *ngIf="isReferenceAttachment">
+<div class="app-section list-item" *ngIf="isSourceAttachment">
   <div class="app-label">{{author.firstName}}<span *ngIf="author.lastName"> {{author.lastName}}</span></div>
-  <button mat-icon-button class="material-icons" (click)="doRemoveAuthorFromReference()">delete</button>
+  <button mat-icon-button class="material-icons" (click)="doRemoveAuthorFromSource()">delete</button>
 </div>
 

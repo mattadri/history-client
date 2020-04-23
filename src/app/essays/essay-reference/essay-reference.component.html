@@ -1,0 +1,17 @@
+<div id="reference-container" (click)="onSelectReference()">
+  <div>
+    <span>Title: {{essayReference.source.title}}</span>
+  </div>
+
+  <div *ngIf="essayReference.source.subTitle">
+    <span>Subtitle: {{essayReference.source.subTitle}}</span>
+  </div>
+
+  <div>
+    <span>Chapter: {{essayReference.sourceChapter}}</span>
+  </div>
+
+  <div>
+    <span>Page: {{essayReference.sourcePage}}</span>
+  </div>
+</div>

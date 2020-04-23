@@ -46,6 +46,11 @@ export class PersonInterceptor implements HttpInterceptor {
           this.body.links = event.body.links;
 
           event.body = this.body;
+        } else if ((req.headers.headers.get('type')[0] === 'person')) {
+          this.person = new Person();
+          this.person.mapPerson(event.body.data);
+
+          event.body = this.person;
         }
       }
     }

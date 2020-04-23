@@ -30,6 +30,7 @@ export class TimelineComponent implements OnInit {
 
   public timelineStart: number;
   public timelineEnd: number;
+  public timelineSpanInYears: number;
   public timeframe: number[];
   public pointerStart: number;
   public pointerEnd: number;
@@ -190,6 +191,8 @@ export class TimelineComponent implements OnInit {
     const earliestEvent = years[0];
     const oldestEvent = years[years.length - 1];
     const distance = oldestEvent - earliestEvent;
+
+    this.timelineSpanInYears = distance;
 
     this.timelineStart = Math.floor(this.padTimelineDate(earliestEvent, distance, false));
     this.timelineEnd = Math.ceil(this.padTimelineDate(oldestEvent, distance, true));
@@ -534,8 +537,6 @@ export class TimelineComponent implements OnInit {
           return el;
         }
       });
-
-      console.log(this.relatedEvents);
     });
   }
 

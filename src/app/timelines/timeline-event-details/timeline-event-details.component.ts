@@ -20,11 +20,14 @@ export interface DialogData {
   templateUrl: './timeline-event-details.component.html',
   styleUrls: ['./timeline-event-details.component.scss']
 })
+
 export class TimelineEventDetailsComponent {
   public isShadow: boolean;
   public selectedCategoryId: number;
   public selectedCategory: TimelineCategory;
   public categoryEventId: number;
+
+  public isEditMode: boolean;
 
   public isInCategory: boolean;
 
@@ -39,6 +42,7 @@ export class TimelineEventDetailsComponent {
     this.categoryEventId = 0;
     this.selectedCategory = null;
     this.isInCategory = false;
+    this.isEditMode = false;
 
     // check if this event is in a category or not
     for (const category of this.data.timeline.categories) {

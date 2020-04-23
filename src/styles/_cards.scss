@@ -10,6 +10,10 @@
   grid-gap: 30px 2%;
   margin: 35px 0;
 
+  &.cards-large {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .app-card {
     background-color: $color-lightest;
     border: $border-light;
@@ -17,6 +21,19 @@
   }
 }
 
+// Styles a card used as main content in a page
+.app-card-content {
+  background-color: $color-lightest;
+  border: $border-light;
+  box-shadow: $shadow-light;
+  padding: 3rem;
+  max-width: 800px;
+  margin: 0 auto;
+
+  .app-content-toolbar {
+    margin-bottom: 1rem;
+  }
+}
 
 
 // Overwrites to the material design card component styles.

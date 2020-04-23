@@ -70,11 +70,11 @@ export class PersonPost {
       };
     }
 
-    if ( person.reference && person.reference.id) {
+    if ( person.source && person.source.id) {
       this.data.attributes.reference_rel = {
         data: {
           type: 'reference',
-          id: person.reference.id
+          id: person.source.id
         }
       };
     }

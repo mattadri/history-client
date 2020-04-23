@@ -4,14 +4,13 @@ import { Event } from '../../models/event';
 import { EventNote } from '../../models/event-note';
 import { Era } from '../../models/era';
 import { Month } from '../../models/month';
-import { Reference } from '../../models/reference';
+import { Source } from '../../models/reference';
 import { Timeline } from '../../models/timeline';
-import { TimelineEvent } from '../../models/timeline-event';
 
 import { EventService } from '../../services/event.service';
 import { MonthService } from '../../services/month.service';
 import { EraService } from '../../services/era.service';
-import { ReferenceService } from '../../services/reference.service';
+import { SourceService } from '../../services/source.service';
 import { TimelineService } from '../../services/timeline.service';
 
 @Component({
@@ -26,7 +25,6 @@ export class EventsComponent implements OnInit {
   public eventNote: EventNote;
   public timelines: Timeline[];
   public timeline: Timeline;
-  public timelineEvent: TimelineEvent;
 
   public isCreateEventMode: boolean;
   public isEditEventMode: boolean;
@@ -35,7 +33,7 @@ export class EventsComponent implements OnInit {
 
   public eras: Era[] = [];
   public months: Month[] = [];
-  public references: Reference[] = [];
+  public sources: Source[] = [];
 
   public totalResults: number;
   public nextPage: string;
@@ -49,13 +47,13 @@ export class EventsComponent implements OnInit {
   public startEraLabel: string;
   public endEraLabel: string;
 
-  public referenceId: number;
+  public sourceId: number;
   public timelineId: number;
 
   public filterQuery: string;
 
   constructor(private eventService: EventService,
-              private referenceService: ReferenceService,
+              private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
               private timelineService: TimelineService) {
@@ -83,12 +81,12 @@ export class EventsComponent implements OnInit {
       }
     });
 
-    this.referenceService.getApiReferences('/references?sort=title').subscribe(references => {
-      for (const reference of references.references) {
-        this.referenceService.setReference(reference);
+    this.sourceService.getApiSources('/sources?sort=title').subscribe(sources => {
+      for (const source of sources.sources) {
+        this.sourceService.setSource(source);
       }
 
-      this.references = this.referenceService.getReferences();
+      this.sources = this.sourceService.getSources();
     });
 
     this.timelineService.getApiTimelines('/timelines?sort=modified&fields[timeline]=label').subscribe(response => {
@@ -135,13 +133,6 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  activateCreateMode(contentPanel) {
-    this.isCreateEventMode = true;
-    this.initializeNewEvent();
-
-    this.openEventDetails(this.event, contentPanel, true);
-  }
-
   createEvent(contentPanel) {
     // set the era objects
     for (const era of this.eras) {
@@ -168,9 +159,9 @@ export class EventsComponent implements OnInit {
       }
     }
 
-    for (const reference of this.references) {
-      if (this.referenceId === reference.id) {
-        this.event.reference = reference;
+    for (const source of this.sources) {
+      if (this.sourceId === source.id) {
+        this.event.source = source;
       }
     }
 
@@ -186,141 +177,9 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  createTimelineEvent() {
-    for (const timeline of this.timelines) {
-      if (this.timelineId === timeline.id) {
-        this.timeline = timeline;
-      }
-    }
-
-    this.timelineEvent = new TimelineEvent();
-    this.timelineEvent.event = this.event;
-    this.timelineEvent.timeline = this.timeline;
-
-    // call service
-    this.timelineService.createEventApiTimeline(this.timelineEvent).subscribe(response => {
-      if (!this.event.timelines) {
-        this.event.timelines = [];
-      }
-
-      this.timelineEvent.id = response.data.id;
-      this.event.timelines.push(this.timeline);
-
-      this.initializeNewTimeline();
-
-      this.isAddTimelineMode = false;
-    });
-  }
-
-  createNote() {
-    this.eventService.createApiEventNote(this.eventNote, this.event).subscribe(result => {
-      if (!this.event.notes) {
-        this.event.notes = [];
-      }
-
-      this.eventNote.id = result.data.id;
-      this.event.notes.push(this.eventNote);
-
-      this.initializeNewNote();
-
-      this.isAddNoteMode = false;
-    });
-  }
-
-  editEvent() {
-    if (!this.event.startDay || !this.event.startDay.length) {
-      this.event.startDay = 'null';
-    }
-
-    if (!this.event.endDay || !this.event.endDay.length) {
-      this.event.endDay = 'null';
-    }
-
-    if (this.startMonthLabel === null) {
-      this.event.startMonth = new Month();
-      this.event.startMonth.label = '';
-      this.event.startMonth.id = 'null';
-    }
-
-    if (this.startMonthLabel) {
-      for (const month of this.months) {
-        if (this.startMonthLabel === month.label) {
-          this.event.startMonth = month;
-        }
-      }
-    }
-
-    if (this.endMonthLabel === null) {
-      this.event.endMonth = new Month();
-      this.event.endMonth.label = '';
-      this.event.endMonth.id = 'null';
-    }
-
-    if (this.endMonthLabel) {
-      for (const month of this.months) {
-        if (this.endMonthLabel === month.label) {
-          this.event.endMonth = month;
-        }
-      }
-    }
-
-    for (const era of this.eras) {
-      if (this.startEraLabel === era.label) {
-        this.event.startEra = era;
-      }
-    }
-
-    for (const era of this.eras) {
-      if (this.endEraLabel === era.label) {
-        this.event.endEra = era;
-      }
-    }
-
-    if (this.referenceId) {
-      for (const reference of this.references) {
-        if (this.referenceId === reference.id) {
-          this.event.reference = reference;
-        }
-      }
-    }
-
-    return this.eventService.patchApiEvent(this.event).subscribe(() => {
-      this.isEditEventMode = false;
-
-      if (this.event.startDay === 'null') {
-        this.event.startDay = '';
-      }
-
-      if (this.event.endDay === 'null') {
-        this.event.endDay = '';
-      }
-    });
-  }
-
-  removeEvent(sideNav) {
-    this.eventService.removeApiEvent(this.event).subscribe(() => {
-      this.eventService.removeEvent(this.event);
-
-      this.initializeNewEvent();
-
-      EventsComponent.closeEventDetails(sideNav);
-    });
-  }
-
-  removeNote(note) {
-    this.eventService.removeApiNote(note).subscribe(() => {
-      this.eventService.removeEventNote(this.event, note);
-    });
-  }
-
-  removeTimeline(timeline) {
-    this.timelineService.removeEventApiTimeline(timeline.eventId).subscribe(() => {
-      for (let i = 0; i < this.event.timelines.length; i++) {
-        if (this.event.timelines[i].id === timeline.id) {
-          this.event.timelines.splice(i, 1);
-        }
-      }
-    });
+  cleanupRemovedEvent(contentPanel) {
+    this.initializeNewEvent();
+    this.closeEventDetails(contentPanel);
   }
 
   openEventDetails(event, sideNav, isCreateMode, isEditMode) {
@@ -346,8 +205,8 @@ export class EventsComponent implements OnInit {
       this.endMonthLabel = this.event.endMonth.label;
     }
 
-    if (this.event.reference) {
-      this.referenceId = this.event.reference.id;
+    if (this.event.source) {
+      this.sourceId = this.event.source.id;
     }
 
     this.startEraLabel = this.event.startEra.label;
@@ -364,19 +223,23 @@ export class EventsComponent implements OnInit {
     }
   }
 
+  activateCreateMode(contentPanel) {
+    this.isCreateEventMode = true;
+    this.initializeNewEvent();
+
+    this.openEventDetails(this.event, contentPanel, true);
+  }
+
   closeEventDetails(contentPanel) {
     contentPanel.close();
   }
 
-  cancelEditCreateModes(contentPanel) {
-    if (this.isCreateEventMode) {
-      EventsComponent.closeEventDetails(contentPanel);
-    }
-
-    this.isCreateEventMode = false;
+  cancelEditMode() {
     this.isEditEventMode = false;
-    this.isAddNoteMode = false;
-    this.isAddTimelineMode = false;
+  }
+
+  cancelCreateMode() {
+    this.isCreateEventMode = false;
   }
 
   turnPage(event) {
@@ -385,25 +248,6 @@ export class EventsComponent implements OnInit {
     } else if (event.pageIndex > event.previousPageIndex) {
       this.getEvents(this.nextPage);
     }
-  }
-
-  async activateEventNoteForm() {
-    this.isAddNoteMode = true;
-    this.initializeNewNote();
-
-    await this.sleep(500);
-
-    document.getElementById('event_note').focus();
-  }
-
-  cancelEventNoteForm() {
-    this.isAddNoteMode = false;
-    this.initializeNewNote();
-  }
-
-  cancelEventTimelineForm() {
-    this.isAddTimelineMode = false;
-    this.initializeNewTimeline();
   }
 
   filterResults() {
@@ -418,9 +262,5 @@ export class EventsComponent implements OnInit {
     }
 
     this.getEvents('/events?sort=-created', stringFilter, dateFilter);
-  }
-
-  private sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
   }
 }

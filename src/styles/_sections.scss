@@ -14,7 +14,8 @@
 
 .app-section {
   padding: 20px 0;
-  border-bottom: $border-light;
+  line-height: 1.2rem;
+  //border-bottom: $border-light;
 
   &.horizontal {
     display: flex;
@@ -86,6 +87,8 @@
     margin: 10px 0;
     border: $border-light;
     border-radius: $border-radius-default;
+    font-size: $font-size-smaller;
+    line-height: 1.2rem;
 
     button {
       font-size: 20px;

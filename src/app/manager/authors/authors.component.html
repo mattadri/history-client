@@ -1,8 +1,9 @@
 <mat-sidenav-container>
   <div class="app-body-content">
-    <h1>Authors</h1>
-
-    <button class="material-icons" (click)="activateCreateMode(authorDetails)">add</button>
+    <div class="app-content-toolbar">
+      <h1>Authors</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="activateCreateMode(authorDetails)">add</button>
+    </div>
 
     <div class="app-cards-container">
       <app-author-card

@@ -1,0 +1,18 @@
+<div class="app-drawer-bottom">
+  <div class="app-drawer-bottom-body">
+    <div class="app-drawer-bottom-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">Reference</div>
+        <div class="app-drawer-heading">{{data.ref.source.title}}</div>
+        <div *ngIf="data.ref.source.subTitle" class="app-drawer-year">{{data.ref.source.subTitle}}</div>
+
+        <div>
+          <p>
+            <span *ngIf="data.ref.sourceChapter">{{data.ref.sourceChapter}}</span>
+            <span *ngIf="data.ref.sourcePage">, page {{data.ref.sourcePage}}</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

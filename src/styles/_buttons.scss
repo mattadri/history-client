@@ -1,0 +1,14 @@
+// Buttons
+// -------
+
+@import '_variables.scss';
+
+.mat-fab,
+.mat-flat-button,
+.mat-mini-fab,
+.mat-raised-button,
+.mat-icon-button,
+.mat-button-focus-overlay {
+  color: $color-brand;
+  background-color: transparent;
+}
