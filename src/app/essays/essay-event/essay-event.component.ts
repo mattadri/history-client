@@ -1,6 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2} from '@angular/core';
 import {EssayEvent} from '../../models/essay-event';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-essay-event',
@@ -11,7 +10,7 @@ export class EssayEventComponent implements OnInit {
   @Input() public essayEvent: EssayEvent;
 
   @Output() private eventSelected: EventEmitter<EssayEvent>;
-  @Output() private delselectAllEssayEvents: EventEmitter<>;
+  @Output() private delselectAllEssayEvents: EventEmitter<any>;
 
   public selectedEvent: EssayEvent;
   public eventIsSelected: boolean;
@@ -19,7 +18,7 @@ export class EssayEventComponent implements OnInit {
   constructor(private elementRef: ElementRef,
               private renderer: Renderer2) {
     this.eventSelected = new EventEmitter<EssayEvent>();
-    this.delselectAllEssayEvents = new EventEmitter<>();
+    this.delselectAllEssayEvents = new EventEmitter<any>();
     this.eventIsSelected = false;
   }
 
@@ -32,7 +31,7 @@ export class EssayEventComponent implements OnInit {
     this.renderer.addClass(el, 'essay-event-selected');
   }
 
-  async onSelectEvent(): Observable<EssayEvent> {
+  async onSelectEvent() {
     this.eventIsSelected = !this.eventIsSelected;
     this.delselectAllEssayEvents.emit();
 

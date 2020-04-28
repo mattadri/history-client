@@ -2,7 +2,7 @@ import {Essay} from '../essay';
 import {EssayEvent} from '../essay-event';
 
 export class EssayEventPost {
-  data: object;
+  data;
 
   mapToPost(essay: Essay, essayEvent: EssayEvent) {
     this.data = {

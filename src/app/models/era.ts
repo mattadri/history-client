@@ -1,5 +1,5 @@
 export class Era {
-  id: string;
+  id: number;
   label: string;
 
   mapEra(eraData) {

@@ -7,7 +7,7 @@
 
     <div class="app-cards-container">
       <app-person-card
-        *ngFor="let person of persons" [person]="person" (loadPerson)="openPersonDetails($event, personDetails)"
+        *ngFor="let person of persons" [person]="person" (loadPerson)="openPersonDetails($event, personDetails, false, false)"
         class="app-card">
       </app-person-card>
     </div>

@@ -9,6 +9,7 @@ import { TimelineService } from '../services/timeline.service';
   templateUrl: './timelines.component.html',
   styleUrls: ['./timelines.component.scss']
 })
+
 export class TimelinesComponent implements OnInit {
   public timelines: Timeline[];
   public timeline: Timeline;
@@ -29,6 +30,10 @@ export class TimelinesComponent implements OnInit {
     this.isEditTimelineMode = false;
 
     this.getTimelines('/timelines?order_by=ascending&page%5Bnumber%5D=1&fields[timeline]=label');
+  }
+
+  static closeTimelineDetails(sideNav) {
+    sideNav.close();
   }
 
   ngOnInit() {
@@ -70,7 +75,7 @@ export class TimelinesComponent implements OnInit {
     this.isEditTimelineMode = isEditMode;
 
     if (sideNav.opened) {
-      sideNav.close().then(done => {
+      sideNav.close().then(() => {
         sideNav.open();
       });
     } else {
@@ -78,13 +83,9 @@ export class TimelinesComponent implements OnInit {
     }
   }
 
-  closeTimelineDetails(sideNav) {
-    sideNav.close();
-  }
-
    cancelEditCreateModes(sideNav) {
     if (this.isCreateTimelineMode) {
-      this.closeTimelineDetails(sideNav);
+      TimelinesComponent.closeTimelineDetails(sideNav);
     }
 
     this.isCreateTimelineMode = false;
@@ -107,7 +108,7 @@ export class TimelinesComponent implements OnInit {
 
       this.isCreateTimelineMode = false;
 
-      this.closeTimelineDetails(sideNav);
+      TimelinesComponent.closeTimelineDetails(sideNav);
 
       this.initializeNewTimeline();
     });

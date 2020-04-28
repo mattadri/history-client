@@ -3,6 +3,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {TimelineCategory} from '../../models/timeline-category';
 import {TimelineService} from '../../services/timeline.service';
 import {Timeline} from '../../models/timeline';
+import {Category} from '../../models/category';
 
 @Component({
   selector: 'app-timeline-categories',
@@ -11,7 +12,7 @@ import {Timeline} from '../../models/timeline';
 })
 export class TimelineCategoriesComponent implements OnInit {
   @Input() public timeline: Timeline;
-  @Input() public categoryEvents: Array;
+  @Input() public categoryEvents: Array<Category>;
 
   public isCreateMode: boolean;
 
@@ -23,16 +24,11 @@ export class TimelineCategoriesComponent implements OnInit {
     this.isCreateMode = false;
 
     this.initializeNewCategory();
-
-    console.log('Event Categories: ', this.categoryEvents);
   }
 
   initializeNewCategory() {
     this.newCategory = new TimelineCategory();
-    this.newCategory.id = null;
-    this.newCategory.label = '';
-    this.newCategory.events = [];
-    this.newCategory.people = [];
+    this.newCategory.initializeNewTimelineCategory();
   }
 
   activateCreateMode() {
@@ -55,7 +51,7 @@ export class TimelineCategoriesComponent implements OnInit {
   }
 
   removeCategory(category) {
-    this.timelineService.removeCategoryApiTimeline(category.id).subscribe(response => {
+    this.timelineService.removeCategoryApiTimeline(category.id).subscribe(() => {
       for (let i = 0; i < this.timeline.categories.length; i++) {
         if (this.timeline.categories[i].id === category.id) {
           this.timeline.categories.splice(i, 1);

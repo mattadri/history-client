@@ -1,7 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2} from '@angular/core';
-import {Person} from '../../models/person';
 import {EssayPerson} from '../../models/essay-person';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-essay-person',
@@ -12,7 +10,7 @@ export class EssayPersonComponent implements OnInit {
   @Input() public essayPerson: EssayPerson;
 
   @Output() private personSelected: EventEmitter<EssayPerson>;
-  @Output() private delselectAllEssayPersons: EventEmitter<>;
+  @Output() private delselectAllEssayPersons: EventEmitter<any>;
 
   public selectedPerson: EssayPerson;
   public personIsSelected: boolean;
@@ -21,7 +19,7 @@ export class EssayPersonComponent implements OnInit {
               private renderer: Renderer2) {
 
     this.personSelected = new EventEmitter<EssayPerson>();
-    this.delselectAllEssayPersons = new EventEmitter<>();
+    this.delselectAllEssayPersons = new EventEmitter<any>();
     this.personIsSelected = false;
   }
 
@@ -34,7 +32,7 @@ export class EssayPersonComponent implements OnInit {
     this.renderer.addClass(el, 'essay-person-selected');
   }
 
-  async onSelectPerson(): Observable<EssayPerson> {
+  async onSelectPerson() {
     this.personIsSelected = !this.personIsSelected;
     this.delselectAllEssayPersons.emit();
 

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { Author } from '../models/author';
 import { AuthorPost } from '../models/posts/author-post';
+import {AuthorResponse} from '../models/responses/author-response';
 
 @Injectable({
   providedIn: 'root'
@@ -37,14 +38,14 @@ export class AuthorService {
     }
   }
 
-  getApiAuthors(path): Observable<Author[]> {
+  getApiAuthors(path): Observable<AuthorResponse> {
     this.authors = [];
 
     if (!path) {
       path = '/authors';
     }
 
-    return this.http.get('/api' + path, {
+    return this.http.get<AuthorResponse>('/api' + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'authors')
@@ -57,16 +58,16 @@ export class AuthorService {
     });
   }
 
-  createApiAuthor(author: Author) {
+  createApiAuthor(author: Author): Observable<any> {
     this.authorPost = new AuthorPost();
-    this.authorPost.mapToPost(author);
+    this.authorPost.mapToPost(author, false);
 
     return this.http.post('/api/authors', this.authorPost, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json').set('Content-Type', 'application/vnd.api+json')
     });
   }
 
-  patchApiAuthor(author: Author): Observable<Author> {
+  patchApiAuthor(author: Author): Observable<any> {
     this.authorPost = new AuthorPost();
     this.authorPost.mapToPost(author, true);
 

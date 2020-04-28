@@ -30,12 +30,15 @@ export class AuthorsComponent implements OnInit {
     this.getAuthors('/authors?sort=last_name');
   }
 
+  static closeAuthorDetails(sideNav) {
+    sideNav.close();
+  }
+
+  ngOnInit() { }
+
   initializeNewAuthor() {
     this.author = new Author();
     this.author.initializeAuthor();
-  }
-
-  ngOnInit() {
   }
 
   getAuthors(path) {
@@ -60,25 +63,25 @@ export class AuthorsComponent implements OnInit {
 
       this.isCreateAuthorMode = false;
 
-      this.closeAuthorDetails(sideNav);
+      AuthorsComponent.closeAuthorDetails(sideNav);
 
       this.initializeNewAuthor();
     });
   }
 
   editAuthor() {
-    return this.authorService.patchApiAuthor(this.author).subscribe(response => {
+    return this.authorService.patchApiAuthor(this.author).subscribe(() => {
       this.isEditAuthorMode = false;
     });
   }
 
   removeAuthor(sideNav) {
-    this.authorService.removeApiAuthor(this.author).subscribe(response => {
+    this.authorService.removeApiAuthor(this.author).subscribe(() => {
       this.authorService.removeAuthor(this.author);
 
       this.initializeNewAuthor();
 
-      this.closeAuthorDetails(sideNav);
+      AuthorsComponent.closeAuthorDetails(sideNav);
     });
   }
 
@@ -97,7 +100,7 @@ export class AuthorsComponent implements OnInit {
     this.isCreateAuthorMode = isCreateMode;
 
     if (sideNav.opened) {
-      sideNav.close().then(done => {
+      sideNav.close().then(() => {
         sideNav.open();
       });
     } else {
@@ -105,13 +108,9 @@ export class AuthorsComponent implements OnInit {
     }
   }
 
-  closeAuthorDetails(sideNav) {
-    sideNav.close();
-  }
-
   cancelEditCreateModes(sideNav) {
     if (this.isCreateAuthorMode) {
-      this.closeAuthorDetails(sideNav);
+      AuthorsComponent.closeAuthorDetails(sideNav);
     }
 
     this.isCreateAuthorMode = false;
@@ -122,7 +121,7 @@ export class AuthorsComponent implements OnInit {
     this.isCreateAuthorMode = true;
     this.initializeNewAuthor();
 
-    this.openAuthorDetails(this.author, sideNav, true);
+    this.openAuthorDetails(this.author, sideNav, true, false);
   }
 
   turnPage(author) {

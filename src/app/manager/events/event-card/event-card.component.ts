@@ -17,8 +17,8 @@ export class EventCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.event.formatYears(true, this.event.startMonth, this.event.startYear, this.event.startEra);
-    this.event.formatYears(false, this.event.endMonth, this.event.endYear, this.event.endEra);
+    this.event.formatYears();
+    this.event.formatYears();
   }
 
   onLoadDetails() {

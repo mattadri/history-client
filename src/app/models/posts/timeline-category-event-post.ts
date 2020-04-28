@@ -2,7 +2,7 @@ import {TimelineCategory} from '../timeline-category';
 import {Event} from '../event';
 
 export class TimelineCategoryEventPost {
-  data: object;
+  data;
 
   mapToPost(timelineCategory: TimelineCategory, event: Event) {
     this.data = {

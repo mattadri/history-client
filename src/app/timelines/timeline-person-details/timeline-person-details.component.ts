@@ -21,11 +21,9 @@ export class TimelinePersonDetailsComponent implements OnInit {
   constructor(public dialogRef: MatBottomSheetRef<TimelinePersonDetailsComponent>,
               @Inject(MAT_BOTTOM_SHEET_DATA) public data: DialogData) { }
 
-  ngOnInit() {
-    console.log(this.data.person);
-  }
+  ngOnInit() { }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.dismiss();
   }
 }

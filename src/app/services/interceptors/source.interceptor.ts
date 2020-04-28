@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpEvent, HttpInterceptor, HttpResponse } from '@angular/common/http';
-import { HttpHandler, HttpRequest, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpEvent, HttpInterceptor } from '@angular/common/http';
+import { HttpHandler, HttpRequest } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 import {tap} from 'rxjs/operators';
@@ -28,8 +28,8 @@ export class SourceInterceptor implements HttpInterceptor {
   }
   handleResponse(req: HttpRequest<any>, event) {
     if (event.body) {
-      if (req.headers.headers.get('type')) {
-        if (req.headers.headers.get('type')[0] === 'sources') {
+      if (req.headers.get('type')) {
+        if (req.headers.get('type') === 'sources') {
           this.sources = [];
 
           for (const data of event.body.data) {
@@ -44,7 +44,7 @@ export class SourceInterceptor implements HttpInterceptor {
           this.body.links = event.body.links;
 
           event.body = this.body;
-        } else if (req.headers.headers.get('type')[0] === 'source') {
+        } else if (req.headers.get('type') === 'source') {
           this.source = new Source();
           this.source.mapSource(event.body.data);
 

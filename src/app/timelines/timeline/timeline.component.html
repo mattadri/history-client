@@ -26,8 +26,13 @@
     </button>
   </div>
 
-  <div id="timeline-container" class="timeline-container" (click)="showCursorLine($event, tooltip)">
-    <app-category *ngFor="let category of categoryEvents" [category]="category" [persons]="persons"></app-category>
+  <div id="timeline-container" class="timeline-container" (dblclick)="showCursorLine($event)">
+    <app-category
+      *ngFor="let category of categoryEvents"
+      [category]="category"
+      [persons]="persons"
+      [timeline]="timeline"
+      [categoryEvents]="categoryEvents"></app-category>
 
     <div class="timeline-timeframe">
       <div class="segment" *ngFor="let segment of timeframe" [ngStyle]="{left: segment.leftPercentage}">
@@ -40,7 +45,8 @@
         #tooltip="matTooltip"
         matTooltip="{{cursorLineDate}}"
         [matTooltipPosition]="cursorLineDatePosition"
-        (mouseout)="showCursorTooltip(tooltip)"></div>
+        (mouseout)="showCursorTooltip(tooltip)">
+    </div>
 
     <!--
     <div>

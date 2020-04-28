@@ -39,8 +39,8 @@ export class EventDetailsComponent implements OnInit {
   @Input() public sourceId: number;
   @Input() public timelineId: number;
 
-  @Output() private fullyCancelEditMode: EventEmitter;
-  @Output() private doCleanupRemovedEvent: EventEmitter;
+  @Output() private fullyCancelEditMode: EventEmitter<void>;
+  @Output() private doCleanupRemovedEvent: EventEmitter<any>;
 
   public timelineEvent: TimelineEvent;
 
@@ -110,18 +110,18 @@ export class EventDetailsComponent implements OnInit {
   }
 
   editEvent() {
-    if (!this.event.startDay || !this.event.startDay.length) {
-      this.event.startDay = 'null';
+    if (!this.event.startDay) {
+      this.event.startDay = null;
     }
 
-    if (!this.event.endDay || !this.event.endDay.length) {
-      this.event.endDay = 'null';
+    if (!this.event.endDay) {
+      this.event.endDay = null;
     }
 
     if (this.startMonthLabel === null) {
       this.event.startMonth = new Month();
       this.event.startMonth.label = '';
-      this.event.startMonth.id = 'null';
+      this.event.startMonth.id = null;
     }
 
     if (this.startMonthLabel) {
@@ -135,7 +135,7 @@ export class EventDetailsComponent implements OnInit {
     if (this.endMonthLabel === null) {
       this.event.endMonth = new Month();
       this.event.endMonth.label = '';
-      this.event.endMonth.id = 'null';
+      this.event.endMonth.id = null;
     }
 
     if (this.endMonthLabel) {
@@ -167,13 +167,13 @@ export class EventDetailsComponent implements OnInit {
     }
 
     return this.eventService.patchApiEvent(this.event).subscribe(() => {
-      if (this.event.startDay === 'null') {
-        this.event.startDay = '';
-      }
-
-      if (this.event.endDay === 'null') {
-        this.event.endDay = '';
-      }
+      // if (this.event.startDay === 'null') {
+      //   this.event.startDay = null;
+      // }
+      //
+      // if (this.event.endDay === 'null') {
+      //   this.event.endDay = null;
+      // }
 
       this.cancelEditMode();
     });
@@ -190,7 +190,7 @@ export class EventDetailsComponent implements OnInit {
 
   removeNote(note) {
     this.eventService.removeApiNote(note).subscribe(() => {
-      this.eventService.removeEventNote(this.event, note);
+      EventService.removeEventNote(this.event, note);
     });
   }
 

@@ -8,12 +8,12 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
   title = 'history-app';
 
-  private timelinesLinkActive: boolean;
-  private eventsLinkActive: boolean;
-  private personsLinkActive: boolean;
-  private sourcesLinkActive: boolean;
-  private authorsLinkActive: boolean;
-  private essaysLinkActive: boolean;
+  public timelinesLinkActive: boolean;
+  public eventsLinkActive: boolean;
+  public personsLinkActive: boolean;
+  public sourcesLinkActive: boolean;
+  public authorsLinkActive: boolean;
+  public essaysLinkActive: boolean;
 
   ngOnInit() {
     this.timelinesLinkActive = true;

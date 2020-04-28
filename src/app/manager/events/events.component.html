@@ -18,7 +18,7 @@
 
     <div class="app-cards-container">
       <app-event-card
-        *ngFor="let event of events" [event]="event" (loadEvent)="openEventDetails($event, eventDetails)"
+        *ngFor="let event of events" [event]="event" (loadEvent)="openEventDetails($event, eventDetails, false, false)"
         class="app-card">
       </app-event-card>
     </div>
@@ -79,7 +79,7 @@
           </div>
           <div class="app-drawer-tools">
             <button mat-icon-button type="submit" class="material-icons">save</button>
-            <button mat-icon-button type="button" class="material-icons" (click)="cancelCreateMode(eventDetails)">close</button>
+            <button mat-icon-button type="button" class="material-icons" (click)="cancelCreateMode()">close</button>
           </div>
         </div>
 

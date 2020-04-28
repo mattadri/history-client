@@ -4,7 +4,7 @@ import { Event } from '../../models/event';
 import { EventNote } from '../../models/event-note';
 import { Era } from '../../models/era';
 import { Month } from '../../models/month';
-import { Source } from '../../models/reference';
+import { Source } from '../../models/source';
 import { Timeline } from '../../models/timeline';
 
 import { EventService } from '../../services/event.service';
@@ -81,7 +81,7 @@ export class EventsComponent implements OnInit {
       }
     });
 
-    this.sourceService.getApiSources('/sources?sort=title').subscribe(sources => {
+    this.sourceService.getApiSources('/references?sort=title').subscribe(sources => {
       for (const source of sources.sources) {
         this.sourceService.setSource(source);
       }
@@ -97,7 +97,11 @@ export class EventsComponent implements OnInit {
       this.timelines = this.timelineService.getTimelines();
     });
 
-    this.getEvents('/events?sort=-created&page%5Bnumber%5D=1');
+    this.getEvents('/events?sort=-created&page%5Bnumber%5D=1', null, null);
+  }
+
+  static closeEventDetails(contentPanel) {
+    contentPanel.close();
   }
 
   ngOnInit() {
@@ -120,7 +124,7 @@ export class EventsComponent implements OnInit {
   }
 
   getEvents(path, filterTerm, dateFilter) {
-    this.eventService.getApiEvents(path, filterTerm, dateFilter).subscribe(response => {
+    this.eventService.getApiEvents(path, filterTerm, dateFilter, false).subscribe(response => {
       for (const event of response.events) {
         this.eventService.setEvent(event);
       }
@@ -173,13 +177,13 @@ export class EventsComponent implements OnInit {
       this.isCreateEventMode = false;
       this.isEditEventMode = false;
 
-      this.openEventDetails(this.event, contentPanel);
+      this.openEventDetails(this.event, contentPanel, false, false);
     });
   }
 
   cleanupRemovedEvent(contentPanel) {
     this.initializeNewEvent();
-    this.closeEventDetails(contentPanel);
+    EventsComponent.closeEventDetails(contentPanel);
   }
 
   openEventDetails(event, sideNav, isCreateMode, isEditMode) {
@@ -227,11 +231,7 @@ export class EventsComponent implements OnInit {
     this.isCreateEventMode = true;
     this.initializeNewEvent();
 
-    this.openEventDetails(this.event, contentPanel, true);
-  }
-
-  closeEventDetails(contentPanel) {
-    contentPanel.close();
+    this.openEventDetails(this.event, contentPanel, true, false);
   }
 
   cancelEditMode() {
@@ -244,9 +244,9 @@ export class EventsComponent implements OnInit {
 
   turnPage(event) {
     if (event.pageIndex < event.previousPageIndex) {
-      this.getEvents(this.previousPage);
+      this.getEvents(this.previousPage, null, null);
     } else if (event.pageIndex > event.previousPageIndex) {
-      this.getEvents(this.nextPage);
+      this.getEvents(this.nextPage, null, null);
     }
   }
 

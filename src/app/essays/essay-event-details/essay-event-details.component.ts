@@ -17,9 +17,8 @@ export class EssayEventDetailsComponent implements OnInit {
               @Inject(MAT_BOTTOM_SHEET_DATA) public data: DialogData) { }
 
   ngOnInit() {
-    console.log(this.data.event);
-    this.data.event.event.formatYears();
-    this.data.event.event.formatDates();
+    this.data.event.formatYears();
+    this.data.event.formatDates();
   }
 
 }

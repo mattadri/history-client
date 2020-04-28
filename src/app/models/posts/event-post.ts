@@ -1,7 +1,7 @@
 import { Event } from '../event';
 
 export class EventPost {
-  data: object;
+  data;
 
   mapToPost(event: Event, isPatch: boolean) {
     this.data = {

@@ -7,6 +7,7 @@ import { PersonPost } from '../models/posts/person-post';
 import { Person } from '../models/person';
 import { PersonNote } from '../models/person-note';
 import { PersonNotePost } from '../models/posts/person-note-post';
+import {PersonResponse} from '../models/responses/person-response';
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +20,17 @@ export class PersonService {
 
   constructor(private http: HttpClient) { }
 
-  createApiPerson(person: Person): Observable<Person> {
+  static removePersonNote(person: Person, note: PersonNote) {
+    for (let i = 0; i < person.notes.length; i++) {
+      if (person.notes[i].id === note.id) {
+        person.notes.splice(i, 1);
+      }
+    }
+  }
+
+  createApiPerson(person: Person): Observable<any> {
     this.personPost = new PersonPost();
-    this.personPost.mapToPost(person);
+    this.personPost.mapToPost(person, false);
 
     return this.http.post('/api/persons', this.personPost, {
       headers: new HttpHeaders()
@@ -30,7 +39,7 @@ export class PersonService {
     });
   }
 
-  patchApiPerson(person: Person): Observable<Person> {
+  patchApiPerson(person: Person): Observable<any> {
     this.personPost = new PersonPost();
     this.personPost.mapToPost(person, true);
 
@@ -47,14 +56,14 @@ export class PersonService {
     });
   }
 
-  getApiPersons(path): Observable<Person[]> {
+  getApiPersons(path): Observable<PersonResponse> {
     this.persons = [];
 
     if (!path) {
       path = '/persons';
     }
 
-    return this.http.get<Person[]>('api' + path, {
+    return this.http.get<PersonResponse>('api' + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'persons')
@@ -90,14 +99,6 @@ export class PersonService {
     for (let i = 0; i < this.persons.length; i++) {
       if (this.persons[i].id === person.id) {
         this.persons.splice(i, 1);
-      }
-    }
-  }
-
-  removePersonNote(person: Person, note: PersonNote) {
-    for (let i = 0; i < person.notes.length; i++) {
-      if (person.notes[i].id === note.id) {
-        person.notes.splice(i, 1);
       }
     }
   }

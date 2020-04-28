@@ -7,6 +7,7 @@ import { SourcePost } from '../models/posts/source-post';
 import { SourceAuthorPost } from '../models/posts/source-author-post';
 import {SourceNote} from '../models/source-note';
 import {SourceNotePost} from '../models/posts/source-note-post';
+import {SourceResponse} from '../models/responses/source-response';
 
 @Injectable({
   providedIn: 'root'
@@ -14,12 +15,21 @@ import {SourceNotePost} from '../models/posts/source-note-post';
 export class SourceService {
   private sourcePost: SourcePost;
   private sourceAuthorPost: SourceAuthorPost;
+  private notePost: SourceNotePost;
 
   private sources: Source[];
   private source: Source;
 
   constructor(private http: HttpClient) {
     this.sources = [];
+  }
+
+  static removeNote(source: Source, note: SourceNote) {
+    for (let i = 0; i < source.notes.length; i++) {
+      if (source.notes[i].id === note.id) {
+        source.notes.splice(i, 1);
+      }
+    }
   }
 
   getSources() {
@@ -50,22 +60,14 @@ export class SourceService {
     }
   }
 
-  removeNote(source: Source, note: SourceNote) {
-    for (let i = 0; i < source.notes.length; i++) {
-      if (source.notes[i].id === note.id) {
-        source.notes.splice(i, 1);
-      }
-    }
-  }
-
-  getApiSources(path): Observable<Source[]> {
+  getApiSources(path): Observable<SourceResponse> {
     this.sources = [];
 
     if (!path) {
       path = '/references';
     }
 
-    return this.http.get<Source[]>('api' + path, {
+    return this.http.get<SourceResponse>('api' + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'sources')
@@ -82,7 +84,7 @@ export class SourceService {
 
   createApiSource(source: Source): Observable<any> {
     this.sourcePost = new SourcePost();
-    this.sourcePost.mapToPost(source);
+    this.sourcePost.mapToPost(source, false);
 
     return this.http.post('/api/references', this.sourcePost, {
       headers: new HttpHeaders()
@@ -91,7 +93,7 @@ export class SourceService {
     });
   }
 
-  patchApiSource(source: Source): Observable<Source> {
+  patchApiSource(source: Source): Observable<any> {
     this.sourcePost = new SourcePost();
     this.sourcePost.mapToPost(source, true);
 
@@ -126,7 +128,6 @@ export class SourceService {
   }
 
   createApiSourceNote(note: SourceNote, source: Source): Observable<any> {
-    console.log('Note: ', note);
     this.notePost = new SourceNotePost();
     this.notePost.mapToPost(note, source);
 

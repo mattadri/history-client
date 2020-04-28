@@ -1,7 +1,7 @@
 import { Person } from '../person';
 
 export class PersonPost {
-  data: object;
+  data;
 
   mapToPost(person: Person, isPatch: boolean) {
     this.data = {

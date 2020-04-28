@@ -18,10 +18,9 @@ export class EssayPersonDetailsComponent implements OnInit {
               @Inject(MAT_BOTTOM_SHEET_DATA) public data: DialogData) { }
 
   ngOnInit() {
-    console.log(this.data.person.person);
-    this.data.person.person.formatYears();
-    this.data.person.person.formatBirthAndDeath();
-    this.data.person.person.setAge();
+    this.data.person.formatYears();
+    this.data.person.formatBirthAndDeath();
+    this.data.person.setAge();
   }
 
 }

@@ -3,17 +3,17 @@
     <div class="app-drawer-bottom-header">
       <div class="app-drawer-title">
         <div class="app-drawer-subheading">Event</div>
-        <div class="app-drawer-heading">{{data.event.event.label}}</div>
+        <div class="app-drawer-heading">{{data.event.label}}</div>
         <div class="app-drawer-year">
-          <span>{{data.event.event.formattedStartYear}}</span>
-          <span *ngIf="!data.event.event.isSinglePointEvent">- {{data.event.event.formattedEndYear}} ({{data.event.event.eventLength}} years)</span>
+          <span>{{data.event.formattedStartYear}}</span>
+          <span *ngIf="!data.event.isSinglePointEvent">- {{data.event.formattedEndYear}} ({{data.event.eventLength}} years)</span>
         </div>
       </div>
     </div>
 
     <div class="app-drawer-content">
       <div class="app-drawer-description">
-        {{data.event.event.description}}
+        {{data.event.description}}
       </div>
     </div>
   </div>

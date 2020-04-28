@@ -71,7 +71,8 @@ export class EssayComponent implements OnInit, AfterViewInit {
   public isAddEssayTimelineMode: boolean;
 
   public source: Source;
-  public sources: Source[] [];
+  public sources: Source[] = [];
+  public sourceId: number;
 
   public event: Event;
   public events: Event[];
@@ -83,19 +84,19 @@ export class EssayComponent implements OnInit, AfterViewInit {
   public timelines: Timeline[];
 
   public sourcesAutocompleteControl = new FormControl();
-  public sourcesFilteredOptions: Observable<string[]>;
+  public sourcesFilteredOptions: Observable<Source[]>;
   public sourceFieldDisplayValue: string;
 
   public eventsAutocompleteControl = new FormControl();
-  public eventsFilteredOptions: Observable<string[]>;
+  public eventsFilteredOptions: Observable<Event[]>;
   public eventFieldDisplayValue: string;
 
   public personsAutocompleteControl = new FormControl();
-  public personsFilteredOptions: Observable<string[]>;
+  public personsFilteredOptions: Observable<Person[]>;
   public personFieldDisplayValue: string;
 
   public timelinesAutocompleteControl = new FormControl();
-  public timelinesFilteredOptions: Observable<string[]>;
+  public timelinesFilteredOptions: Observable<Timeline[]>;
   public timelineFieldDisplayValue: string;
 
   private referenceRegex = /\(\(r (\d+) ([^))]*)\)\)/ig;
@@ -152,7 +153,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.eventService.getApiEvents('events?page[size]=0&fields[event]=label').subscribe(response => {
+    this.eventService.getApiEvents('events?page[size]=0&fields[event]=label', null, null, false).subscribe(response => {
       this.events = response.events;
 
       this.eventsFilteredOptions = this.eventsAutocompleteControl.valueChanges.pipe(
@@ -556,7 +557,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
   initializeNewEssayNote() {
     this.sourceFieldDisplayValue = '';
-    this.sourcesAutocompleteControl.value = '';
 
     this.essayNote = new EssayNote();
     this.essayNote.initializeNewEssayNote();
@@ -633,8 +633,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     const thisReference = this.essay.essayReferences.find(reference => reference.id === referenceId);
 
-    this.bottomSheet.open(EssayReferenceDetailsComponent, {
-      width: '500px',
+    this.bottomSheet.open(EssayReferenceDetailsComponent as any, {
       data: {
         ref: thisReference
       }
@@ -652,10 +651,9 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     const thisEvent = this.essay.essayEvents.find(foundEvent => foundEvent.id === eventId);
 
-    this.bottomSheet.open(EssayEventDetailsComponent, {
-      width: '500px',
+    this.bottomSheet.open(EssayEventDetailsComponent as any, {
       data: {
-        event: thisEvent
+        event: thisEvent.event
       }
     });
   }
@@ -671,16 +669,17 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     const thisPerson = this.essay.essayPeople.find(foundPerson => foundPerson.id === personId);
 
-    this.bottomSheet.open(EssayPersonDetailsComponent, {
-      width: '500px',
+    this.bottomSheet.open(EssayPersonDetailsComponent as any, {
       data: {
-        person: thisPerson
+        person: thisPerson.person
       }
     });
   }
 
-  handleTimelineClick(timeline) {
+  handleTimelineClick(timeline): void {
     let timelineId = null;
+
+    console.log('working');
 
     if (timeline.toElement.localName === 'sup') {
       timelineId = timeline.toElement.parentNode.dataset.timelineid;
@@ -690,10 +689,9 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     const thisTimeline = this.essay.essayTimelines.find(foundTimeline => foundTimeline.id === timelineId);
 
-    this.bottomSheet.open(EssayTimelineDetailsComponent, {
-      width: '500px',
+    this.bottomSheet.open(EssayTimelineDetailsComponent as any, {
       data: {
-        timeline: thisTimeline
+        timeline: thisTimeline.timeline
       }
     });
   }
@@ -1009,10 +1007,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
   }
 
   private _filterSources(filterValue: string): Source[] {
-    if (filterValue.title) {
-      filterValue = filterValue.title;
-    }
-
     filterValue = filterValue.toLowerCase();
 
     return this.sources.filter(source => {
@@ -1021,10 +1015,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
   }
 
   private _filterEvents(filterValue: string): Event[] {
-    if (filterValue.label) {
-      filterValue = filterValue.label;
-    }
-
     filterValue = filterValue.toLowerCase();
 
     return this.events.filter(event => {
@@ -1034,18 +1024,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
   private _filterPersons(filterValue: string): Person[] {
     let valueToFilterOn = filterValue;
-
-    if (filterValue.firstName) {
-      valueToFilterOn = filterValue.firstName;
-    }
-
-    if (filterValue.middleName) {
-      valueToFilterOn = valueToFilterOn + ' ' + filterValue.middleName;
-    }
-
-    if (filterValue.lastName) {
-      valueToFilterOn = valueToFilterOn + ' ' + filterValue.lastName;
-    }
 
     valueToFilterOn = valueToFilterOn.toLowerCase();
 
@@ -1064,12 +1042,14 @@ export class EssayComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private _filterTimelines(filterValue: string): Timeline[] {
-    if (filterValue.label) {
-      filterValue = filterValue.label;
+  private _filterTimelines(filterValue: any): Timeline[] {
+    if (filterValue) {
+      if (filterValue.label) {
+        filterValue = filterValue.label.toLowerCase();
+      } else {
+        filterValue = filterValue.toLowerCase();
+      }
     }
-
-    filterValue = filterValue.toLowerCase();
 
     return this.timelines.filter(timeline => {
       return timeline.label.toLowerCase().includes(filterValue);

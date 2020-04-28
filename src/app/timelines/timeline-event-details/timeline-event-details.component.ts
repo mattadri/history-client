@@ -12,7 +12,7 @@ import {Category} from '../../models/category';
 export interface DialogData {
   event: Event;
   timeline: Timeline;
-  categoryEvents: Array;
+  categoryEvents: Array<Category>;
 }
 
 @Component({
@@ -66,10 +66,10 @@ export class TimelineEventDetailsComponent {
   }
 
   onNoClick(): void {
-    this.dialogRef.close();
+    this.dialogRef.dismiss();
   }
 
-  updateShadowState(checkbox) {
+  updateShadowState() {
     // this is a change event, but does not have access to the event at the moment of the click event.
     // As such false is equal to true and the other way around
     let shadowState = false;
@@ -80,9 +80,7 @@ export class TimelineEventDetailsComponent {
 
     this.data.event.isShadow = shadowState;
 
-    this.timelineService.patchEventApiTimeline(this.data.timeline, this.data.event).subscribe(response => {
-      console.log(response);
-    });
+    this.timelineService.patchEventApiTimeline(this.data.timeline, this.data.event).subscribe(() => { });
   }
 
   addToCategory() {
@@ -108,8 +106,8 @@ export class TimelineEventDetailsComponent {
     } else {
       // event was in a category and is now being removed from all categories
       if (this.selectedCategoryId == 0) {
-        this.timelineService.removeCategoryEventApiTimeline(this.categoryEventId).subscribe(response => {
-          this.removeCategoryEventFromTimeline(this.data.event, this.categoryEventId, this.selectedCategory.id, false);
+        this.timelineService.removeCategoryEventApiTimeline(this.categoryEventId).subscribe(() => {
+          this.removeCategoryEventFromTimeline(this.data.event, this.categoryEventId, false);
 
           this.selectedCategoryId = 0;
           this.categoryEventId = 0;
@@ -119,8 +117,8 @@ export class TimelineEventDetailsComponent {
 
         // event is was in category A and is being updated to category B
       } else {
-        this.timelineService.removeCategoryEventApiTimeline(this.categoryEventId).subscribe(response => {
-          this.removeCategoryEventFromTimeline(this.data.event, this.categoryEventId, this.selectedCategoryId, true);
+        this.timelineService.removeCategoryEventApiTimeline(this.categoryEventId).subscribe(() => {
+          this.removeCategoryEventFromTimeline(this.data.event, this.categoryEventId, true);
 
           this.timelineService.createCategoryEventApiTimeline(categoryToAdd, this.data.event).subscribe(secondResponse => {
             this.categoryEventId = secondResponse.data.id;
@@ -188,7 +186,7 @@ export class TimelineEventDetailsComponent {
     }
   }
 
-  removeCategoryEventFromTimeline(event, categoryEventId, selectedCategoryId, isUpdate) {
+  removeCategoryEventFromTimeline(event, categoryEventId, isUpdate) {
     // remove it from the list of available categories
     for (const category of this.data.timeline.categories) {
       if (category.events.length) {

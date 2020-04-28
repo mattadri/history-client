@@ -3,20 +3,20 @@
     <div class="app-drawer-bottom-header">
       <div class="app-drawer-title">
         <div class="app-drawer-subheading">Person</div>
-        <div class="app-drawer-heading">{{data.person.person.firstName}}
-          <span *ngIf="data.person.person.middleName">{{data.person.person.middleName}} </span>
-          <span *ngIf="data.person.person.lastName">{{data.person.person.lastName}}</span>
+        <div class="app-drawer-heading">{{data.person.firstName}}
+          <span *ngIf="data.person.middleName">{{data.person.middleName}} </span>
+          <span *ngIf="data.person.lastName">{{data.person.lastName}}</span>
         </div>
         <div class="app-drawer-year">
-          <span>{{data.person.person.formattedBirth}}</span>
-          <span> - {{data.person.person.formattedDeath}} ({{data.person.person.age}} years)</span>
+          <span>{{data.person.formattedBirth}}</span>
+          <span> - {{data.person.formattedDeath}} ({{data.person.age}} years)</span>
         </div>
       </div>
     </div>
 
     <div class="app-drawer-content">
-      <div *ngIf="data.person.person.description" class="app-drawer-description">
-        {{data.person.person.description}}
+      <div *ngIf="data.person.description" class="app-drawer-description">
+        {{data.person.description}}
       </div>
     </div>
   </div>

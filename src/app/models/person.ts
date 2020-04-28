@@ -22,8 +22,10 @@ export class Person {
   timelines: Timeline[];
   notes: PersonNote[];
 
-  timelineStartLocation: string;
-  timelineEndLocation: string;
+  timelinePersonId: number;
+
+  timelineStartLocation: number;
+  timelineEndLocation: number;
   listEventIsHighlighted: boolean;
 
   formattedBirthYear: string;
@@ -31,7 +33,7 @@ export class Person {
   formattedBirth: string;
   formattedDeath: string;
 
-  age: string;
+  age: number;
 
   colorClass: string;
 
@@ -51,7 +53,7 @@ export class Person {
     this.source = new Source();
     this.notes = [];
 
-    this.timelineStartLocation = '';
+    this.timelineStartLocation = null;
     this.listEventIsHighlighted = false;
 
     this.formattedBirthYear = '';
@@ -59,7 +61,7 @@ export class Person {
     this.formattedBirth = '';
     this.formattedDeath = '';
 
-    this.age = '';
+    this.age = null;
   }
 
   mapPerson(person) {
@@ -158,14 +160,14 @@ export class Person {
     if (this.birthEra.label === 'BC') {
       this.formattedBirthYear = this.birthYear.toString() + ' BC';
     } else {
-      this.formattedBirthYear = this.birthYear;
+      this.formattedBirthYear = this.birthYear.toString();
     }
 
     if (this.deathYear) {
       if (this.deathEra && this.deathEra.label === 'BC') {
         this.formattedDeathYear = this.deathYear.toString() + ' BC';
       } else {
-        this.formattedDeathYear = this.deathYear;
+        this.formattedDeathYear = this.deathYear.toString();
       }
 
     } else {
@@ -203,10 +205,10 @@ export class Person {
 
   setAge() {
     if (this.deathYear) {
-      this.age = (this.deathYear - this.birthYear).toString();
+      this.age = (this.deathYear - this.birthYear);
     } else {
       const dateObj = new Date();
-      this.age = (dateObj.getFullYear() - this.birthYear).toString();
+      this.age = (dateObj.getFullYear() - this.birthYear);
     }
 
     if (this.age < 0) {

@@ -2,7 +2,7 @@ import {EssayPerson} from '../essay-person';
 import {Essay} from '../essay';
 
 export class EssayPersonPost {
-  data: object;
+  data;
 
   mapToPost(essay: Essay, essayPerson: EssayPerson) {
     this.data = {

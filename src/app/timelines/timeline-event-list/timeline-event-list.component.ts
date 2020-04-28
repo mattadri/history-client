@@ -5,6 +5,7 @@ import { Event } from '../../models/event';
 import {Timeline} from '../../models/timeline';
 
 import { TimelineEventDetailsComponent } from '../timeline-event-details/timeline-event-details.component';
+import {Category} from '../../models/category';
 
 @Component({
   selector: 'app-timeline-event-list',
@@ -15,10 +16,12 @@ import { TimelineEventDetailsComponent } from '../timeline-event-details/timelin
 export class TimelineEventListComponent implements OnInit {
   @Input() public event: Event;
   @Input() public timeline: Timeline;
-  @Input() public categoryEvents: Array;
+  @Input() public categoryEvents: Array<Category>;
 
   public isSelected: boolean;
   public styles: object;
+
+  public showEditButton: boolean;
 
   public listOnly: boolean;
 
@@ -36,6 +39,10 @@ export class TimelineEventListComponent implements OnInit {
     this.event.formatDates();
   }
 
+  applyColorClass() {
+    return 'grid-list-item-key';
+  }
+
   pinHighlight() {
     let classes = '';
 
@@ -48,10 +55,6 @@ export class TimelineEventListComponent implements OnInit {
     }
 
     return classes;
-  }
-
-  applyColorClass() {
-    return 'grid-list-item-key';
   }
 
   applyStyles() {
@@ -83,8 +86,7 @@ export class TimelineEventListComponent implements OnInit {
   }
 
   showDetails() {
-    this.bottomSheet.open(TimelineEventDetailsComponent, {
-      width: '500px',
+    this.bottomSheet.open(TimelineEventDetailsComponent as any, {
       data: {
         event: this.event,
         timeline: this.timeline,

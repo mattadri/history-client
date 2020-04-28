@@ -2,7 +2,7 @@ import { Source } from '../source';
 import { Author } from '../author';
 
 export class SourceAuthorPost {
-  data: object;
+  data;
 
   mapToPost(source: Source, author: Author) {
     this.data = {

@@ -2,7 +2,7 @@ import { EventNote } from '../event-note';
 import { Event } from '../event';
 
 export class EventNotePost {
-  data: object;
+  data;
 
   mapToPost(eventNote: EventNote, event: Event) {
     this.data = {

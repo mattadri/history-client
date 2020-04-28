@@ -1,7 +1,7 @@
 import { Source } from '../source';
 
 export class SourcePost {
-  data: object;
+  data;
 
   mapToPost(source: Source, isPatch: boolean) {
     this.data = {

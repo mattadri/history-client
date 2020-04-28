@@ -32,8 +32,8 @@ export class EssayInterceptor implements HttpInterceptor {
 
   handleResponse(req: HttpRequest<any>, event) {
     if (event.body) {
-      if (req.headers.headers.get('type')) {
-        if (req.headers.headers.get('type')[0] === 'essays') {
+      if (req.headers.get('type')) {
+        if (req.headers.get('type') === 'essays') {
           this.essays = [];
 
           for (const data of event.body.data) {
@@ -48,7 +48,7 @@ export class EssayInterceptor implements HttpInterceptor {
           this.body.links = event.body.links;
 
           event.body = this.body;
-        } else if ((req.headers.headers.get('type')[0] === 'essay')) {
+        } else if ((req.headers.get('type') === 'essay')) {
           this.essay = new Essay();
           this.essay.initializeNewEssay();
 

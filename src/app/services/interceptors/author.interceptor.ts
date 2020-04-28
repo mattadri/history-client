@@ -13,7 +13,7 @@ export class AuthorInterceptor implements HttpInterceptor {
   private author: Author;
 
   private body = {
-    events: [],
+    authors: [],
     total: 0,
     links: {}
   };
@@ -32,13 +32,13 @@ export class AuthorInterceptor implements HttpInterceptor {
 
   handleResponse(req: HttpRequest<any>, event) {
     if (event.body) {
-      if (req.headers.headers.get('type')) {
-        if (req.headers.headers.get('type')[0] === 'authors') {
+      if (req.headers.get('type')) {
+        if (req.headers.get('type') === 'authors') {
           this.authors = [];
 
           for (const data of event.body.data) {
             this.author = new Author();
-            this.author.mapAuthor(data);
+            this.author.mapAuthor(data, null);
 
             this.authors.push(this.author);
           }

@@ -1,6 +1,5 @@
 import {Component, OnInit, Input, EventEmitter, Output, Renderer2, ElementRef} from '@angular/core';
 import {EssayReference} from '../../models/essay-reference';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-essay-reference',
@@ -11,7 +10,7 @@ export class EssayReferenceComponent implements OnInit {
   @Input() essayReference: EssayReference;
 
   @Output() private referenceSelected: EventEmitter<EssayReference>;
-  @Output() private delselectAllEssayReferences: EventEmitter<>;
+  @Output() private delselectAllEssayReferences: EventEmitter<any>;
 
   public selectedReference: EssayReference;
   public referenceIsSelected: boolean;
@@ -20,7 +19,7 @@ export class EssayReferenceComponent implements OnInit {
               private renderer: Renderer2) {
 
     this.referenceSelected = new EventEmitter<EssayReference>();
-    this.delselectAllEssayReferences = new EventEmitter<>();
+    this.delselectAllEssayReferences = new EventEmitter<any>();
     this.referenceIsSelected = false;
   }
 
@@ -35,7 +34,7 @@ export class EssayReferenceComponent implements OnInit {
     console.log(el);
   }
 
-  async onSelectReference(): Observable<EssayReference> {
+  async onSelectReference() {
     this.referenceIsSelected = !this.referenceIsSelected;
     this.delselectAllEssayReferences.emit();
 

@@ -30,13 +30,13 @@ export class EventInterceptor implements HttpInterceptor {
 
   handleResponse(req: HttpRequest<any>, event) {
     if (event.body) {
-      if (req.headers.headers.get('type')) {
-        if (req.headers.headers.get('type')[0] === 'events') {
+      if (req.headers.get('type')) {
+        if (req.headers.get('type') === 'events') {
           this.events = [];
 
           for (const data of event.body.data) {
             this.event = new Event();
-            this.event.mapEvent(data);
+            this.event.mapEvent(data, false, null, null);
 
             this.events.push(this.event);
           }
@@ -46,9 +46,9 @@ export class EventInterceptor implements HttpInterceptor {
           this.body.links = event.body.links;
 
           event.body = this.body;
-        } else if (req.headers.headers.get('type')[0] === 'event') {
+        } else if (req.headers.get('type') === 'event') {
           this.event = new Event();
-          this.event.mapEvent(event.body.data);
+          this.event.mapEvent(event.body.data, false, null, null);
 
           event.body = this.event;
         }

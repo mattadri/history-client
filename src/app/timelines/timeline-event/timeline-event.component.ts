@@ -4,6 +4,8 @@ import { MatBottomSheet } from '@angular/material';
 import { Event } from '../../models/event';
 
 import { TimelineEventDetailsComponent } from '../timeline-event-details/timeline-event-details.component';
+import {Timeline} from '../../models/timeline';
+import {Category} from '../../models/category';
 
 @Component({
   selector: 'app-timeline-event',
@@ -12,6 +14,8 @@ import { TimelineEventDetailsComponent } from '../timeline-event-details/timelin
 })
 export class TimelineEventComponent implements OnInit {
   @Input() public event: Event;
+  @Input() public timeline: Timeline;
+  @Input() public categoryEvents: Array<Category>;
 
   public positionStyle: object;
   public isSinglePointEvent: boolean;
@@ -75,10 +79,11 @@ export class TimelineEventComponent implements OnInit {
   }
 
   showDetails() {
-    this.bottomSheet.open(TimelineEventDetailsComponent, {
-      width: '500px',
+    this.bottomSheet.open(TimelineEventDetailsComponent as any, {
       data: {
-        event: this.event
+        event: this.event,
+        timeline: this.timeline,
+        categoryEvents: this.categoryEvents
       }
     });
   }

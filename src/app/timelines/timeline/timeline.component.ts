@@ -31,7 +31,7 @@ export class TimelineComponent implements OnInit {
   public timelineStart: number;
   public timelineEnd: number;
   public timelineSpanInYears: number;
-  public timeframe: number[];
+  public timeframe: any[];
   public pointerStart: number;
   public pointerEnd: number;
   public options: Options;
@@ -110,8 +110,41 @@ export class TimelineComponent implements OnInit {
 
       this.setPersons();
 
-      this.getRelatedEvents();
+      this.getRelatedEvents(null, false);
     });
+  }
+
+  // If the era is BC then make the number a negative
+  private static convertPolarity(value: number, comparator: Event): number {
+    if (comparator.startEra.label === 'BC') {
+      value = value * -1;
+    }
+
+    return value;
+  }
+
+  private static padTimelineDate(yearToPad: number, timelineLength: number, increase: boolean) {
+    const minPadding = 1;
+    const maxPadding = 100;
+
+    // get 10 percent of the total length and see if it falls within the min/max range.
+    let padding = timelineLength * .02;
+
+    if (padding < minPadding) {
+      padding = minPadding;
+    }
+
+    if (padding > maxPadding) {
+      padding = maxPadding;
+    }
+
+    if (increase) {
+      yearToPad = yearToPad + padding;
+    } else {
+      yearToPad = yearToPad - padding;
+    }
+
+    return yearToPad;
   }
 
   ngOnInit() { }
@@ -194,8 +227,8 @@ export class TimelineComponent implements OnInit {
 
     this.timelineSpanInYears = distance;
 
-    this.timelineStart = Math.floor(this.padTimelineDate(earliestEvent, distance, false));
-    this.timelineEnd = Math.ceil(this.padTimelineDate(oldestEvent, distance, true));
+    this.timelineStart = Math.floor(TimelineComponent.padTimelineDate(earliestEvent, distance, false));
+    this.timelineEnd = Math.ceil(TimelineComponent.padTimelineDate(oldestEvent, distance, true));
 
     this.timelineLength = this.timelineEnd - this.timelineStart;
   }
@@ -228,8 +261,8 @@ export class TimelineComponent implements OnInit {
 
     for (let i = 0; i < loopedDivisions; i++) {
       const segment = {
-        leftPercentage: 0,
-        year: 0
+        leftPercentage: '',
+        year: ''
       };
 
       // The first division should be equal to the timeline start date
@@ -265,7 +298,7 @@ export class TimelineComponent implements OnInit {
         if (this.timelineEnd < 0) {
           tmpEvent.endEra.label = 'BC';
 
-        } else {
+        } else  {
           tmpEvent.endEra.label = 'AD';
         }
 
@@ -283,13 +316,13 @@ export class TimelineComponent implements OnInit {
 
       tmpEvent.startYear = divisionYear;
 
-      tmpEvent.formatYears();
-
       if (divisionYear < 0) {
-        tmpEvent.formatYears(true, null, divisionYear, {label: 'BC'});
+        tmpEvent.startEra.label = 'BC';
       } else {
-        tmpEvent.formatYears(true, null, divisionYear, {label: 'AD'});
+        tmpEvent.startEra.label = 'AD';
       }
+
+      tmpEvent.formatYears();
 
       if (numberOfDivisions < this.minYearToMonths) {
         percentage = percentage + (100 / numberOfDivisions);
@@ -426,9 +459,9 @@ export class TimelineComponent implements OnInit {
 
   filterEvents() {
     this.timeline.events = this.timeline.events.filter(event => {
-      if (this.convertPolarity(event.startYear, event) < this.timelineStart) {
+      if (TimelineComponent.convertPolarity(event.startYear, event) < this.timelineStart) {
         return false;
-      } else if (this.convertPolarity(event.endYear, event) > this.timelineEnd) {
+      } else if (TimelineComponent.convertPolarity(event.endYear, event) > this.timelineEnd) {
         return false;
       }
 
@@ -438,8 +471,8 @@ export class TimelineComponent implements OnInit {
 
   formatDates() {
     for (const event of this.timeline.events) {
-      event.formatYears(true, event.startMonth, event.startYear, event.startEra);
-      event.formatYears(false, event.endMonth, event.endYear, event.endEra);
+      event.formatYears();
+      event.formatYears();
 
       event.formatDates();
     }
@@ -457,9 +490,7 @@ export class TimelineComponent implements OnInit {
           startMonthInTimeline = startMonthInTimeline + Number(event.startMonth.id);
         }
 
-        const startPercentage = (startMonthInTimeline / timelineLengthInMonths) * 100;
-
-        event.timelineStartLocation = startPercentage.toLocaleString();
+        event.timelineStartLocation = (startMonthInTimeline / timelineLengthInMonths) * 100;
 
         let endMonthInTimeline = ((event.endYear - this.timelineStart) * 12);
 
@@ -474,14 +505,13 @@ export class TimelineComponent implements OnInit {
           endPercentage = 1;
         }
 
-        event.timelineEndLocation = endPercentage.toLocaleString();
+        event.timelineEndLocation = endPercentage;
       }
 
     } else {
       for (const event of this.timeline.events) {
         // set the percentage location from oldest event.
-        const startPercentage = ((event.startYear - this.timelineStart) / this.timelineLength) * 100;
-        event.timelineStartLocation = startPercentage.toLocaleString();
+        event.timelineStartLocation = ((event.startYear - this.timelineStart) / this.timelineLength) * 100;
 
         let endYear = event.endYear;
 
@@ -497,7 +527,7 @@ export class TimelineComponent implements OnInit {
           endPercentage = 1;
         }
 
-        event.timelineEndLocation = endPercentage.toLocaleString();
+        event.timelineEndLocation = endPercentage;
       }
     }
   }
@@ -506,20 +536,17 @@ export class TimelineComponent implements OnInit {
     if (this.timeline.persons && this.timeline.persons.length) {
       for (const person of this.timeline.persons) {
         // set the percentage location from oldest event.
-          const startPercentage = ((person.birthYear - this.timelineStart) / this.timelineLength) * 100;
-          person.timelineStartLocation = startPercentage.toLocaleString();
+        person.timelineStartLocation = ((person.birthYear - this.timelineStart) / this.timelineLength) * 100;
 
-          let deathYear = person.deathYear;
+        let deathYear = person.deathYear;
 
-          // in the case that the person is still alive
-          if (!deathYear) {
-            const dateObj = new Date();
-            deathYear = dateObj.getFullYear();
-          }
+        // in the case that the person is still alive
+        if (!deathYear) {
+          const dateObj = new Date();
+          deathYear = dateObj.getFullYear();
+        }
 
-          const endPercentage =
-            (((deathYear - this.timelineStart) / this.timelineLength) * 100) - person.timelineStartLocation;
-          person.timelineEndLocation = endPercentage.toLocaleString();
+        person.timelineEndLocation = (((deathYear - this.timelineStart) / this.timelineLength) * 100) - person.timelineStartLocation;
       }
     }
   }
@@ -561,12 +588,17 @@ export class TimelineComponent implements OnInit {
     const pixelsByYear = timelineWidth / this.timelineLength;
     const numberOfYearsOffset = cursorXInDiv / pixelsByYear;
 
-    this.cursorLineDate = Math.floor(this.timelineStart + numberOfYearsOffset);
+    const lineDate: number = Math.floor(this.timelineStart + numberOfYearsOffset);
 
     const tmpEvent = new Event();
-    tmpEvent.startYear = this.cursorLineDate;
+    tmpEvent.startYear = lineDate;
     tmpEvent.startEra = new Era();
-    tmpEvent.startEra.label = 'BC';
+
+    if (lineDate < 0) {
+      tmpEvent.startEra.label = 'BC';
+    } else {
+      tmpEvent.startEra.label = 'AD';
+    }
 
     tmpEvent.formatYears();
 
@@ -582,7 +614,7 @@ export class TimelineComponent implements OnInit {
   }
 
   editTimeline() {
-    this.timelineService.patchApiTimeline(this.timeline).subscribe(response => {
+    this.timelineService.patchApiTimeline(this.timeline).subscribe(() => {
       this.isTimelineEditMode = false;
     });
   }
@@ -681,39 +713,6 @@ export class TimelineComponent implements OnInit {
   //     }
   //   };
   // }
-
-  // If the era is BC then make the number a negative
-  private convertPolarity(value: number, comparator: Event): number {
-    if (comparator.startEra.label === 'BC') {
-      value = value * -1;
-    }
-
-    return value;
-  }
-
-  private padTimelineDate(yearToPad: number, timelineLength: number, increase: boolean) {
-    const minPadding = 1;
-    const maxPadding = 100;
-
-    // get 10 percent of the total length and see if it falls within the min/max range.
-    let padding = timelineLength * .02;
-
-    if (padding < minPadding) {
-      padding = minPadding;
-    }
-
-    if (padding > maxPadding) {
-      padding = maxPadding;
-    }
-
-    if (increase) {
-      yearToPad = yearToPad + padding;
-    } else {
-      yearToPad = yearToPad - padding;
-    }
-
-    return yearToPad;
-  }
 
   private sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

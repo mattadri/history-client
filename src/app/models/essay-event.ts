@@ -13,6 +13,6 @@ export class EssayEvent {
     this.id = essayEvent.id;
 
     this.event = new Event();
-    this.event.mapEvent(essayEvent.attributes.event.data);
+    this.event.mapEvent(essayEvent.attributes.event.data, false, 0, null);
   }
 }

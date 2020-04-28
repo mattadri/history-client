@@ -2,7 +2,7 @@ import {Essay} from '../essay';
 import {EssayNote} from '../essay-note';
 
 export class EssayNotePost {
-  data: object;
+  data;
 
   mapToPost(essay: Essay, essayNote: EssayNote, isPatch: boolean) {
     this.data = {

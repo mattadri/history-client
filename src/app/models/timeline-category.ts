@@ -1,12 +1,14 @@
 export class TimelineCategory {
   id: number;
   label: string;
-  events: array;
+  events: Array<any>;
+  people: Array<any>;
 
   initializeNewTimelineCategory() {
     this.id = null;
     this.label = '';
     this.events = [];
+    this.people = [];
   }
 
   mapTimelineCategory(category) {

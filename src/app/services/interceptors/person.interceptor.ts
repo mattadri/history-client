@@ -30,8 +30,8 @@ export class PersonInterceptor implements HttpInterceptor {
 
   handleResponse(req: HttpRequest<any>, event) {
     if (event.body) {
-      if (req.headers.headers.get('type')) {
-        if (req.headers.headers.get('type')[0] === 'persons') {
+      if (req.headers.get('type')) {
+        if (req.headers.get('type') === 'persons') {
           this.persons = [];
 
           for (const data of event.body.data) {
@@ -46,7 +46,7 @@ export class PersonInterceptor implements HttpInterceptor {
           this.body.links = event.body.links;
 
           event.body = this.body;
-        } else if ((req.headers.headers.get('type')[0] === 'person')) {
+        } else if ((req.headers.get('type') === 'person')) {
           this.person = new Person();
           this.person.mapPerson(event.body.data);
 

@@ -15,6 +15,7 @@ export class EssaysComponent implements OnInit {
   public essay: Essay;
 
   public isCreateEssayMode: boolean;
+  public isCreateTimelineMode: boolean;
 
   public totalResults: number;
   public nextPage: string;
@@ -24,6 +25,10 @@ export class EssaysComponent implements OnInit {
     this.isCreateEssayMode = false;
 
     this.getEssays('/essays?order_by=descending&page%5Bnumber%5D=1&fields[essay]=title,abstract');
+  }
+
+  static closeEssayDetails(contentPanel) {
+    contentPanel.close();
   }
 
   ngOnInit() { }
@@ -55,7 +60,7 @@ export class EssaysComponent implements OnInit {
 
       this.isCreateEssayMode = false;
 
-      this.closeEssayDetails(contentPanel);
+      EssaysComponent.closeEssayDetails(contentPanel);
 
       this.initializeNewEssay();
     });
@@ -66,7 +71,7 @@ export class EssaysComponent implements OnInit {
 
     this.initializeNewEssay();
 
-    this.openCreateDialog(this.essay, contentPanel, true, false);
+    this.openCreateDialog(this.essay, contentPanel, true);
   }
 
   openCreateDialog(essay, contentPanel, isCreateMode) {
@@ -89,13 +94,18 @@ export class EssaysComponent implements OnInit {
 
   cancelCreateMode(contentPanel) {
     if (this.isCreateEssayMode) {
-      this.closeEssayDetails(contentPanel);
+      EssaysComponent.closeEssayDetails(contentPanel);
     }
 
     this.isCreateEssayMode = false;
   }
 
-  closeEssayDetails(contentPanel) {
-    contentPanel.close();
+  turnPage(essay) {
+    if (essay.pageIndex < essay.previousPageIndex) {
+      this.getEssays(this.previousPage);
+
+    } else if (essay.pageIndex > essay.previousPageIndex) {
+      this.getEssays(this.nextPage);
+    }
   }
 }

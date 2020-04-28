@@ -13,6 +13,8 @@ import { TimelineEventPost } from '../models/posts/timeline-event-post';
 import { TimelinePersonPost } from '../models/posts/timeline-person-post';
 import { TimelineCategoryPost } from '../models/posts/timeline-category-post';
 
+import {TimelineResponse} from '../models/responses/timeline-response';
+
 import {TimelineCategory} from '../models/timeline-category';
 import {TimelineCategoryEventPost} from '../models/posts/timeline-category-event-post';
 import {TimelineCategoryPersonPost} from '../models/posts/timeline-category-person-post';
@@ -28,14 +30,13 @@ export class TimelineService {
   private timelinePersonPost: TimelinePersonPost;
   private timelineCategoryPost: TimelineCategoryPost;
   private timelineCategoryEventPost: TimelineCategoryEventPost;
-  private timelineCategoryPersonPost: TimelineCategoryPersonPost;
 
   constructor(private http: HttpClient) { }
 
   getApiTimelines(path) {
     this.timelines = [];
 
-    return this.http.get<Timeline[]>('api' + path, {
+    return this.http.get<TimelineResponse>('api' + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'timelines')
@@ -52,7 +53,7 @@ export class TimelineService {
 
   createApiTimeline(timeline: Timeline): Observable<any> {
     this.timelinePost = new TimelinePost();
-    this.timelinePost.mapToPost(timeline);
+    this.timelinePost.mapToPost(timeline, false);
 
     return this.http.post('/api/timelines', this.timelinePost, {
       headers: new HttpHeaders()
@@ -74,7 +75,7 @@ export class TimelineService {
 
   createEventApiTimeline(timelineEvent: TimelineEvent): Observable<any> {
     this.timelineEventPost = new TimelineEventPost();
-    this.timelineEventPost.mapToPost(timelineEvent);
+    this.timelineEventPost.mapToPost(timelineEvent, false);
 
     return this.http.post('/api/timeline_events', this.timelineEventPost, {
       headers: new HttpHeaders()
@@ -85,7 +86,7 @@ export class TimelineService {
 
   createPersonApiTimeline(timelinePerson: TimelinePerson): Observable<any> {
     this.timelinePersonPost = new TimelinePersonPost();
-    this.timelinePersonPost.mapToPost(timelinePerson);
+    this.timelinePersonPost.mapToPost(timelinePerson, false);
 
     return this.http.post('/api/timeline_persons', this.timelinePersonPost, {
       headers: new HttpHeaders()

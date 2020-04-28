@@ -8,7 +8,7 @@
     <div class="app-cards-container">
       <app-author-card
         *ngFor="let author of authors" [author]="author"
-        (loadAuthor)="openAuthorDetails($event, authorDetails)"
+        (loadAuthor)="openAuthorDetails($event, authorDetails, false, false)"
         class="app-card">
       </app-author-card>
     </div>

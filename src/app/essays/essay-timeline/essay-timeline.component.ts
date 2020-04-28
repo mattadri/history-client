@@ -1,6 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2} from '@angular/core';
 import {EssayTimeline} from '../../models/essay-timeline';
-import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-essay-timeline',
@@ -11,7 +10,7 @@ export class EssayTimelineComponent implements OnInit {
   @Input() public essayTimeline: EssayTimeline;
 
   @Output() private timelineSelected: EventEmitter<EssayTimeline>;
-  @Output() private delselectAllEssayTimelines: EventEmitter<>;
+  @Output() private delselectAllEssayTimelines: EventEmitter<any>;
 
   public selectedTimeline: EssayTimeline;
   public timelineIsSelected: boolean;
@@ -19,7 +18,7 @@ export class EssayTimelineComponent implements OnInit {
   constructor(private elementRef: ElementRef,
               private renderer: Renderer2) {
     this.timelineSelected = new EventEmitter<EssayTimeline>();
-    this.delselectAllEssayTimelines = new EventEmitter<>();
+    this.delselectAllEssayTimelines = new EventEmitter<any>();
     this.timelineIsSelected = false;
   }
 
@@ -32,7 +31,7 @@ export class EssayTimelineComponent implements OnInit {
     this.renderer.addClass(el, 'essay-timeline-selected');
   }
 
-  async onSelectTimeline(): Observable<EssayTimeline> {
+  async onSelectTimeline() {
     this.timelineIsSelected = !this.timelineIsSelected;
     this.delselectAllEssayTimelines.emit();
 

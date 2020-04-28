@@ -11,7 +11,6 @@ export class Timeline {
 
   eventId: number; // if the timeline is returned as an event-timeline object
   personId: number;
-  categoryId: number;
 
   initializeNewTimeline() {
     this.id = 0;
@@ -74,9 +73,7 @@ export class Timeline {
 
         for (const returnedPerson of timeline.attributes.timeline_person.data) {
           const person: Person = new Person();
-          person.mapPerson(
-            returnedPerson.attributes.person.data,
-            returnedPerson.id);
+          person.mapPerson(returnedPerson.attributes.person.data);
 
           self.persons.push(person);
         }

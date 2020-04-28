@@ -2,7 +2,7 @@ import {EssayReference} from '../essay-reference';
 import {Essay} from '../essay';
 
 export class EssayReferencePost {
-  data: object;
+  data;
 
   mapToPost(essay: Essay, essayReference: EssayReference, isPatch: boolean) {
     this.data = {

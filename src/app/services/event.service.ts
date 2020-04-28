@@ -8,22 +8,34 @@ import { EventNote } from '../models/event-note';
 import { EventNotePost } from '../models/posts/event-note-post';
 import { EventPost } from '../models/posts/event-post';
 
+import {EventResponse} from '../models/responses/event-response';
+
 @Injectable({
   providedIn: 'root'
 })
+
+
 
 export class EventService {
   private events: Event[];
   private eventNotePost: EventNotePost;
   private eventPost: EventPost;
 
-  private filterObject: array;
+  private filterObject: Array<any>;
 
   constructor(private http: HttpClient) {
     this.filterObject = [];
   }
 
-  getApiEvents(path, filterTerm, dateFilter, isPageLink): Observable<Event[]> {
+  static removeEventNote(event: Event, note: EventNote) {
+    for (let i = 0; i < event.notes.length; i++) {
+      if (event.notes[i].id === note.id) {
+        event.notes.splice(i, 1);
+      }
+    }
+  }
+
+  getApiEvents(path, filterTerm, dateFilter, isPageLink): Observable<EventResponse> {
     this.filterObject = [];
 
     this.events = [];
@@ -87,7 +99,7 @@ export class EventService {
       }
     }
 
-    return this.http.get<Event[]>('api' + path, {
+    return this.http.get<EventResponse>('api' + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'events')
@@ -102,9 +114,9 @@ export class EventService {
     });
   }
 
-  createApiEvent(event: Event): Observable<Event> {
+  createApiEvent(event: Event): Observable<any> {
     this.eventPost = new EventPost();
-    this.eventPost.mapToPost(event);
+    this.eventPost.mapToPost(event, false);
 
     return this.http.post('/api/events', this.eventPost, {
       headers: new HttpHeaders()
@@ -113,7 +125,7 @@ export class EventService {
     });
   }
 
-  patchApiEvent(event: Event): Observable<Event> {
+  patchApiEvent(event: Event): Observable<any> {
     this.eventPost = new EventPost();
     this.eventPost.mapToPost(event, true);
 
@@ -151,14 +163,6 @@ export class EventService {
     for (let i = 0; i < this.events.length; i++) {
       if (this.events[i].id === event.id) {
         this.events.splice(i, 1);
-      }
-    }
-  }
-
-  removeEventNote(event: Event, note: EventNote) {
-    for (let i = 0; i < event.notes.length; i++) {
-      if (event.notes[i].id === note.id) {
-        event.notes.splice(i, 1);
       }
     }
   }

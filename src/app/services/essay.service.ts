@@ -15,6 +15,7 @@ import {EssayPerson} from '../models/essay-person';
 import {EssayPersonPost} from '../models/posts/essay-person-post';
 import {EssayTimelinePost} from '../models/posts/essay-timeline-post';
 import {EssayTimeline} from '../models/essay-timeline';
+import {EssayResponse} from '../models/responses/essay-response';
 
 @Injectable({
   providedIn: 'root'
@@ -33,10 +34,18 @@ export class EssayService {
     this.essays = [];
   }
 
-  getApiEssays(path) {
+  static removeEssayNote(essay: Essay, essayNote: EssayNote) {
+    for (let i = 0; i < essay.essayNotes.length; i++) {
+      if (essay.essayNotes[i].id === essayNote.id) {
+        essay.essayNotes.splice(i, 1);
+      }
+    }
+  }
+
+  getApiEssays(path): Observable<EssayResponse> {
     this.essays = [];
 
-    return this.http.get<Essay[]>('api' + path, {
+    return this.http.get<EssayResponse>('api' + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'essays')
@@ -44,14 +53,14 @@ export class EssayService {
   }
 
   getApiEssay(essayId) {
-    return this.http.get<Essay[]>('api/essays/' + essayId, {
+    return this.http.get<Essay>('api/essays/' + essayId, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'essay')
     });
   }
 
-  createApiEssay(essay: Essay): Observable<Essay> {
+  createApiEssay(essay: Essay): Observable<any> {
     this.essayPost = new EssayPost();
     this.essayPost.mapToPost(essay, true);
 
@@ -62,9 +71,9 @@ export class EssayService {
     });
   }
 
-  createApiEssayNote(essay: Essay, essayNote: EssayNote) {
+  createApiEssayNote(essay: Essay, essayNote: EssayNote): Observable<any> {
     this.essayNotePost = new EssayNotePost();
-    this.essayNotePost.mapToPost(essay, essayNote);
+    this.essayNotePost.mapToPost(essay, essayNote, false);
 
     return this.http.post('/api/essay_notes', this.essayNotePost, {
       headers: new HttpHeaders()
@@ -73,9 +82,9 @@ export class EssayService {
     });
   }
 
-  createApiEssayReference(essay: Essay, essayReference: EssayReference) {
+  createApiEssayReference(essay: Essay, essayReference: EssayReference): Observable<any> {
     this.essayReferencePost = new EssayReferencePost();
-    this.essayReferencePost.mapToPost(essay, essayReference);
+    this.essayReferencePost.mapToPost(essay, essayReference, false);
 
     return this.http.post('/api/essay_references', this.essayReferencePost, {
       headers: new HttpHeaders()
@@ -84,7 +93,7 @@ export class EssayService {
     });
   }
 
-  createApiEssayEvent(essay: Essay, essayEvent: EssayEvent) {
+  createApiEssayEvent(essay: Essay, essayEvent: EssayEvent): Observable<any> {
     this.essayEventPost = new EssayEventPost();
     this.essayEventPost.mapToPost(essay, essayEvent);
 
@@ -95,7 +104,7 @@ export class EssayService {
     });
   }
 
-  createApiEssayPerson(essay: Essay, essayPerson: EssayPerson) {
+  createApiEssayPerson(essay: Essay, essayPerson: EssayPerson): Observable<any> {
     this.essayPersonPost = new EssayPersonPost();
     this.essayPersonPost.mapToPost(essay, essayPerson);
 
@@ -106,7 +115,7 @@ export class EssayService {
     });
   }
 
-  createApiEssayTimeline(essay: Essay, essayTimeline: EssayTimeline) {
+  createApiEssayTimeline(essay: Essay, essayTimeline: EssayTimeline): Observable<any> {
     this.essayTimelinePost = new EssayTimelinePost();
     this.essayTimelinePost.mapToPost(essay, essayTimeline);
 
@@ -117,7 +126,7 @@ export class EssayService {
     });
   }
 
-  patchApiEssay(essay: Essay): Observable<Essay> {
+  patchApiEssay(essay: Essay): Observable<any> {
     this.essayPost = new EssayPost();
     this.essayPost.mapToPost(essay, true);
 
@@ -150,14 +159,6 @@ export class EssayService {
     for (let i = 0; i < this.essays.length; i++) {
       if (this.essays[i].id === essay.id) {
         this.essays.splice(i, 1);
-      }
-    }
-  }
-
-  removeEssayNote(essay: Essay, essayNote: EssayNote) {
-    for (let i = 0; i < essay.essayNotes.length; i++) {
-      if (essay.essayNotes[i].id === essayNote.id) {
-        essay.essayNotes.splice(i, 1);
       }
     }
   }

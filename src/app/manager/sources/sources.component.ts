@@ -76,6 +76,10 @@ export class SourcesComponent implements OnInit {
     this.getSources('/references?sort=title');
   }
 
+  static closeSourceDetails(sideNav) {
+    sideNav.close();
+  }
+
   ngOnInit() { }
 
   initializeNewSource() {
@@ -119,12 +123,9 @@ export class SourcesComponent implements OnInit {
     }
   }
 
-  closeSourceDetails(sideNav) {
-    sideNav.close();
-  }
-
   getSources(path) {
     this.sourceService.getApiSources(path).subscribe(response => {
+      console.log(response);
       for (const source of response.sources) {
         this.sourceService.setSource(source);
       }
@@ -158,7 +159,7 @@ export class SourcesComponent implements OnInit {
 
       this.isCreateSourceMode = false;
 
-      this.closeSourceDetails(sideNav);
+      SourcesComponent.closeSourceDetails(sideNav);
 
       this.initializeNewSource();
     });
@@ -197,14 +198,14 @@ export class SourcesComponent implements OnInit {
   }
 
   editSource() {
-    if (!this.source.publishedDay || !this.source.publishedDay.length) {
-      this.source.publishedDay = 'null';
+    if (!this.source.publishedDay) {
+      this.source.publishedDay = null;
     }
 
     if (this.publishedMonthLabel === null) {
       this.source.publishedMonth = new Month();
       this.source.publishedMonth.label = '';
-      this.source.publishedMonth.id = 'null';
+      this.source.publishedMonth.id = null;
     }
 
     if (this.publishedMonthLabel) {
@@ -224,9 +225,9 @@ export class SourcesComponent implements OnInit {
     return this.sourceService.patchApiSource(this.source).subscribe(() => {
       this.isEditSourceMode = false;
 
-      if (this.source.publishedDay === 'null') {
-        this.source.publishedDay = null;
-      }
+      // if (this.source.publishedDay === 'null') {
+      //   this.source.publishedDay = null;
+      // }
     });
   }
 
@@ -236,7 +237,7 @@ export class SourcesComponent implements OnInit {
 
       this.initializeNewSource();
 
-      this.closeSourceDetails(sideNav);
+      SourcesComponent.closeSourceDetails(sideNav);
     });
   }
 
@@ -249,7 +250,7 @@ export class SourcesComponent implements OnInit {
   removeNote(note) {
     this.sourceService.removeApiNote(note).subscribe(() => {
       console.log('Source: ', this.source);
-      this.sourceService.removeNote(this.source, note);
+      SourceService.removeNote(this.source, note);
     });
   }
 
@@ -257,7 +258,7 @@ export class SourcesComponent implements OnInit {
     this.isCreateSourceMode = true;
     this.initializeNewSource();
 
-    this.openSourceDetails(this.source, sideNav, true);
+    this.openSourceDetails(this.source, sideNav, true, false);
 
     await this.sleep(500);
 
@@ -275,7 +276,7 @@ export class SourcesComponent implements OnInit {
 
   cancelEditCreateModes(sideNav) {
     if (this.isCreateSourceMode) {
-      this.closeSourceDetails(sideNav);
+      SourcesComponent.closeSourceDetails(sideNav);
     }
 
     this.isCreateSourceMode = false;

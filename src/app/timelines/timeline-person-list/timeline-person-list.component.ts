@@ -35,8 +35,7 @@ export class TimelinePersonListComponent implements OnInit {
   }
 
   showDetails() {
-    this.bottomSheet.open(TimelinePersonDetailsComponent, {
-      width: '500px',
+    this.bottomSheet.open(TimelinePersonDetailsComponent as any, {
       data: {
         person: this.person,
         timeline: this.timeline

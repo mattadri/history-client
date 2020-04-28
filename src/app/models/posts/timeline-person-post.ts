@@ -1,7 +1,7 @@
 import { TimelinePerson } from '../timeline-person';
 
 export class TimelinePersonPost {
-  data: object;
+  data;
 
   mapToPost(timelinePerson: TimelinePerson, isPatch: boolean) {
     this.data = {

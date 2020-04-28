@@ -1,7 +1,7 @@
 import { TimelineEvent } from '../timeline-event';
 
 export class TimelineEventPost {
-  data: object;
+  data;
 
   mapToPost(timelineEvent: TimelineEvent, isPatch: boolean) {
     this.data = {

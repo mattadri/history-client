@@ -2,7 +2,7 @@ import {PersonNote} from '../person-note';
 import {Person} from '../person';
 
 export class PersonNotePost {
-  data: object;
+  data;
 
   mapToNotePost(personNote: PersonNote, person: Person) {
     this.data = {

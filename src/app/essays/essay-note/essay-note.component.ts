@@ -20,7 +20,7 @@ export class EssayNoteComponent implements OnInit {
 
   deleteEssayNote() {
     this.essayService.removeApiEssayNote(this.note.id).subscribe(() => {
-      this.essayService.removeEssayNote(this.essay, this.note);
+      EssayService.removeEssayNote(this.essay, this.note);
     });
   }
 }

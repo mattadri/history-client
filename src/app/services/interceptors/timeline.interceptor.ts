@@ -30,13 +30,13 @@ export class TimelineInterceptor implements HttpInterceptor {
 
   handleResponse(req: HttpRequest<any>, event) {
     if (event.body) {
-      if (req.headers.headers.get('type')) {
-        if (req.headers.headers.get('type')[0] === 'timelines') {
+      if (req.headers.get('type')) {
+        if (req.headers.get('type') === 'timelines') {
           this.timelines = [];
 
           for (const data of event.body.data) {
             this.timeline = new Timeline();
-            this.timeline.mapTimeline(data);
+            this.timeline.mapTimeline(data, false, false);
 
             this.timelines.push(this.timeline);
           }
@@ -47,9 +47,9 @@ export class TimelineInterceptor implements HttpInterceptor {
 
           event.body = this.body;
 
-        } else if (req.headers.headers.get('type')[0] === 'timeline') {
+        } else if (req.headers.get('type') === 'timeline') {
           this.timeline = new Timeline();
-          this.timeline.mapTimeline(event.body.data);
+          this.timeline.mapTimeline(event.body.data, false, false);
 
           event.body = this.timeline;
         }

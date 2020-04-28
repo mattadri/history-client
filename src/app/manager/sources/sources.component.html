@@ -8,7 +8,7 @@
     <div class="app-cards-container">
       <app-source-card
         *ngFor="let source of sources" [source]="source"
-        (loadSource)="openSourceDetails($event, sourceDetails)"
+        (loadSource)="openSourceDetails($event, sourceDetails, false, false)"
         class="app-card">
       </app-source-card>
     </div>

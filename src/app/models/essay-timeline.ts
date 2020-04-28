@@ -13,6 +13,6 @@ export class EssayTimeline {
     this.id = essayTimeline.id;
 
     this.timeline = new Timeline();
-    this.timeline.mapTimeline(essayTimeline.attributes.timeline.data);
+    this.timeline.mapTimeline(essayTimeline.attributes.timeline.data, null, null);
   }
 }

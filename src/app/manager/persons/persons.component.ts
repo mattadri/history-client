@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Person } from '../../models/person';
 import { Era } from '../../models/era';
 import { Month } from '../../models/month';
-import { Source } from '../../models/reference';
+import { Source } from '../../models/source';
 import { Timeline } from '../../models/timeline';
 import { TimelinePerson } from '../../models/timeline-person';
 
@@ -98,6 +98,10 @@ export class PersonsComponent implements OnInit {
     this.getPersons('/persons?sort=-created&page%5Bnumber%5D=1');
   }
 
+  static closePersonDetails(sideNav) {
+    sideNav.close();
+  }
+
   ngOnInit() { }
 
   initializeNewPerson() {
@@ -132,7 +136,7 @@ export class PersonsComponent implements OnInit {
     this.isCreatePersonMode = true;
     this.initializeNewPerson();
 
-    this.openPersonDetails(this.person, sideNav, true);
+    this.openPersonDetails(this.person, sideNav, true, false);
   }
 
   createPerson(sideNav) {
@@ -178,7 +182,7 @@ export class PersonsComponent implements OnInit {
 
       this.isCreatePersonMode = false;
 
-      this.closePersonDetails(sideNav);
+      PersonsComponent.closePersonDetails(sideNav);
 
       this.initializeNewPerson();
     });
@@ -226,18 +230,18 @@ export class PersonsComponent implements OnInit {
   }
 
   editPerson() {
-    if (!this.person.birthDay || !this.person.birthDay.length) {
-      this.person.birthDay = 'null';
+    if (!this.person.birthDay) {
+      this.person.birthDay = null;
     }
 
-    if (!this.person.deathDay || !this.person.deathDay.length) {
-      this.person.deathDay = 'null';
+    if (!this.person.deathDay) {
+      this.person.deathDay = null;
     }
 
     if (this.birthMonthLabel === null) {
       this.person.birthMonth = new Month();
       this.person.birthMonth.label = '';
-      this.person.birthMonth.id = 'null';
+      this.person.birthMonth.id = null;
     }
 
     if (this.birthMonthLabel) {
@@ -251,7 +255,7 @@ export class PersonsComponent implements OnInit {
     if (this.deathMonthLabel === null) {
       this.person.deathMonth = new Month();
       this.person.deathMonth.label = '';
-      this.person.deathMonth.id = 'null';
+      this.person.deathMonth.id = null;
     }
 
     if (this.deathMonthLabel) {
@@ -282,31 +286,31 @@ export class PersonsComponent implements OnInit {
       }
     }
 
-    return this.personService.patchApiPerson(this.person).subscribe(response => {
+    return this.personService.patchApiPerson(this.person).subscribe(() => {
       this.isEditPersonMode = false;
 
-      if (this.person.birthDay === 'null') {
-        this.person.birthDay = null;
-      }
-
-      if (this.person.deathDay === 'null') {
-        this.person.deathDay = null;
-      }
+      // if (this.person.birthDay === 'null') {
+      //   this.person.birthDay = null;
+      // }
+      //
+      // if (this.person.deathDay === 'null') {
+      //   this.person.deathDay = null;
+      // }
     });
   }
 
   removePerson(sideNav) {
-    this.personService.removeApiPerson(this.person).subscribe(response => {
+    this.personService.removeApiPerson(this.person).subscribe(() => {
       this.personService.removePerson(this.person);
 
       this.initializeNewPerson();
 
-      this.closePersonDetails(sideNav);
+      PersonsComponent.closePersonDetails(sideNav);
     });
   }
 
   removeTimeline(timeline) {
-    this.timelineService.removePersonApiTimeline(timeline.personId).subscribe(response => {
+    this.timelineService.removePersonApiTimeline(timeline.personId).subscribe(() => {
       for (let i = 0; i < this.person.timelines.length; i++) {
         if (this.person.timelines[i].id === timeline.id) {
           this.person.timelines.splice(i, 1);
@@ -316,8 +320,8 @@ export class PersonsComponent implements OnInit {
   }
 
   removeNote(note) {
-    this.personService.removeApiNote(note).subscribe(response => {
-      this.personService.removePersonNote(this.person, note);
+    this.personService.removeApiNote(note).subscribe(() => {
+      PersonService.removePersonNote(this.person, note);
     });
   }
 
@@ -354,7 +358,7 @@ export class PersonsComponent implements OnInit {
     this.isCreatePersonMode = isCreateMode;
 
     if (sideNav.opened) {
-      sideNav.close().then(done => {
+      sideNav.close().then(() => {
         sideNav.open();
       });
     } else {
@@ -364,7 +368,7 @@ export class PersonsComponent implements OnInit {
 
   cancelEditCreateModes(sideNav) {
     if (this.isCreatePersonMode) {
-      this.closePersonDetails(sideNav);
+      PersonsComponent.closePersonDetails(sideNav);
     }
 
     this.isCreatePersonMode = false;
@@ -388,10 +392,6 @@ export class PersonsComponent implements OnInit {
   cancelPersonNoteForm() {
     this.isAddNoteMode = false;
     this.initializeNewNote();
-  }
-
-  closePersonDetails(sideNav) {
-    sideNav.close();
   }
 
   turnPage(person) {

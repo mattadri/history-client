@@ -8,7 +8,11 @@
 
 <div *ngIf="category.multiPointEvents.length" class="timeline-group">
   <div class="timeline-box" *ngFor="let event of category.multiPointEvents">
-    <app-timeline-event [event]="event"></app-timeline-event>
+    <app-timeline-event
+      [event]="event"
+      [timeline]="timeline"
+      [categoryEvents]="categoryEvents">
+    </app-timeline-event>
   </div>
 </div>
 

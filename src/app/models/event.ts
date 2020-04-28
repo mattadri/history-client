@@ -27,8 +27,8 @@ export class Event {
 
   // if event is being loaded on a timeline this timelineStart will be populated with it's location on the timeline.
   timelineEventId: number;
-  timelineStartLocation: string;
-  timelineEndLocation: string;
+  timelineStartLocation: number;
+  timelineEndLocation: number;
   listEventIsHighlighted: boolean;
   timelineEventIsHighlighted: boolean;
   isSinglePointEvent: boolean;
@@ -52,7 +52,7 @@ export class Event {
     this.timelines = [];
     this.source = new Source();
 
-    this.timelineStartLocation = '';
+    this.timelineStartLocation = null;
     this.listEventIsHighlighted = false;
     this.timelineEventIsHighlighted = false;
     this.isSinglePointEvent = false;
@@ -142,7 +142,7 @@ export class Event {
       for (const returnedTimeline of event.attributes.timeline_event.data) {
         const timeline: Timeline = new Timeline();
 
-        timeline.mapTimeline(returnedTimeline.attributes.timeline.data, returnedTimeline.id);
+        timeline.mapTimeline(returnedTimeline.attributes.timeline.data, returnedTimeline.id, null);
 
         self.timelines.push(timeline);
       }
@@ -154,54 +154,67 @@ export class Event {
   // in the case that an event has no month and the year is greater than 999,999 the formatter will shorten with 'MYA' or 'BYA'
   public formatYears() {
     // START DATE FORMATTED YEAR
-    let formattedNumber = this.startYear;
-    let addBC = false;
+    let formattedNumber: number = this.startYear;
+    let postfix = '';
+
+    let addBC = this.startEra.label === 'BC';
 
     if (formattedNumber < 0) {
-      addBC = true;
       formattedNumber = formattedNumber * -1;
     }
 
     if (this.startEra && this.startEra.label === 'BC' && !this.startMonth) {
       if (formattedNumber > 999999 && formattedNumber < 1000000000) {
-        formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000).toFixed(2)) + ' MYA';
+        formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000));
+        formattedNumber.toFixed(2);
+        postfix = 'MYA';
+
       } else if (formattedNumber > 999999999 && formattedNumber < 1000000000000) {
-        formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000000).toFixed(2)) + ' BYA';
+        formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000000));
+        formattedNumber.toFixed(2);
+        postfix = 'BYA';
+
       } else {
         if (addBC) {
-          formattedNumber = formattedNumber.toString() + ' BC';
+          postfix = 'BC';
         }
       }
     }
-
+    
     if (formattedNumber) {
-      this.formattedStartYear = formattedNumber.toString();
+      this.formattedStartYear = formattedNumber.toString() + ' ' + postfix;
     }
 
     // END DATE FORMATTED YEAR
     if (this.endYear) {
       formattedNumber = this.endYear;
-      addBC = false;
+
+      addBC = this.endEra.label === 'BC';
 
       if (formattedNumber < 0) {
-        addBC = true;
         formattedNumber = formattedNumber * -1;
       }
 
       if (this.endEra && this.endEra.label === 'BC' && !this.endMonth) {
         if (formattedNumber > 999999 && formattedNumber < 1000000000) {
-          formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000).toFixed(2)) + ' MYA';
+          formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000));
+          formattedNumber.toFixed(2);
+          postfix = 'MYA';
+
         } else if (formattedNumber > 999999999 && formattedNumber < 1000000000000) {
-          formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000000).toFixed(2)) + ' BYA';
+          formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000000));
+          formattedNumber.toFixed(2);
+          postfix = 'BYA';
+
         } else {
           if (addBC) {
-            formattedNumber = formattedNumber.toString() + ' BC';
+            postfix = 'BC';
           }
         }
       }
 
       if (formattedNumber) {
-        this.formattedEndYear = formattedNumber.toString();
+        this.formattedEndYear = formattedNumber.toString() + ' ' + postfix;
       }
 
     } else {
@@ -255,10 +268,10 @@ export class Event {
 
   setEventLength() {
     if (this.endYear) {
-      this.eventLength = (this.endYear - this.startYear).toString();
+      this.eventLength = (this.endYear - this.startYear);
     } else {
       const dateObj = new Date();
-      this.eventLength = (dateObj.getFullYear() - this.startYear).toString();
+      this.eventLength = (dateObj.getFullYear() - this.startYear);
     }
 
     if (this.eventLength < 0) {

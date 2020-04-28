@@ -1,8 +1,8 @@
 import {SourceNote} from '../source-note';
-import {Source} from '../reference';
+import {Source} from '../source';
 
 export class SourceNotePost {
-  data: object;
+  data;
 
   mapToPost(sourceNote: SourceNote, source: Source) {
     this.data = {
