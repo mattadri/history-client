@@ -180,7 +180,7 @@ export class Event {
         }
       }
     }
-    
+
     if (formattedNumber) {
       this.formattedStartYear = formattedNumber.toString() + ' ' + postfix;
     }

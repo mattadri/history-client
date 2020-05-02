@@ -76,10 +76,6 @@ export class SourcesComponent implements OnInit {
     this.getSources('/references?sort=title');
   }
 
-  static closeSourceDetails(sideNav) {
-    sideNav.close();
-  }
-
   ngOnInit() { }
 
   initializeNewSource() {
@@ -291,6 +287,10 @@ export class SourcesComponent implements OnInit {
 
   cancelAddAuthorMode() {
     this.isAddAuthorMode = false;
+  }
+
+  closeSourceDetails(sideNav) {
+    sideNav.close();
   }
 
   turnPage(source) {
