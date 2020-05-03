@@ -155,7 +155,7 @@ export class SourcesComponent implements OnInit {
 
       this.isCreateSourceMode = false;
 
-      SourcesComponent.closeSourceDetails(sideNav);
+      this.closeSourceDetails(sideNav);
 
       this.initializeNewSource();
     });
@@ -233,7 +233,7 @@ export class SourcesComponent implements OnInit {
 
       this.initializeNewSource();
 
-      SourcesComponent.closeSourceDetails(sideNav);
+      this.closeSourceDetails(sideNav);
     });
   }
 
@@ -272,7 +272,7 @@ export class SourcesComponent implements OnInit {
 
   cancelEditCreateModes(sideNav) {
     if (this.isCreateSourceMode) {
-      SourcesComponent.closeSourceDetails(sideNav);
+      this.closeSourceDetails(sideNav);
     }
 
     this.isCreateSourceMode = false;
