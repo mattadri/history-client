@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 import { PersonPost } from '../models/posts/person-post';
 import { Person } from '../models/person';
 import { PersonNote } from '../models/person-note';
@@ -32,7 +34,7 @@ export class PersonService {
     this.personPost = new PersonPost();
     this.personPost.mapToPost(person, false);
 
-    return this.http.post('/api/persons', this.personPost, {
+    return this.http.post(environment.apiUrl + '/persons', this.personPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -43,7 +45,7 @@ export class PersonService {
     this.personPost = new PersonPost();
     this.personPost.mapToPost(person, true);
 
-    return this.http.patch('/api/persons/' + person.id, this.personPost, {
+    return this.http.patch(environment.apiUrl + '/persons/' + person.id, this.personPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -51,7 +53,7 @@ export class PersonService {
   }
 
   removeApiPerson(person: Person): Observable<any> {
-    return this.http.delete('/api/persons/' + person.id, {
+    return this.http.delete(environment.apiUrl + '/persons/' + person.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
@@ -63,7 +65,7 @@ export class PersonService {
       path = '/persons';
     }
 
-    return this.http.get<PersonResponse>('api' + path, {
+    return this.http.get<PersonResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'persons')
@@ -71,7 +73,7 @@ export class PersonService {
   }
 
   getApiPerson(personId): Observable<Person> {
-    return this.http.get<Person>('api/persons/' + personId, {
+    return this.http.get<Person>(environment.apiUrl + '/persons/' + personId, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'person')
@@ -82,7 +84,7 @@ export class PersonService {
     this.personNotePost = new PersonNotePost();
     this.personNotePost.mapToNotePost(note, person);
 
-    return this.http.post('/api/person_notes', this.personNotePost, {
+    return this.http.post(environment.apiUrl + '/person_notes', this.personNotePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -90,7 +92,7 @@ export class PersonService {
   }
 
   removeApiNote(note: PersonNote): Observable<any> {
-    return this.http.delete('/api/person_notes/' + note.id, {
+    return this.http.delete(environment.apiUrl + '/person_notes/' + note.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }

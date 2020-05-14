@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 import {Essay} from '../models/essay';
 import {EssayPost} from '../models/posts/essay-post';
 import {EssayNote} from '../models/essay-note';
@@ -45,7 +47,7 @@ export class EssayService {
   getApiEssays(path): Observable<EssayResponse> {
     this.essays = [];
 
-    return this.http.get<EssayResponse>('api' + path, {
+    return this.http.get<EssayResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'essays')
@@ -53,7 +55,7 @@ export class EssayService {
   }
 
   getApiEssay(essayId) {
-    return this.http.get<Essay>('api/essays/' + essayId, {
+    return this.http.get<Essay>(environment.apiUrl + '/essays/' + essayId, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'essay')
@@ -64,7 +66,7 @@ export class EssayService {
     this.essayPost = new EssayPost();
     this.essayPost.mapToPost(essay, true);
 
-    return this.http.post('/api/essays', this.essayPost, {
+    return this.http.post(environment.apiUrl + '/essays', this.essayPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -75,7 +77,7 @@ export class EssayService {
     this.essayNotePost = new EssayNotePost();
     this.essayNotePost.mapToPost(essay, essayNote, false);
 
-    return this.http.post('/api/essay_notes', this.essayNotePost, {
+    return this.http.post(environment.apiUrl + '/essay_notes', this.essayNotePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -86,7 +88,7 @@ export class EssayService {
     this.essayReferencePost = new EssayReferencePost();
     this.essayReferencePost.mapToPost(essay, essayReference, false);
 
-    return this.http.post('/api/essay_references', this.essayReferencePost, {
+    return this.http.post(environment.apiUrl + '/essay_references', this.essayReferencePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -97,7 +99,7 @@ export class EssayService {
     this.essayEventPost = new EssayEventPost();
     this.essayEventPost.mapToPost(essay, essayEvent);
 
-    return this.http.post('/api/essay_events', this.essayEventPost, {
+    return this.http.post(environment.apiUrl + '/essay_events', this.essayEventPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -108,7 +110,7 @@ export class EssayService {
     this.essayPersonPost = new EssayPersonPost();
     this.essayPersonPost.mapToPost(essay, essayPerson);
 
-    return this.http.post('/api/essay_persons', this.essayPersonPost, {
+    return this.http.post(environment.apiUrl + '/essay_persons', this.essayPersonPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -119,7 +121,7 @@ export class EssayService {
     this.essayTimelinePost = new EssayTimelinePost();
     this.essayTimelinePost.mapToPost(essay, essayTimeline);
 
-    return this.http.post('/api/essay_timelines', this.essayTimelinePost, {
+    return this.http.post(environment.apiUrl + '/essay_timelines', this.essayTimelinePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -130,7 +132,7 @@ export class EssayService {
     this.essayPost = new EssayPost();
     this.essayPost.mapToPost(essay, true);
 
-    return this.http.patch('/api/essays/' + essay.id, this.essayPost, {
+    return this.http.patch(environment.apiUrl + '/essays/' + essay.id, this.essayPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -138,7 +140,7 @@ export class EssayService {
   }
 
   removeApiEssayNote(essayNoteId: number): Observable<any> {
-    return this.http.delete('/api/essay_notes/' + essayNoteId, {
+    return this.http.delete(environment.apiUrl + '/essay_notes/' + essayNoteId, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }

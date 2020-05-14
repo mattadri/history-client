@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 import { Timeline } from '../models/timeline';
 import { Event } from '../models/event';
 import { TimelineEvent } from '../models/timeline-event';
@@ -17,7 +19,6 @@ import {TimelineResponse} from '../models/responses/timeline-response';
 
 import {TimelineCategory} from '../models/timeline-category';
 import {TimelineCategoryEventPost} from '../models/posts/timeline-category-event-post';
-import {TimelineCategoryPersonPost} from '../models/posts/timeline-category-person-post';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +37,7 @@ export class TimelineService {
   getApiTimelines(path) {
     this.timelines = [];
 
-    return this.http.get<TimelineResponse>('api' + path, {
+    return this.http.get<TimelineResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'timelines')
@@ -44,7 +45,7 @@ export class TimelineService {
   }
 
   getApiTimeline(timelineId) {
-    return this.http.get<Timeline>('api/timelines/' + timelineId, {
+    return this.http.get<Timeline>(environment.apiUrl + '/timelines/' + timelineId, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'timeline')
@@ -55,7 +56,7 @@ export class TimelineService {
     this.timelinePost = new TimelinePost();
     this.timelinePost.mapToPost(timeline, false);
 
-    return this.http.post('/api/timelines', this.timelinePost, {
+    return this.http.post(environment.apiUrl + '/timelines', this.timelinePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -66,7 +67,7 @@ export class TimelineService {
     this.timelinePost = new TimelinePost();
     this.timelinePost.mapToPost(timeline, true);
 
-    return this.http.patch('/api/timelines/' + timeline.id, this.timelinePost, {
+    return this.http.patch(environment.apiUrl + '/timelines/' + timeline.id, this.timelinePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -77,7 +78,7 @@ export class TimelineService {
     this.timelineEventPost = new TimelineEventPost();
     this.timelineEventPost.mapToPost(timelineEvent, false);
 
-    return this.http.post('/api/timeline_events', this.timelineEventPost, {
+    return this.http.post(environment.apiUrl + '/timeline_events', this.timelineEventPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -88,7 +89,7 @@ export class TimelineService {
     this.timelinePersonPost = new TimelinePersonPost();
     this.timelinePersonPost.mapToPost(timelinePerson, false);
 
-    return this.http.post('/api/timeline_persons', this.timelinePersonPost, {
+    return this.http.post(environment.apiUrl + '/timeline_persons', this.timelinePersonPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -99,7 +100,7 @@ export class TimelineService {
     this.timelineCategoryPost = new TimelineCategoryPost();
     this.timelineCategoryPost.mapToPost(timelineCategory, timeline);
 
-    return this.http.post('/api/timeline_categories', this.timelineCategoryPost, {
+    return this.http.post(environment.apiUrl + '/timeline_categories', this.timelineCategoryPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -110,7 +111,7 @@ export class TimelineService {
     this.timelineCategoryEventPost = new TimelineCategoryEventPost();
     this.timelineCategoryEventPost.mapToPost(timelineCategory, event);
 
-    return this.http.post('/api/timeline_category_events', this.timelineCategoryEventPost, {
+    return this.http.post(environment.apiUrl + '/timeline_category_events', this.timelineCategoryEventPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -124,7 +125,7 @@ export class TimelineService {
     this.timelineEventPost = new TimelineEventPost();
     this.timelineEventPost.mapToPost(timelineEvent, true);
 
-    return this.http.patch('/api/timeline_events/' + timelineEvent.id, this.timelineEventPost, {
+    return this.http.patch(environment.apiUrl + '/timeline_events/' + timelineEvent.id, this.timelineEventPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -132,25 +133,25 @@ export class TimelineService {
   }
 
   removeCategoryApiTimeline(categoryId: number): Observable<any> {
-    return this.http.delete('/api/timeline_categories/' + categoryId, {
+    return this.http.delete(environment.apiUrl + '/timeline_categories/' + categoryId, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
 
   removeEventApiTimeline(timelineEventId: number): Observable<any> {
-    return this.http.delete('/api/timeline_events/' + timelineEventId, {
+    return this.http.delete(environment.apiUrl + '/timeline_events/' + timelineEventId, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
 
   removePersonApiTimeline(timelinePersonId: number): Observable<any> {
-    return this.http.delete('/api/timeline_persons/' + timelinePersonId, {
+    return this.http.delete(environment.apiUrl + '/timeline_persons/' + timelinePersonId, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
 
   removeCategoryEventApiTimeline(categoryEventId: number): Observable<any> {
-    return this.http.delete('/api/timeline_category_events/' + categoryEventId, {
+    return this.http.delete(environment.apiUrl + '/timeline_category_events/' + categoryEventId, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }

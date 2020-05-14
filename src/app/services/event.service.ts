@@ -3,19 +3,17 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 import { Event } from '../models/event';
 import { EventNote } from '../models/event-note';
 import { EventNotePost } from '../models/posts/event-note-post';
 import { EventPost } from '../models/posts/event-post';
-
 import {EventResponse} from '../models/responses/event-response';
 
 @Injectable({
   providedIn: 'root'
 })
-
-
-
 export class EventService {
   private events: Event[];
   private eventNotePost: EventNotePost;
@@ -99,7 +97,7 @@ export class EventService {
       }
     }
 
-    return this.http.get<EventResponse>('api' + path, {
+    return this.http.get<EventResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'events')
@@ -107,7 +105,7 @@ export class EventService {
   }
 
   getApiEvent(eventId): Observable<Event> {
-    return this.http.get<Event>('api/events/' + eventId, {
+    return this.http.get<Event>(environment.apiUrl + '/events/' + eventId, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'event')
@@ -118,7 +116,7 @@ export class EventService {
     this.eventPost = new EventPost();
     this.eventPost.mapToPost(event, false);
 
-    return this.http.post('/api/events', this.eventPost, {
+    return this.http.post(environment.apiUrl + '/events', this.eventPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -129,7 +127,7 @@ export class EventService {
     this.eventPost = new EventPost();
     this.eventPost.mapToPost(event, true);
 
-    return this.http.patch('/api/events/' + event.id, this.eventPost, {
+    return this.http.patch(environment.apiUrl + '/events/' + event.id, this.eventPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -137,7 +135,7 @@ export class EventService {
   }
 
   removeApiEvent(event: Event): Observable<any> {
-    return this.http.delete('/api/events/' + event.id, {
+    return this.http.delete(environment.apiUrl + '/events/' + event.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
@@ -146,7 +144,7 @@ export class EventService {
     this.eventNotePost = new EventNotePost();
     this.eventNotePost.mapToPost(note, event);
 
-    return this.http.post('/api/event_notes', this.eventNotePost, {
+    return this.http.post(environment.apiUrl + '/event_notes', this.eventNotePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -154,7 +152,7 @@ export class EventService {
   }
 
   removeApiNote(note: EventNote): Observable<any> {
-    return this.http.delete('/api/event_notes/' + note.id, {
+    return this.http.delete(environment.apiUrl + '/event_notes/' + note.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }

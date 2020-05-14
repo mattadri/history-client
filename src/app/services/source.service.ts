@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
+
 import { Observable } from 'rxjs';
+
+import { environment } from '../../environments/environment';
+
 import { Source } from '../models/source';
 import { Author } from '../models/author';
 import { SourcePost } from '../models/posts/source-post';
@@ -67,7 +71,7 @@ export class SourceService {
       path = '/references';
     }
 
-    return this.http.get<SourceResponse>('api' + path, {
+    return this.http.get<SourceResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'sources')
@@ -75,7 +79,7 @@ export class SourceService {
   }
 
   getApiSource(sourceId): Observable<Source> {
-    return this.http.get<Source>('api/references/' + sourceId, {
+    return this.http.get<Source>(environment.apiUrl + '/references/' + sourceId, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'source')
@@ -86,7 +90,7 @@ export class SourceService {
     this.sourcePost = new SourcePost();
     this.sourcePost.mapToPost(source, false);
 
-    return this.http.post('/api/references', this.sourcePost, {
+    return this.http.post(environment.apiUrl + '/references', this.sourcePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -97,7 +101,7 @@ export class SourceService {
     this.sourcePost = new SourcePost();
     this.sourcePost.mapToPost(source, true);
 
-    return this.http.patch('/api/references/' + source.id, this.sourcePost, {
+    return this.http.patch(environment.apiUrl + '/references/' + source.id, this.sourcePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -108,7 +112,7 @@ export class SourceService {
     this.sourceAuthorPost = new SourceAuthorPost();
     this.sourceAuthorPost.mapToPost(source, author);
 
-    return this.http.post('/api/reference_authors', this.sourceAuthorPost, {
+    return this.http.post(environment.apiUrl + '/reference_authors', this.sourceAuthorPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -116,13 +120,13 @@ export class SourceService {
   }
 
   removeApiSource(source: Source): Observable<any> {
-    return this.http.delete('/api/references/' + source.id, {
+    return this.http.delete(environment.apiUrl + '/references/' + source.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
 
   removeApiSourceAuthor(author: Author): Observable<any> {
-    return this.http.delete('/api/reference_authors/' + author.relationshipId, {
+    return this.http.delete(environment.apiUrl + '/reference_authors/' + author.relationshipId, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
@@ -131,7 +135,7 @@ export class SourceService {
     this.notePost = new SourceNotePost();
     this.notePost.mapToPost(note, source);
 
-    return this.http.post('/api/reference_notes', this.notePost, {
+    return this.http.post(environment.apiUrl + '/reference_notes', this.notePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -139,7 +143,7 @@ export class SourceService {
   }
 
   removeApiNote(note: SourceNote): Observable<any> {
-    return this.http.delete('/api/reference_notes/' + note.id, {
+    return this.http.delete(environment.apiUrl + '/reference_notes/' + note.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }

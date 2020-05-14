@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
+
 import { Author } from '../models/author';
 import { AuthorPost } from '../models/posts/author-post';
 import {AuthorResponse} from '../models/responses/author-response';
@@ -45,7 +47,7 @@ export class AuthorService {
       path = '/authors';
     }
 
-    return this.http.get<AuthorResponse>('/api' + path, {
+    return this.http.get<AuthorResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'authors')
@@ -53,7 +55,7 @@ export class AuthorService {
   }
 
   removeApiAuthor(author: Author): Observable<any> {
-    return this.http.delete('/api/authors/' + author.id, {
+    return this.http.delete(environment.apiUrl + '/authors/' + author.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
@@ -62,7 +64,7 @@ export class AuthorService {
     this.authorPost = new AuthorPost();
     this.authorPost.mapToPost(author, false);
 
-    return this.http.post('/api/authors', this.authorPost, {
+    return this.http.post(environment.apiUrl + '/authors', this.authorPost, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json').set('Content-Type', 'application/vnd.api+json')
     });
   }
@@ -71,7 +73,7 @@ export class AuthorService {
     this.authorPost = new AuthorPost();
     this.authorPost.mapToPost(author, true);
 
-    return this.http.patch('/api/authors/' + author.id, this.authorPost, {
+    return this.http.patch(environment.apiUrl + '/authors/' + author.id, this.authorPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
