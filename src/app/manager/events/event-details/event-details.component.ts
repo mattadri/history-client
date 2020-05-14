@@ -1,4 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {FormControl} from '@angular/forms';
+
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 
 import {TimelineService} from '../../../services/timeline.service';
 import {EventService} from '../../../services/event.service';
@@ -36,7 +40,6 @@ export class EventDetailsComponent implements OnInit {
   @Input() public startEraLabel: string;
   @Input() public endEraLabel: string;
 
-  @Input() public sourceId: number;
   @Input() public timelineId: number;
 
   @Output() private fullyCancelEditMode: EventEmitter<void>;
@@ -49,11 +52,22 @@ export class EventDetailsComponent implements OnInit {
   public eventNote: EventNote;
   public timeline: Timeline;
 
+  public sourcesAutocompleteControl = new FormControl();
+  public sourcesFilteredOptions: Observable<Source[]>;
+  public sourceFieldDisplayValue: string;
+
+  public source: Source;
+
   constructor(private eventService: EventService,
               private timelineService: TimelineService) {
 
     this.fullyCancelEditMode = new EventEmitter();
     this.doCleanupRemovedEvent = new EventEmitter();
+
+    this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
+      startWith(''),
+      map(source => this._filterSources(source))
+    );
   }
 
   ngOnInit() { }
@@ -158,25 +172,25 @@ export class EventDetailsComponent implements OnInit {
       }
     }
 
-    if (this.sourceId) {
-      for (const source of this.sources) {
-        if (this.sourceId === source.id) {
-          this.event.source = source;
-        }
+    return this.eventService.patchApiEvent(this.event).subscribe(() => {
+      this.cancelEditMode();
+    });
+  }
+
+  saveSource() {
+    this.event.source = this.sourcesAutocompleteControl.value;
+  }
+
+  displaySource(source: Source) {
+    if (source) {
+      this.sourceFieldDisplayValue = source.title;
+
+      if (source.subTitle) {
+        this.sourceFieldDisplayValue = this.sourceFieldDisplayValue + ': ' + source.subTitle;
       }
     }
 
-    return this.eventService.patchApiEvent(this.event).subscribe(() => {
-      // if (this.event.startDay === 'null') {
-      //   this.event.startDay = null;
-      // }
-      //
-      // if (this.event.endDay === 'null') {
-      //   this.event.endDay = null;
-      // }
-
-      this.cancelEditMode();
-    });
+    return this.sourceFieldDisplayValue;
   }
 
   removeEvent(contentPanel) {
@@ -228,6 +242,17 @@ export class EventDetailsComponent implements OnInit {
   cancelEventTimelineForm() {
     this.isAddTimelineMode = false;
     this.initializeNewTimeline();
+  }
+
+  private _filterSources(filterValue: any): Source[] {
+    // when a source is actually selected the value is changed to the source itself. Do not filter if that is the case.
+    if (!filterValue.id) {
+      filterValue = filterValue.toLowerCase();
+
+      return this.sources.filter(source => {
+        return source.title.toLowerCase().includes(filterValue);
+      });
+    }
   }
 
   private sleep(ms) {

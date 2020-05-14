@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 import { Options } from 'ng5-slider';
 
@@ -9,7 +10,6 @@ import { Event } from '../../models/event';
 import {Era} from '../../models/era';
 import {Category} from '../../models/category';
 
-import {ActivatedRoute} from '@angular/router';
 import {EventService} from '../../services/event.service';
 
 @Component({

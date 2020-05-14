@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {FormControl} from '@angular/forms';
+
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 
 import { Person } from '../../models/person';
 import { Era } from '../../models/era';
@@ -47,10 +51,13 @@ export class PersonsComponent implements OnInit {
   public nextPage: string;
   public previousPage: string;
 
-  public sourceId: number;
   public timelineId: number;
 
   public isAddTimelineMode: boolean;
+
+  public sourcesAutocompleteControl = new FormControl();
+  public sourcesFilteredOptions: Observable<Source[]>;
+  public sourceFieldDisplayValue: string;
 
   constructor(private personService: PersonService,
               private sourceService: SourceService,
@@ -79,12 +86,17 @@ export class PersonsComponent implements OnInit {
       }
     });
 
-    this.sourceService.getApiSources('/references?sort=title').subscribe(sources => {
+    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
       for (const source of sources.sources) {
         this.sourceService.setSource(source);
       }
 
       this.sources = this.sourceService.getSources();
+
+      this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
+        startWith(''),
+        map(source => this._filterSources(source))
+      );
     });
 
     this.timelineService.getApiTimelines('/timelines?sort=modified&fields[timeline]=label').subscribe(response => {
@@ -96,10 +108,6 @@ export class PersonsComponent implements OnInit {
     });
 
     this.getPersons('/persons?sort=-created&page%5Bnumber%5D=1');
-  }
-
-  static closePersonDetails(sideNav) {
-    sideNav.close();
   }
 
   ngOnInit() { }
@@ -169,12 +177,6 @@ export class PersonsComponent implements OnInit {
       }
     }
 
-    for (const source of this.sources) {
-      if (this.sourceId === source.id) {
-        this.person.source = source;
-      }
-    }
-
     return this.personService.createApiPerson(this.person).subscribe(response => {
       this.person.id = response.data.id;
 
@@ -182,7 +184,7 @@ export class PersonsComponent implements OnInit {
 
       this.isCreatePersonMode = false;
 
-      PersonsComponent.closePersonDetails(sideNav);
+      this.closePersonDetails(sideNav);
 
       this.initializeNewPerson();
     });
@@ -278,25 +280,25 @@ export class PersonsComponent implements OnInit {
       }
     }
 
-    if (this.sourceId) {
-      for (const source of this.sources) {
-        if (this.sourceId === source.id) {
-          this.person.source = source;
-        }
+    return this.personService.patchApiPerson(this.person).subscribe(() => {
+      this.isEditPersonMode = false;
+    });
+  }
+
+  saveSource() {
+    this.person.source = this.sourcesAutocompleteControl.value;
+  }
+
+  displaySource(source: Source) {
+    if (source) {
+      this.sourceFieldDisplayValue = source.title;
+
+      if (source.subTitle) {
+        this.sourceFieldDisplayValue = this.sourceFieldDisplayValue + ': ' + source.subTitle;
       }
     }
 
-    return this.personService.patchApiPerson(this.person).subscribe(() => {
-      this.isEditPersonMode = false;
-
-      // if (this.person.birthDay === 'null') {
-      //   this.person.birthDay = null;
-      // }
-      //
-      // if (this.person.deathDay === 'null') {
-      //   this.person.deathDay = null;
-      // }
-    });
+    return this.sourceFieldDisplayValue;
   }
 
   removePerson(sideNav) {
@@ -305,7 +307,7 @@ export class PersonsComponent implements OnInit {
 
       this.initializeNewPerson();
 
-      PersonsComponent.closePersonDetails(sideNav);
+      this.closePersonDetails(sideNav);
     });
   }
 
@@ -344,10 +346,6 @@ export class PersonsComponent implements OnInit {
       this.deathMonthLabel = this.person.deathMonth.label;
     }
 
-    if (this.person.source) {
-      this.sourceId = this.person.source.id;
-    }
-
     this.birthEraLabel = this.person.birthEra.label;
 
     if (this.person.deathEra) {
@@ -366,9 +364,13 @@ export class PersonsComponent implements OnInit {
     }
   }
 
+  closePersonDetails(sideNav) {
+    sideNav.close();
+  }
+
   cancelEditCreateModes(sideNav) {
     if (this.isCreatePersonMode) {
-      PersonsComponent.closePersonDetails(sideNav);
+      this.closePersonDetails(sideNav);
     }
 
     this.isCreatePersonMode = false;
@@ -399,6 +401,17 @@ export class PersonsComponent implements OnInit {
       this.getPersons(this.previousPage);
     } else if (person.pageIndex > person.previousPageIndex) {
       this.getPersons(this.nextPage);
+    }
+  }
+
+  private _filterSources(filterValue: any): Source[] {
+    // when a source is actually selected the value is changed to the source itself. Do not filter if that is the case.
+    if (!filterValue.id) {
+      filterValue = filterValue.toLowerCase();
+
+      return this.sources.filter(source => {
+        return source.title.toLowerCase().includes(filterValue);
+      });
     }
   }
 

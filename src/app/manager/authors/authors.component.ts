@@ -30,10 +30,6 @@ export class AuthorsComponent implements OnInit {
     this.getAuthors('/authors?sort=last_name');
   }
 
-  static closeAuthorDetails(sideNav) {
-    sideNav.close();
-  }
-
   ngOnInit() { }
 
   initializeNewAuthor() {
@@ -63,7 +59,7 @@ export class AuthorsComponent implements OnInit {
 
       this.isCreateAuthorMode = false;
 
-      AuthorsComponent.closeAuthorDetails(sideNav);
+      this.closeAuthorDetails(sideNav);
 
       this.initializeNewAuthor();
     });
@@ -81,7 +77,7 @@ export class AuthorsComponent implements OnInit {
 
       this.initializeNewAuthor();
 
-      AuthorsComponent.closeAuthorDetails(sideNav);
+      this.closeAuthorDetails(sideNav);
     });
   }
 
@@ -110,7 +106,7 @@ export class AuthorsComponent implements OnInit {
 
   cancelEditCreateModes(sideNav) {
     if (this.isCreateAuthorMode) {
-      AuthorsComponent.closeAuthorDetails(sideNav);
+      this.closeAuthorDetails(sideNav);
     }
 
     this.isCreateAuthorMode = false;
@@ -122,6 +118,10 @@ export class AuthorsComponent implements OnInit {
     this.initializeNewAuthor();
 
     this.openAuthorDetails(this.author, sideNav, true, false);
+  }
+
+  closeAuthorDetails(sideNav) {
+    sideNav.close();
   }
 
   turnPage(author) {

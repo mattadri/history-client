@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {FormControl} from '@angular/forms';
+
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
 
 import { Event } from '../../models/event';
 import { EventNote } from '../../models/event-note';
@@ -47,10 +51,13 @@ export class EventsComponent implements OnInit {
   public startEraLabel: string;
   public endEraLabel: string;
 
-  public sourceId: number;
   public timelineId: number;
 
   public filterQuery: string;
+
+  public sourcesAutocompleteControl = new FormControl();
+  public sourcesFilteredOptions: Observable<Source[]>;
+  public sourceFieldDisplayValue: string;
 
   constructor(private eventService: EventService,
               private sourceService: SourceService,
@@ -81,12 +88,17 @@ export class EventsComponent implements OnInit {
       }
     });
 
-    this.sourceService.getApiSources('/references?sort=title').subscribe(sources => {
+    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
       for (const source of sources.sources) {
         this.sourceService.setSource(source);
       }
 
       this.sources = this.sourceService.getSources();
+
+      this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
+        startWith(''),
+        map(source => this._filterSources(source))
+      );
     });
 
     this.timelineService.getApiTimelines('/timelines?sort=modified&fields[timeline]=label').subscribe(response => {
@@ -98,10 +110,6 @@ export class EventsComponent implements OnInit {
     });
 
     this.getEvents('/events?sort=-created&page%5Bnumber%5D=1', null, null);
-  }
-
-  static closeEventDetails(contentPanel) {
-    contentPanel.close();
   }
 
   ngOnInit() {
@@ -163,12 +171,6 @@ export class EventsComponent implements OnInit {
       }
     }
 
-    for (const source of this.sources) {
-      if (this.sourceId === source.id) {
-        this.event.source = source;
-      }
-    }
-
     return this.eventService.createApiEvent(this.event).subscribe(response => {
       this.event.id = response.data.id;
 
@@ -183,7 +185,7 @@ export class EventsComponent implements OnInit {
 
   cleanupRemovedEvent(contentPanel) {
     this.initializeNewEvent();
-    EventsComponent.closeEventDetails(contentPanel);
+    this.closeEventDetails(contentPanel);
   }
 
   openEventDetails(event, sideNav, isCreateMode, isEditMode) {
@@ -209,10 +211,6 @@ export class EventsComponent implements OnInit {
       this.endMonthLabel = this.event.endMonth.label;
     }
 
-    if (this.event.source) {
-      this.sourceId = this.event.source.id;
-    }
-
     this.startEraLabel = this.event.startEra.label;
     this.endEraLabel = this.event.endEra.label;
 
@@ -227,11 +225,31 @@ export class EventsComponent implements OnInit {
     }
   }
 
+  saveSource() {
+    this.event.source = this.sourcesAutocompleteControl.value;
+  }
+
+  displaySource(source: Source) {
+    if (source) {
+      this.sourceFieldDisplayValue = source.title;
+
+      if (source.subTitle) {
+        this.sourceFieldDisplayValue = this.sourceFieldDisplayValue + ': ' + source.subTitle;
+      }
+    }
+
+    return this.sourceFieldDisplayValue;
+  }
+
   activateCreateMode(contentPanel) {
     this.isCreateEventMode = true;
     this.initializeNewEvent();
 
     this.openEventDetails(this.event, contentPanel, true, false);
+  }
+
+  closeEventDetails(contentPanel) {
+    contentPanel.close();
   }
 
   cancelEditMode() {
@@ -262,5 +280,16 @@ export class EventsComponent implements OnInit {
     }
 
     this.getEvents('/events?sort=-created', stringFilter, dateFilter);
+  }
+
+  private _filterSources(filterValue: any): Source[] {
+    // when a source is actually selected the value is changed to the source itself. Do not filter if that is the case.
+    if (!filterValue.id) {
+      filterValue = filterValue.toLowerCase();
+
+      return this.sources.filter(source => {
+        return source.title.toLowerCase().includes(filterValue);
+      });
+    }
   }
 }

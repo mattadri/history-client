@@ -61,7 +61,6 @@
         [endEraLabel]="endEraLabel"
         [startMonthLabel]="startMonthLabel"
         [endMonthLabel]="endMonthLabel"
-        [sourceId]="sourceId"
         [timelineId]="timelineId"
         (fullyCancelEditMode)="cancelEditMode()"
         (doCleanupRemovedEvent)="cleanupRemovedEvent($event)">
@@ -188,10 +187,19 @@
           <section class="app-section inline">
             <label>Source</label>
             <mat-form-field class="app-field-reference">
-              <mat-label>Source</mat-label>
-              <mat-select [(ngModel)]="sourceId" name="event_source" required>
-                <mat-option *ngFor="let source of sources" [value]="source.id">{{source.title}}</mat-option>
-              </mat-select>
+              <input
+                type="text"
+                placeholder="Select Source"
+                aria-label="Source"
+                matInput
+                [formControl]="sourcesAutocompleteControl"
+                [matAutocomplete]="auto">
+
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
+                <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+                  {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
           </section>
 

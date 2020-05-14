@@ -9,8 +9,6 @@ export class SourceNotePost {
       type: 'reference_note',
       attributes: {
         note: sourceNote.note,
-        chapter: sourceNote.chapter,
-        page: sourceNote.page,
         reference_rel: {
           data: {
             type: 'reference',
@@ -19,5 +17,13 @@ export class SourceNotePost {
         }
       }
     };
+
+    if (sourceNote.chapter) {
+      this.data.attributes.chapter = sourceNote.chapter;
+    }
+
+    if (sourceNote.page) {
+      this.data.attributes.page = sourceNote.page;
+    }
   }
 }

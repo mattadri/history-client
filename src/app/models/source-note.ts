@@ -21,7 +21,7 @@ export class SourceNote {
 
   initializeNote() {
     this.note = '';
-    this.chapter = '';
+    this.chapter = null;
     this.page = null;
   }
 }

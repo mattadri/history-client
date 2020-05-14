@@ -166,12 +166,12 @@ export class Event {
     if (this.startEra && this.startEra.label === 'BC' && !this.startMonth) {
       if (formattedNumber > 999999 && formattedNumber < 1000000000) {
         formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000));
-        formattedNumber.toFixed(2);
+        formattedNumber = Math.round(100 * formattedNumber) / 100;
         postfix = 'MYA';
 
       } else if (formattedNumber > 999999999 && formattedNumber < 1000000000000) {
         formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000000));
-        formattedNumber.toFixed(2);
+        formattedNumber = Math.round(100 * formattedNumber) / 100;
         postfix = 'BYA';
 
       } else {
@@ -198,12 +198,12 @@ export class Event {
       if (this.endEra && this.endEra.label === 'BC' && !this.endMonth) {
         if (formattedNumber > 999999 && formattedNumber < 1000000000) {
           formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000));
-          formattedNumber.toFixed(2);
+          formattedNumber = Math.round(100 * formattedNumber) / 100;
           postfix = 'MYA';
 
         } else if (formattedNumber > 999999999 && formattedNumber < 1000000000000) {
           formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000000));
-          formattedNumber.toFixed(2);
+          formattedNumber = Math.round(100 * formattedNumber) / 100;
           postfix = 'BYA';
 
         } else {

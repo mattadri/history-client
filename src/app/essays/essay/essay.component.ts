@@ -144,7 +144,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
       this.tokenizeTimelines();
     });
 
-    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title').subscribe(response => {
+    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(response => {
       this.sources = response.sources;
 
       this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
