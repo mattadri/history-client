@@ -1,0 +1,8 @@
+<p>
+  Are you really sure you want to delete <b>{{data.label}}</b>?
+</p>
+
+<br>
+
+<button mat-flat-button color="primary" [mat-dialog-close]="true">Delete</button>
+<button mat-flat-button color="secondary" (click)="onNoClick()">Cancel</button>

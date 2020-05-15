@@ -133,9 +133,20 @@ export class SourceService {
 
   createApiSourceNote(note: SourceNote, source: Source): Observable<any> {
     this.notePost = new SourceNotePost();
-    this.notePost.mapToPost(note, source);
+    this.notePost.mapToPost(note, source, false);
 
     return this.http.post(environment.apiUrl + '/reference_notes', this.notePost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  patchApiSourceNote(source: Source, note: SourceNote): Observable<any> {
+    this.notePost = new SourceNotePost();
+    this.notePost.mapToPost(note, source, true);
+
+    return this.http.patch(environment.apiUrl + '/reference_notes/' + note.id, this.notePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')

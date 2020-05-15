@@ -5,6 +5,7 @@ import {TimelineCategory} from './timeline-category';
 export class Timeline {
   id: number;
   label: string;
+  description: string;
   events: Event[];
   persons: Person[];
   categories: TimelineCategory[];
@@ -34,6 +35,7 @@ export class Timeline {
 
     self.id = timeline.id;
     self.label = timeline.attributes.label;
+    self.description = timeline.attributes.description;
 
     if (timeline.attributes.timeline_category) {
       if (timeline.attributes.timeline_category.data.length) {

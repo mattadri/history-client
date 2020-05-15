@@ -1,7 +1,6 @@
 <div class="app-body-content">
   <div class="app-content-toolbar">
     <h1 *ngIf="timeline && !isTimelineEditMode">{{timeline.label}}</h1>
-    <h3 *ngIf="timeline && !isTimelineEditMode">Spans {{this.timelineSpanInYears}} years</h3>
 
     <span *ngIf="isTimelineEditMode">
       <mat-form-field style="width: 100%">
@@ -14,17 +13,28 @@
           [(ngModel)]="timeline.label" />
       </mat-form-field>
 
+      <div id="essay-editor"
+           (froalaInit)="initializeTimelineDescriptionEditor($event)"
+           [(froalaModel)]="timeline.description"
+           [froalaEditor]></div>
+
       <button mat-icon-button class="material-icons" (click)="editTimeline()">
         save
       </button>
 
-      <button mat-icon-button class="material-icons" (click)="removeTimeline()">delete</button>
+      <button mat-icon-button class="material-icons" (click)="closeTimelineEditoMode()">close</button>
     </span>
 
     <button *ngIf="!isTimelineEditMode" mat-icon-button class="material-icons" (click)="activateTimelineEditMode()">
       edit
     </button>
   </div>
+
+  <div id="timeline_timespan">
+    <h3 *ngIf="timeline && !isTimelineEditMode">Spans {{this.timelineSpanInYears}} years</h3>
+  </div>
+
+  <span *ngIf="timeline && timeline.description" [innerHtml]="timeline.description | safeHtml"></span>
 
   <div id="timeline-container" class="timeline-container" (dblclick)="showCursorLine($event)">
     <app-category
@@ -41,11 +51,12 @@
     </div>
 
     <div class="timeline-cursor-line"
-        [ngStyle]="cursorLineStyles"
-        #tooltip="matTooltip"
-        matTooltip="{{cursorLineDate}}"
-        [matTooltipPosition]="cursorLineDatePosition"
-        (mouseout)="showCursorTooltip(tooltip)">
+         *ngIf="cursorLineActive"
+         [ngStyle]="cursorLineStyles"
+         #tooltip="matTooltip"
+         matTooltip="{{cursorLineDate}}"
+         [matTooltipPosition]="cursorLineDatePosition"
+         (mouseout)="showCursorTooltip(tooltip).then()">
     </div>
 
     <!--

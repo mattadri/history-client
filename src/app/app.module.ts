@@ -85,6 +85,9 @@ import { EssayReferenceComponent } from './essays/essay-reference/essay-referenc
 import { EssayEventComponent } from './essays/essay-event/essay-event.component';
 import { EssayPersonComponent } from './essays/essay-person/essay-person.component';
 import { EssayTimelineComponent } from './essays/essay-timeline/essay-timeline.component';
+import { SourceDetailsComponent } from './manager/sources/source-details/source-details.component';
+import { SourceDetailsNoteComponent } from './manager/sources/source-details/source-details-note/source-details-note.component';
+import { ConfirmRemovalComponent } from './utilities/confirm-removal/confirm-removal.component';
 
 @NgModule({
   declarations: [
@@ -133,6 +136,9 @@ import { EssayTimelineComponent } from './essays/essay-timeline/essay-timeline.c
     EssayEventComponent,
     EssayPersonComponent,
     EssayTimelineComponent,
+    SourceDetailsComponent,
+    SourceDetailsNoteComponent,
+    ConfirmRemovalComponent,
   ],
   entryComponents: [
     TimelineEventDetailsComponent,
@@ -140,7 +146,8 @@ import { EssayTimelineComponent } from './essays/essay-timeline/essay-timeline.c
     EssayReferenceDetailsComponent,
     EssayEventDetailsComponent,
     EssayPersonDetailsComponent,
-    EssayTimelineDetailsComponent
+    EssayTimelineDetailsComponent,
+    ConfirmRemovalComponent
   ],
   imports: [
     BrowserModule,

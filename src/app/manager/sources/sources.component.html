@@ -27,6 +27,12 @@
 
         </div>
         <div class="app-drawer-tools">
+          <a routerLink="{{sourceLink}}">
+            <span class="material-icons mat-icon-button mat-button-base">
+              launch
+            </span>
+          </a>
+
           <button mat-icon-button class="material-icons" (click)="isEditSourceMode = true">edit</button>
           <button mat-icon-button class="material-icons" (click)="closeSourceDetails(sourceDetails)">close</button>
         </div>
@@ -113,7 +119,7 @@
           </div>
 
           <div *ngIf="source.notes && source.notes.length">
-            <app-event-note *ngFor="let note of source.notes" [note]="note" (removeNote)="removeNote(note)"></app-event-note>
+            <app-source-details-note *ngFor="let note of source.notes" [note]="note" [source]="source" [showToolbar]="false"></app-source-details-note>
           </div>
         </section>
       </div>

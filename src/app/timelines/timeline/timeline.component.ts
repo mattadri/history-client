@@ -3,6 +3,8 @@ import {ActivatedRoute} from '@angular/router';
 
 import { Options } from 'ng5-slider';
 
+import FroalaEditor from 'froala-editor/js/froala_editor.min.js';
+
 import { TimelineService } from '../../services/timeline.service';
 
 import { Timeline } from '../../models/timeline';
@@ -45,6 +47,9 @@ export class TimelineComponent implements OnInit {
   public relatedEventsTotalResults: number;
   public relatedEventsPreviousPage: string;
   public relatedEventsNextPage: string;
+
+  public timelineEditor: FroalaEditor;
+  public initControls;
 
   public persons = [];
 
@@ -148,6 +153,14 @@ export class TimelineComponent implements OnInit {
   }
 
   ngOnInit() { }
+
+  public initializeTimelineDescriptionEditor(initControls) {
+    this.initControls = initControls;
+    this.initControls.initialize();
+    this.timelineEditor = this.initControls.getEditor();
+
+    this.timelineEditor.opts.width = 1000;
+  }
 
   // this will get called if the timeline start/end points change
   calculateTimeline() {
@@ -573,7 +586,7 @@ export class TimelineComponent implements OnInit {
     this.cursorLineActive = true;
     const xPosition = $event.clientX;
 
-    const height = timelineContainerElement.offsetHeight - 30;
+    const height = timelineContainerElement.offsetHeight;
 
     this.cursorLineStyles = {
       left: xPosition + 'px',
@@ -610,7 +623,12 @@ export class TimelineComponent implements OnInit {
   }
 
   activateTimelineEditMode() {
+    this.cursorLineActive = false;
     this.isTimelineEditMode = true;
+  }
+
+  closeTimelineEditoMode() {
+    this.isTimelineEditMode = false;
   }
 
   editTimeline() {

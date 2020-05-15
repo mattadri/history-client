@@ -1,0 +1,44 @@
+<div class="app-body-content" *ngIf="source">
+  <div class="app-content-toolbar">
+    <h1>{{source.title}}</h1>
+
+    <button mat-flat-button class="material-icons" (click)="activateAddNoteMode()">add</button>
+  </div>
+
+  <h2 *ngIf="source.subTitle">{{source.subTitle}}</h2>
+  <h2><i>{{displayAuthors}}</i></h2>
+  <h3 *ngIf="source.publishedYear">{{source.publishedYear}}</h3>
+
+  <div *ngIf="isAddNoteMode" class="app-essay-edit-mode">
+    <div class="app-content-toolbar">
+      <button mat-flat-button class="material-icons" (click)="saveNote()">save</button>
+      <button mat-flat-button class="material-icons" (click)="deactivateAddNoteMode()">close</button>
+    </div>
+
+    <div [(froalaModel)]="note.note"
+         [froalaEditor]></div>
+
+    <mat-form-field>
+      <input
+        matInput
+        placeholder="Chapter"
+        name="reference_chapter"
+        #eventLabel="ngModel"
+        [(ngModel)]="note.chapter">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        placeholder="Page"
+        name="reference_page"
+        #eventLabel="ngModel"
+        [(ngModel)]="note.page">
+    </mat-form-field>
+  </div>
+
+  <app-source-details-note *ngFor="let note of source.notes" [note]="note" [source]="source" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-source-details-note>
+</div>
+
+

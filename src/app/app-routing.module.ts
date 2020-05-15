@@ -9,10 +9,12 @@ import { TimelinesComponent } from './timelines/timelines.component';
 import { TimelineComponent } from './timelines/timeline/timeline.component';
 import { EssaysComponent } from './essays/essays.component';
 import {EssayComponent} from './essays/essay/essay.component';
+import {SourceDetailsComponent} from './manager/sources/source-details/source-details.component';
 
 
 const routes: Routes = [
   {path: 'manager/sources', component: SourcesComponent},
+  {path: 'manager/sources/:id', component: SourceDetailsComponent},
   {path: 'manager/authors', component: AuthorsComponent},
   {path: 'manager/persons', component: PersonsComponent},
   {path: 'manager/events', component: EventsComponent},

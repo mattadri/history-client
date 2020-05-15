@@ -11,6 +11,10 @@ export class TimelinePost {
       }
     };
 
+    if (timeline.description) {
+      this.data.attributes.description = timeline.description;
+    }
+
     if (isPatch) {
       this.data.id = timeline.id;
     }

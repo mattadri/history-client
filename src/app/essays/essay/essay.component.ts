@@ -264,8 +264,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
     this.initControls.initialize();
     this.essayEditor = this.initControls.getEditor();
 
-    console.log(this.essayEditor);
-
     this.essayEditor.opts.toolbarButtons = {
       moreText: {
         buttons: [

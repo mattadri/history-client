@@ -22,8 +22,6 @@
           <button mat-flat-button class="material-icons" *ngIf="isAbstractEditMode" (click)="setAbstractViewMode()">close</button>
         </div>
 
-        <!--<div [froalaEditor] [(froalaModel)]="essay.abstract" *ngIf="isAbstractEditMode"></div>-->
-
         <div [(froalaModel)]="essay.abstract"
              [froalaEditor]></div>
       </div>

@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
       this.authorsLinkActive = false;
       this.essaysLinkActive = false;
 
-    } else if (pathname === '/manager/events') {
+    } else if (pathname.startsWith('/manager/events')) {
       this.timelinesLinkActive = false;
       this.eventsLinkActive = true;
       this.personsLinkActive = false;
@@ -47,7 +47,7 @@ export class AppComponent implements OnInit {
       this.authorsLinkActive = false;
       this.essaysLinkActive = false;
 
-    } else if (pathname === '/manager/persons') {
+    } else if (pathname.startsWith('/manager/persons')) {
       this.timelinesLinkActive = false;
       this.eventsLinkActive = false;
       this.personsLinkActive = true;
@@ -55,14 +55,14 @@ export class AppComponent implements OnInit {
       this.authorsLinkActive = false;
       this.essaysLinkActive = false;
 
-    } else if (pathname === '/manager/sources') {
+    } else if (pathname.startsWith('/manager/sources')) {
       this.timelinesLinkActive = false;
       this.eventsLinkActive = false;
       this.personsLinkActive = false;
       this.sourcesLinkActive = true;
       this.authorsLinkActive = false;
       this.essaysLinkActive = false;
-    } else if (pathname === '/manager/authors') {
+    } else if (pathname.startsWith('/manager/authors')) {
       this.timelinesLinkActive = false;
       this.eventsLinkActive = false;
       this.personsLinkActive = false;

@@ -40,6 +40,8 @@ export class SourcesComponent implements OnInit {
   public nextPage: string;
   public previousPage: string;
 
+  public sourceLink: string;
+
   constructor(private sourceService: SourceService,
               private monthService: MonthService,
               private eraService: EraService,
@@ -66,8 +68,6 @@ export class SourcesComponent implements OnInit {
     });
 
     this.authorService.getApiAuthors('/authors?sort=last_name').subscribe(authors => {
-      console.log('Authors: ', authors);
-
       for (const author of authors.authors) {
         this.authors.push(author);
       }
@@ -90,6 +90,8 @@ export class SourcesComponent implements OnInit {
 
   openSourceDetails(source, sideNav, isCreateMode, isEditMode) {
     this.source = source;
+
+    this.sourceLink = '/manager/sources/' + this.source.id.toString();
 
     if (!isCreateMode) {
       isCreateMode = false;
@@ -121,7 +123,6 @@ export class SourcesComponent implements OnInit {
 
   getSources(path) {
     this.sourceService.getApiSources(path).subscribe(response => {
-      console.log(response);
       for (const source of response.sources) {
         this.sourceService.setSource(source);
       }

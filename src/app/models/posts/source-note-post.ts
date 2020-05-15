@@ -4,7 +4,7 @@ import {Source} from '../source';
 export class SourceNotePost {
   data;
 
-  mapToPost(sourceNote: SourceNote, source: Source) {
+  mapToPost(sourceNote: SourceNote, source: Source, isPatch: boolean) {
     this.data = {
       type: 'reference_note',
       attributes: {
@@ -24,6 +24,10 @@ export class SourceNotePost {
 
     if (sourceNote.page) {
       this.data.attributes.page = sourceNote.page;
+    }
+
+    if (isPatch) {
+      this.data.id = sourceNote.id;
     }
   }
 }
