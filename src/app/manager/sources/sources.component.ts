@@ -73,7 +73,7 @@ export class SourcesComponent implements OnInit {
       }
     });
 
-    this.getSources('/references?sort=title');
+    this.getSources('/references?sort=-created');
   }
 
   ngOnInit() { }
@@ -91,7 +91,9 @@ export class SourcesComponent implements OnInit {
   openSourceDetails(source, sideNav, isCreateMode, isEditMode) {
     this.source = source;
 
-    this.sourceLink = '/manager/sources/' + this.source.id.toString();
+    if (this.source && this.source.id) {
+      this.sourceLink = '/manager/sources/' + this.source.id.toString();
+    }
 
     if (!isCreateMode) {
       isCreateMode = false;

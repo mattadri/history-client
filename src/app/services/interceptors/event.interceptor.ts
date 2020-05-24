@@ -36,6 +36,7 @@ export class EventInterceptor implements HttpInterceptor {
 
           for (const data of event.body.data) {
             this.event = new Event();
+            this.event.initializeNewEvent();
             this.event.mapEvent(data, false, null, null);
 
             this.events.push(this.event);

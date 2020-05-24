@@ -4,7 +4,7 @@ import { Event } from '../event';
 export class EventNotePost {
   data;
 
-  mapToPost(eventNote: EventNote, event: Event) {
+  mapToPost(eventNote: EventNote, event: Event, isPatch: boolean) {
     this.data = {
       type: 'event_note',
       attributes: {
@@ -17,5 +17,9 @@ export class EventNotePost {
         }
       }
     };
+
+    if (isPatch) {
+      this.data.id = eventNote.id;
+    }
   }
 }

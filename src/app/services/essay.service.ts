@@ -36,7 +36,7 @@ export class EssayService {
     this.essays = [];
   }
 
-  static removeEssayNote(essay: Essay, essayNote: EssayNote) {
+  static removeNote(essay: Essay, essayNote: EssayNote) {
     for (let i = 0; i < essay.essayNotes.length; i++) {
       if (essay.essayNotes[i].id === essayNote.id) {
         essay.essayNotes.splice(i, 1);
@@ -139,8 +139,19 @@ export class EssayService {
     });
   }
 
-  removeApiEssayNote(essayNoteId: number): Observable<any> {
-    return this.http.delete(environment.apiUrl + '/essay_notes/' + essayNoteId, {
+  patchApiEssayNote(essay: Essay, essayNote: EssayNote): Observable<any> {
+    this.essayNotePost = new EssayNotePost();
+    this.essayNotePost.mapToPost(essay, essayNote, true);
+
+    return this.http.patch(environment.apiUrl + '/essay_notes/' + essayNote.id, this.essayNotePost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  removeApiNote(essayNote: EssayNote): Observable<any> {
+    return this.http.delete(environment.apiUrl + '/essay_notes/' + essayNote.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }

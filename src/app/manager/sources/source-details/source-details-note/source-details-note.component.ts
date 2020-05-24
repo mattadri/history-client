@@ -29,9 +29,7 @@ export class SourceDetailsNoteComponent implements OnInit {
     this.removeNote = new EventEmitter<SourceNote>();
   }
 
-  ngOnInit() {
-    console.log(this.note);
-  }
+  ngOnInit() { }
 
   activateEditNoteMode() {
     this.isEditNoteMode = true;

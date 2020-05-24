@@ -2,7 +2,15 @@
   <div class="app-drawer-bottom-body">
     <div class="app-drawer-bottom-header">
       <div class="app-drawer-title">
-        <div class="app-drawer-subheading">Event</div>
+        <div class="app-drawer-subheading">
+          Event
+
+          <a routerLink="{{eventLink}}" (click)="onNoClick()">
+            <span class="material-icons mat-icon-button mat-button-base">
+              launch
+            </span>
+          </a>
+        </div>
         <div class="app-drawer-heading">{{data.event.label}}</div>
         <div class="app-drawer-year">
           <span>{{data.event.formattedStartYear}}</span>
@@ -16,17 +24,18 @@
         {{data.event.description}}
       </div>
 
-      <div class="app-drawer-notes" *ngIf="data.event.notes">
+      <div class="app-drawer-notes" *ngIf="displayNotes.length">
         <div class="app-drawer-subheading">Notes</div>
         <ul>
-          <app-timeline-event-detail-note *ngFor="let note of data.event.notes" [note]="note"></app-timeline-event-detail-note>
+          <app-timeline-event-detail-note *ngFor="let note of displayNotes" [note]="note"></app-timeline-event-detail-note>
         </ul>
-       </div>
+
+        <p *ngIf="numberOfAdditionalNotes">{{numberOfAdditionalNotes}} additional note<span *ngIf="numberOfAdditionalNotes > 1">s</span></p>
+      </div>
 
     </div>
 
     <div class="app-drawer-settings">
-
       <div class="app-drawer-category">
 
         <!-- If the event is not assigned to any category -->

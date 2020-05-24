@@ -4,16 +4,16 @@ export class EssayNote {
   id: number;
   note: string;
   source: Source;
-  referenceChapter: string;
-  referencePage: number;
+  chapter: string;
+  page: number;
 
   initializeNewEssayNote() {
     this.id = null;
     this.note = '';
     this.source = new Source();
     this.source.initializeSource();
-    this.referenceChapter = '';
-    this.referencePage = null;
+    this.chapter = '';
+    this.page = null;
   }
 
   mapNote(note) {
@@ -30,11 +30,11 @@ export class EssayNote {
     }
 
     if (note.attributes.reference_chapter) {
-      this.referenceChapter = note.attributes.reference_chapter;
+      this.chapter = note.attributes.reference_chapter;
     }
 
     if (note.attributes.reference_page) {
-      this.referencePage = note.attributes.reference_page;
+      this.page = note.attributes.reference_page;
     }
   }
 }

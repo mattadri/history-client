@@ -72,7 +72,6 @@ import { PersonNoteComponent } from './manager/persons/person-note/person-note.c
 import { TimelineCategoryComponent } from './timelines/timeline-categories/timeline-category/timeline-category.component';
 import { TimelineCategoriesComponent } from './timelines/timeline-categories/timeline-categories.component';
 import { CategoryComponent } from './timelines/category/category.component';
-import { EventDetailsComponent } from './manager/events/event-details/event-details.component';
 import { EssaysComponent } from './essays/essays.component';
 import { EssayReferenceDetailsComponent } from './essays/essay-reference-details/essay-reference-details.component';
 import { EssayEventDetailsComponent } from './essays/essay-event-details/essay-event-details.component';
@@ -88,6 +87,8 @@ import { EssayTimelineComponent } from './essays/essay-timeline/essay-timeline.c
 import { SourceDetailsComponent } from './manager/sources/source-details/source-details.component';
 import { SourceDetailsNoteComponent } from './manager/sources/source-details/source-details-note/source-details-note.component';
 import { ConfirmRemovalComponent } from './utilities/confirm-removal/confirm-removal.component';
+import { EventDetailsComponent } from './manager/events/event-details/event-details.component';
+import { EventDetailsNoteComponent } from './manager/events/event-details/event-details-note/event-details-note.component';
 
 @NgModule({
   declarations: [
@@ -123,7 +124,6 @@ import { ConfirmRemovalComponent } from './utilities/confirm-removal/confirm-rem
     TimelineCategoryComponent,
     TimelineCategoriesComponent,
     CategoryComponent,
-    EventDetailsComponent,
     EssaysComponent,
     EssayReferenceDetailsComponent,
     EssayEventDetailsComponent,
@@ -139,6 +139,8 @@ import { ConfirmRemovalComponent } from './utilities/confirm-removal/confirm-rem
     SourceDetailsComponent,
     SourceDetailsNoteComponent,
     ConfirmRemovalComponent,
+    EventDetailsComponent,
+    EventDetailsNoteComponent
   ],
   entryComponents: [
     TimelineEventDetailsComponent,

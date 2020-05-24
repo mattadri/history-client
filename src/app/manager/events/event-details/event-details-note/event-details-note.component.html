@@ -7,10 +7,6 @@
       </div>
 
       <h3><span *ngIf="note.note" [innerHtml]="note.note | safeHtml"></span></h3>
-      <div>
-        <h4 *ngIf="note.source">{{note.source.title}}</h4>
-        <h4 *ngIf="note.chapter"><i>{{note.chapter}}<span *ngIf="note.page">, {{note.page}}</span></i></h4>
-      </div>
     </div>
 
     <div *ngIf="isEditNoteMode" class="app-essay-edit-mode">
@@ -21,26 +17,6 @@
 
       <div [(froalaModel)]="note.note"
            [froalaEditor]></div>
-
-      <mat-form-field>
-        <input
-          matInput
-          placeholder="Chapter"
-          name="reference_chapter"
-          #eventLabel="ngModel"
-          [(ngModel)]="note.chapter">
-      </mat-form-field>
-
-      <mat-form-field>
-        <input
-          matInput
-          type="number"
-          placeholder="Page"
-          name="reference_page"
-          #eventLabel="ngModel"
-          [(ngModel)]="note.page">
-      </mat-form-field>
     </div>
   </div>
 </div>
-

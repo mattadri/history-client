@@ -94,7 +94,7 @@
 
     <mat-tab label="What Else?">
       <div class="grid-list" *ngIf="timeline">
-        <app-timeline-event-list *ngFor="let event of relatedEvents" [event]="event"></app-timeline-event-list>
+        <app-timeline-event-list *ngFor="let event of relatedEvents" [event]="event" [timeline]="timeline"></app-timeline-event-list>
         <mat-paginator length="{{relatedEventsTotalResults}}" pageSize="20" (page)="turnRelatedEventsPage($event)"></mat-paginator>
       </div>
     </mat-tab>

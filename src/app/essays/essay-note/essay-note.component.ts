@@ -1,9 +1,12 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {MatDialog} from '@angular/material';
 
 import {EssayService} from '../../services/essay.service';
 
 import {EssayNote} from '../../models/essay-note';
 import {Essay} from '../../models/essay';
+
+import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
   selector: 'app-essay-note',
@@ -11,16 +14,48 @@ import {Essay} from '../../models/essay';
   styleUrls: ['./essay-note.component.scss']
 })
 export class EssayNoteComponent implements OnInit {
-  @Input() essay: Essay;
-  @Input() note: EssayNote;
+  @Input() public note: EssayNote;
+  @Input() public essay: Essay;
+  @Input() public showToolbar: boolean;
 
-  constructor(private essayService: EssayService) { }
+  @Output() private removeNote: EventEmitter<EssayNote>;
+
+  public isEditNoteMode: boolean;
+
+  constructor(public dialog: MatDialog, private essayService: EssayService) {
+    this.isEditNoteMode = false;
+
+    this.removeNote = new EventEmitter<EssayNote>();
+  }
 
   ngOnInit() { }
 
-  deleteEssayNote() {
-    this.essayService.removeApiEssayNote(this.note.id).subscribe(() => {
-      EssayService.removeEssayNote(this.essay, this.note);
+  activateEditNoteMode() {
+    this.isEditNoteMode = true;
+  }
+
+  setNoteViewMode() {
+    this.isEditNoteMode = false;
+  }
+
+  saveNote() {
+    this.essayService.patchApiEssayNote(this.essay, this.note).subscribe(() => {
+      this.setNoteViewMode();
+    });
+  }
+
+  doDeleteNote() {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the note '
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.removeNote.emit(this.note);
+      }
     });
   }
 }

@@ -4,6 +4,8 @@ import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 
+import {Sleep} from '../../utilities/sleep';
+
 import { Event } from '../../models/event';
 import { EventNote } from '../../models/event-note';
 import { Era } from '../../models/era';
@@ -16,6 +18,7 @@ import { MonthService } from '../../services/month.service';
 import { EraService } from '../../services/era.service';
 import { SourceService } from '../../services/source.service';
 import { TimelineService } from '../../services/timeline.service';
+import {TimelineEvent} from '../../models/timeline-event';
 
 @Component({
   selector: 'app-events',
@@ -29,6 +32,7 @@ export class EventsComponent implements OnInit {
   public eventNote: EventNote;
   public timelines: Timeline[];
   public timeline: Timeline;
+  public timelineEvent: TimelineEvent;
 
   public isCreateEventMode: boolean;
   public isEditEventMode: boolean;
@@ -58,6 +62,8 @@ export class EventsComponent implements OnInit {
   public sourcesAutocompleteControl = new FormControl();
   public sourcesFilteredOptions: Observable<Source[]>;
   public sourceFieldDisplayValue: string;
+
+  public eventLink: string;
 
   constructor(private eventService: EventService,
               private sourceService: SourceService,
@@ -125,10 +131,12 @@ export class EventsComponent implements OnInit {
 
   initializeNewNote() {
     this.eventNote = new EventNote();
+    this.eventNote.initializeNote();
   }
 
   initializeNewTimeline() {
     this.timeline = new Timeline();
+    this.timeline.initializeNewTimeline();
   }
 
   getEvents(path, filterTerm, dateFilter) {
@@ -176,10 +184,129 @@ export class EventsComponent implements OnInit {
 
       this.eventService.setEvent(this.event);
 
-      this.isCreateEventMode = false;
-      this.isEditEventMode = false;
+      this.cancelCreateEditMode();
 
       this.openEventDetails(this.event, contentPanel, false, false);
+    });
+  }
+
+  createNote() {
+    this.eventService.createApiEventNote(this.eventNote, this.event).subscribe(result => {
+      if (!this.event.notes) {
+        this.event.notes = [];
+      }
+
+      this.eventNote.id = result.data.id;
+      this.event.notes.push(this.eventNote);
+
+      this.initializeNewNote();
+
+      this.isAddNoteMode = false;
+    });
+  }
+
+  createTimelineEvent() {
+    for (const timeline of this.timelines) {
+      if (this.timelineId === timeline.id) {
+        this.timeline = timeline;
+      }
+    }
+
+    this.timelineEvent = new TimelineEvent();
+    this.timelineEvent.event = this.event;
+    this.timelineEvent.timeline = this.timeline;
+
+    // call service
+    this.timelineService.createEventApiTimeline(this.timelineEvent).subscribe(response => {
+      if (!this.event.timelines) {
+        this.event.timelines = [];
+      }
+
+      this.timelineEvent.id = response.data.id;
+      this.timeline.eventId = this.timelineEvent.id;
+
+      this.event.timelines.push(this.timeline);
+
+      this.initializeNewTimeline();
+
+      this.isAddTimelineMode = false;
+    });
+  }
+
+  editEvent() {
+    if (!this.event.startDay) {
+      this.event.startDay = null;
+    }
+
+    if (!this.event.endDay) {
+      this.event.endDay = null;
+    }
+
+    if (this.startMonthLabel === null) {
+      this.event.startMonth = new Month();
+      this.event.startMonth.label = '';
+      this.event.startMonth.id = null;
+    }
+
+    if (this.startMonthLabel) {
+      for (const month of this.months) {
+        if (this.startMonthLabel === month.label) {
+          this.event.startMonth = month;
+        }
+      }
+    }
+
+    if (this.endMonthLabel === null) {
+      this.event.endMonth = new Month();
+      this.event.endMonth.label = '';
+      this.event.endMonth.id = null;
+    }
+
+    if (this.endMonthLabel) {
+      for (const month of this.months) {
+        if (this.endMonthLabel === month.label) {
+          this.event.endMonth = month;
+        }
+      }
+    }
+
+    for (const era of this.eras) {
+      if (this.startEraLabel === era.label) {
+        this.event.startEra = era;
+      }
+    }
+
+    for (const era of this.eras) {
+      if (this.endEraLabel === era.label) {
+        this.event.endEra = era;
+      }
+    }
+
+    return this.eventService.patchApiEvent(this.event).subscribe(() => {
+      this.cancelCreateEditMode();
+    });
+  }
+
+  removeEvent(contentPanel) {
+    this.eventService.removeApiEvent(this.event).subscribe(() => {
+      this.eventService.removeEvent(this.event);
+      this.cleanupRemovedEvent(contentPanel);
+    });
+  }
+
+  removeNote(note) {
+    this.eventService.removeApiNote(note).subscribe(() => {
+      EventService.removeEventNote(this.event, note);
+    });
+  }
+
+  removeTimeline(timeline) {
+    this.timelineService.removeEventApiTimeline(timeline.eventId).subscribe(() => {
+      for (let i = 0; i < this.event.timelines.length; i++) {
+        if (this.event.timelines[i].id === timeline.id) {
+          this.event.timelines.splice(i, 1);
+        }
+      }
     });
   }
 
@@ -203,6 +330,10 @@ export class EventsComponent implements OnInit {
 
     this.isAddNoteMode = false;
 
+    if (this.event && this.event.id) {
+      this.eventLink = '/manager/events/' + this.event.id.toString();
+    }
+
     if (this.event.startMonth) {
       this.startMonthLabel = this.event.startMonth.label;
     }
@@ -223,6 +354,10 @@ export class EventsComponent implements OnInit {
     } else {
       sideNav.open();
     }
+  }
+
+  closeEventDetails(contentPanel) {
+    contentPanel.close();
   }
 
   saveSource() {
@@ -248,16 +383,28 @@ export class EventsComponent implements OnInit {
     this.openEventDetails(this.event, contentPanel, true, false);
   }
 
-  closeEventDetails(contentPanel) {
-    contentPanel.close();
+  async activateEventNoteForm() {
+    this.isAddNoteMode = true;
+    this.initializeNewNote();
+
+    await Sleep.wait(500);
+
+    document.getElementById('event_note').focus();
   }
 
-  cancelEditMode() {
+  cancelCreateEditMode() {
+    this.isCreateEventMode = false;
     this.isEditEventMode = false;
   }
 
-  cancelCreateMode() {
-    this.isCreateEventMode = false;
+  cancelEventNoteForm() {
+    this.isAddNoteMode = false;
+    this.initializeNewNote();
+  }
+
+  cancelEventTimelineForm() {
+    this.isAddTimelineMode = false;
+    this.initializeNewTimeline();
   }
 
   turnPage(event) {

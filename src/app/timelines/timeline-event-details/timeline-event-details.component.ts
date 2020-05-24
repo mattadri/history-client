@@ -8,6 +8,7 @@ import { Timeline } from '../../models/timeline';
 import { TimelineService } from '../../services/timeline.service';
 import {TimelineCategory} from '../../models/timeline-category';
 import {Category} from '../../models/category';
+import {EventNote} from '../../models/event-note';
 
 export interface DialogData {
   event: Event;
@@ -31,6 +32,13 @@ export class TimelineEventDetailsComponent {
 
   public isInCategory: boolean;
 
+  public displayNotes: EventNote[];
+
+  public numberOfNotesToShow: number;
+  public numberOfAdditionalNotes: number;
+
+  public eventLink: string;
+
   constructor(public dialogRef: MatBottomSheetRef<TimelineEventDetailsComponent>,
               @Inject(MAT_BOTTOM_SHEET_DATA) public data: DialogData,
               public timelineService: TimelineService) {
@@ -43,6 +51,10 @@ export class TimelineEventDetailsComponent {
     this.selectedCategory = null;
     this.isInCategory = false;
     this.isEditMode = false;
+
+    this.displayNotes = [];
+    this.numberOfNotesToShow = 2;
+    this.numberOfAdditionalNotes = 0;
 
     // check if this event is in a category or not
     for (const category of this.data.timeline.categories) {
@@ -63,6 +75,28 @@ export class TimelineEventDetailsComponent {
         this.categoryEventId = category.events[categoryEventIndex][0];
       }
     }
+
+    if (this.data.event.notes.length) {
+      for (let i = 0; i < this.data.event.notes.length; i++) {
+        if (i < this.numberOfNotesToShow) {
+          this.displayNotes.push(this.data.event.notes[i]);
+          continue;
+        }
+
+        break;
+      }
+    }
+
+    if (this.data.event.notes.length > this.displayNotes.length) {
+      this.numberOfAdditionalNotes = this.data.event.notes.length - this.displayNotes.length;
+    }
+
+    this.eventLink = '/manager/events/' + this.data.event.id.toString();
+
+    console.log('Event Link: ', this.eventLink);
+
+    console.log('Total Notes: ', this.data.event.notes);
+    console.log('Display Notes: ', this.displayNotes);
   }
 
   onNoClick(): void {

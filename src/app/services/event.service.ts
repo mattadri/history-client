@@ -22,6 +22,7 @@ export class EventService {
   private filterObject: Array<any>;
 
   constructor(private http: HttpClient) {
+    this.events = [];
     this.filterObject = [];
   }
 
@@ -142,9 +143,20 @@ export class EventService {
 
   createApiEventNote(note: EventNote, event: Event): Observable<any> {
     this.eventNotePost = new EventNotePost();
-    this.eventNotePost.mapToPost(note, event);
+    this.eventNotePost.mapToPost(note, event, false);
 
     return this.http.post(environment.apiUrl + '/event_notes', this.eventNotePost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  patchApiEventNote(note: EventNote, event: Event): Observable<any> {
+    this.eventNotePost = new EventNotePost();
+    this.eventNotePost.mapToPost(note, event, true);
+
+    return this.http.patch(environment.apiUrl + '/event_notes/' + note.id, this.eventNotePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')

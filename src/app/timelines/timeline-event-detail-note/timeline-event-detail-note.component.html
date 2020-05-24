@@ -1,1 +1,1 @@
-<li>{{note.note}}</li>
+<li><span *ngIf="note.note" [innerHtml]="note.note | safeHtml"></span></li>

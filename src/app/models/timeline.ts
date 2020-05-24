@@ -57,6 +57,7 @@ export class Timeline {
 
         for (const returnedEvent of timeline.attributes.timeline_event.data) {
           const event: Event = new Event();
+          event.initializeNewEvent();
           event.mapEvent(
             returnedEvent.attributes.event.data,
             returnedEvent.attributes.is_shadow,

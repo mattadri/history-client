@@ -25,17 +25,18 @@ export class TimelineEventListComponent implements OnInit {
 
   public listOnly: boolean;
 
-  constructor(public bottomSheet: MatBottomSheet) { }
+  constructor(public bottomSheet: MatBottomSheet) {
+
+  }
 
   ngOnInit() {
     this.isSelected = false;
 
-    this.event.formatYears();
+    this.listOnly = !this.timeline;
 
     this.applyStyles();
 
-    this.listOnly = !this.timeline;
-
+    this.event.formatYears();
     this.event.formatDates();
   }
 

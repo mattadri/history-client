@@ -28,12 +28,12 @@ export class EssayNotePost {
       };
     }
 
-    if (essayNote.referenceChapter) {
-      this.data.attributes.reference_chapter = essayNote.referenceChapter;
+    if (essayNote.chapter) {
+      this.data.attributes.reference_chapter = essayNote.chapter;
     }
 
-    if (essayNote.referencePage) {
-      this.data.attributes.reference_page = essayNote.referencePage;
+    if (essayNote.page) {
+      this.data.attributes.reference_page = essayNote.page;
     }
 
     if (isPatch) {

@@ -828,6 +828,12 @@ export class EssayComponent implements OnInit, AfterViewInit {
     });
   }
 
+  deleteNote(note: EssayNote) {
+    this.essayService.removeApiNote(note).subscribe(() => {
+      EssayService.removeNote(this.essay, note);
+    });
+  }
+
   async setAddEssayNoteMode() {
     this.isAddEssayNoteMode = true;
     this.initializeNewEssayNote();

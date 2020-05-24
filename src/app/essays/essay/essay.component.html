@@ -65,17 +65,8 @@
 
         <div *ngIf="isAddEssayNoteMode">
           <form (ngSubmit)="addNote()" #noteForm="ngForm">
-            <mat-form-field style="width: 100%">
-              <textarea
-                matInput
-                cdkTextareaAutosize
-                #autosize="cdkTextareaAutosize"
-                cdkAutosizeMinRows="1"
-                cdkAutosizeMaxRows="10"
-                name="essay_note"
-                id="essay_note"
-                [(ngModel)]="essayNote.note"></textarea>
-            </mat-form-field>
+            <div [(froalaModel)]="essayNote.note"
+              [froalaEditor]></div>
 
             <section class="app-section inline">
               <label>Source</label>
@@ -101,7 +92,7 @@
                   type="text"
                   placeholder="Chapter"
                   name="reference_chapter"
-                  [(ngModel)]="essayNote.referenceChapter" />
+                  [(ngModel)]="essayNote.chapter" />
               </mat-form-field>
 
               <mat-form-field>
@@ -110,7 +101,7 @@
                   type="number"
                   placeholder="Page"
                   name="reference_page"
-                  [(ngModel)]="essayNote.referencePage" />
+                  [(ngModel)]="essayNote.page" />
               </mat-form-field>
             </section>
 
@@ -119,7 +110,12 @@
           </form>
         </div>
 
-        <app-essay-note *ngFor="let essayNote of essay.essayNotes" [note]="essayNote" [essay]="essay"></app-essay-note>
+        <app-essay-note
+          *ngFor="let note of essay.essayNotes"
+          [note]="note" [essay]="essay"
+          [showToolbar]="true"
+          (removeNote)="deleteNote($event)">
+        </app-essay-note>
       </mat-expansion-panel>
 
       <mat-expansion-panel expanded>

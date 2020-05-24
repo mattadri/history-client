@@ -4,6 +4,12 @@ export class SourceNote {
   chapter: string;
   page: number;
 
+  initializeNote() {
+    this.note = '';
+    this.chapter = null;
+    this.page = null;
+  }
+
   mapNote(note) {
     this.id = note.id;
     this.note = note.attributes.note;
@@ -17,11 +23,5 @@ export class SourceNote {
     }
 
     return this;
-  }
-
-  initializeNote() {
-    this.note = '';
-    this.chapter = null;
-    this.page = null;
   }
 }

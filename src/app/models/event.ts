@@ -131,8 +131,10 @@ export class Event {
 
       for (const returnedNote of event.attributes.event_note.data) {
         const note: EventNote = new EventNote();
+        note.initializeNote();
+        note.mapNote(returnedNote);
 
-        self.notes.push(note.mapNote(returnedNote));
+        self.notes.push(note);
       }
     }
 
@@ -236,7 +238,7 @@ export class Event {
     if (this.startEra.label === 'AD') {
       let startDate = '';
 
-      if (this.startMonth) {
+      if (this.startMonth && this.startMonth.label) {
         startDate = startDate + this.startMonth.label + ' ';
       }
 
@@ -250,7 +252,7 @@ export class Event {
     if (this.endEra && this.endEra.label === 'AD') {
       let endDate = '';
 
-      if (this.endMonth) {
+      if (this.endMonth && this.endMonth.label) {
         endDate = endDate + this.endMonth.label + ' ';
       }
 

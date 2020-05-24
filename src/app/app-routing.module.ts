@@ -10,6 +10,7 @@ import { TimelineComponent } from './timelines/timeline/timeline.component';
 import { EssaysComponent } from './essays/essays.component';
 import {EssayComponent} from './essays/essay/essay.component';
 import {SourceDetailsComponent} from './manager/sources/source-details/source-details.component';
+import {EventDetailsComponent} from './manager/events/event-details/event-details.component';
 
 
 const routes: Routes = [
@@ -18,6 +19,7 @@ const routes: Routes = [
   {path: 'manager/authors', component: AuthorsComponent},
   {path: 'manager/persons', component: PersonsComponent},
   {path: 'manager/events', component: EventsComponent},
+  {path: 'manager/events/:id', component: EventDetailsComponent},
   {path: 'timelines', component: TimelinesComponent},
   {path: 'timeline/:id', component: TimelineComponent},
   {path: 'essays', component: EssaysComponent},
