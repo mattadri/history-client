@@ -147,14 +147,18 @@ export class EssayComponent implements OnInit, AfterViewInit {
     this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(response => {
       this.sources = response.sources;
 
+      console.log(this.sources);
+
       this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
         startWith(''),
         map(source => this._filterSources(source))
       );
     });
 
-    this.eventService.getApiEvents('events?page[size]=0&fields[event]=label', null, null, false).subscribe(response => {
+    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label', null, null, false).subscribe(response => {
       this.events = response.events;
+
+      console.log(this.events);
 
       this.eventsFilteredOptions = this.eventsAutocompleteControl.valueChanges.pipe(
         startWith(''),
@@ -162,8 +166,10 @@ export class EssayComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.personService.getApiPersons('persons?page[size]=0&fields[person]=first_name,middle_name,last_name').subscribe(response => {
+    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,middle_name,last_name').subscribe(response => {
       this.persons = response.persons;
+
+      console.log(this.persons);
 
       this.personsFilteredOptions = this.personsAutocompleteControl.valueChanges.pipe(
         startWith(''),
@@ -171,8 +177,10 @@ export class EssayComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.timelineService.getApiTimelines('timelines?page[size]=0&fields[timeline]=label').subscribe(response => {
+    this.timelineService.getApiTimelines('/timelines?page[size]=0&fields[timeline]=label').subscribe(response => {
       this.timelines = response.timelines;
+
+      console.log(this.timelines);
 
       this.timelinesFilteredOptions = this.timelinesAutocompleteControl.valueChanges.pipe(
         startWith(''),
@@ -1011,11 +1019,13 @@ export class EssayComponent implements OnInit, AfterViewInit {
   }
 
   private _filterSources(filterValue: string): Source[] {
-    filterValue = filterValue.toLowerCase();
+    if (typeof filterValue === 'string' ) {
+      filterValue = filterValue.toLowerCase();
 
-    return this.sources.filter(source => {
-      return source.title.toLowerCase().includes(filterValue);
-    });
+      return this.sources.filter(source => {
+        return source.title.toLowerCase().includes(filterValue);
+      });
+    }
   }
 
   private _filterEvents(filterValue: string): Event[] {
