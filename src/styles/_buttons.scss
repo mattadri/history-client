@@ -12,3 +12,26 @@
   color: $color-brand;
   background-color: transparent;
 }
+
+.mat-button, 
+.mat-fab, 
+.mat-flat-button, 
+.mat-icon-button, 
+.mat-mini-fab, 
+.mat-raised-button, 
+.mat-stroked-button {
+  border: 1px solid $color-brand !important;
+}
+
+.mat-flat-button.material-icons,
+.material-icons.mat-icon-button.mat-button-base,
+.mat-paginator-navigation-next.mat-icon-button.mat-button-base,
+.mat-paginator-navigation-previous.mat-icon-button.mat-button-base {
+  border: 0 !important;
+}
+
+form {
+  button.mat-primary {
+    margin-right: 1rem;
+  }
+}

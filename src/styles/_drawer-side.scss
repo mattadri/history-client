@@ -8,8 +8,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba($color-gray-scale-100, .2);
-  border-bottom: $border-light;
+  background-color: rgba($color-gray-scale-100, .3);
+  border-bottom: $border-lightest;
 }
 
 .app-drawer-title {
@@ -31,8 +31,7 @@
 
 .app-drawer-subtitle {
   font-size: $font-size-base;
-  color: $color-gray-scale-600;
-  font-weight: 300;
+  color: $color-gray-scale-400;
   margin-top: 5px;
 }
 

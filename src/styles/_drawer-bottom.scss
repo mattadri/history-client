@@ -5,16 +5,21 @@
 
 
 .app-drawer-bottom-body {
-  padding: 2rem 2rem 0 2rem;
+  padding: 1rem 1rem 0;
   min-width: 600px;
 }
-
 
 
 .app-drawer-bottom {
   .app-drawer-heading {
     font-size: $font-size-large-200;
     color: $color-gray-scale-600;
+    a {
+      color: $color-brand;
+      span.material-icons {
+        font-size: .9em;
+      }
+    }
   }
 
   .app-drawer-subheading {
@@ -54,7 +59,7 @@
   .app-drawer-settings {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: $border-light;

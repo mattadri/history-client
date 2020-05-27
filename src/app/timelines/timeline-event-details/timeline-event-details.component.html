@@ -4,14 +4,15 @@
       <div class="app-drawer-title">
         <div class="app-drawer-subheading">
           Event
-
+        </div>
+        <div class="app-drawer-heading">
           <a routerLink="{{eventLink}}" (click)="onNoClick()">
-            <span class="material-icons mat-icon-button mat-button-base">
+              {{data.event.label}}
+            <span class="material-icons">
               launch
             </span>
           </a>
         </div>
-        <div class="app-drawer-heading">{{data.event.label}}</div>
         <div class="app-drawer-year">
           <span>{{data.event.formattedStartYear}}</span>
           <span *ngIf="!data.event.isSinglePointEvent">- {{data.event.formattedEndYear}} ({{data.event.eventLength}} years)</span>
@@ -37,9 +38,7 @@
 
     <div class="app-drawer-settings">
       <div class="app-drawer-category">
-
         <!-- If the event is not assigned to any category -->
-        <div>
           <mat-form-field>
             <mat-label>Category</mat-label>
             <mat-select [(ngModel)]="selectedCategoryId" [(value)]="selectedCategoryId" name="timeline_selected_category" (selectionChange)="addToCategory()">
@@ -47,8 +46,9 @@
               <mat-option *ngFor="let category of data.timeline.categories" [value]="category.id">{{category.label}}</mat-option>
             </mat-select>
           </mat-form-field>
-        </div>
+      </div>
 
+      <div class="app-drawer-shadow">
         <mat-checkbox [(ngModel)]="isShadow"
                       (click)="updateShadowState()"
                       #checkbox="matCheckbox">Shadow Event

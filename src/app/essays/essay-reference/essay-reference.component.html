@@ -1,17 +1,27 @@
 <div id="reference-container" (click)="onSelectReference()">
-  <div>
-    <span>Title: {{essayReference.source.title}}</span>
-  </div>
+  <div class="app-section list-item">
+    <div class="app-label">
+        <span>
+          <i>{{essayReference.source.title}},</i>
+        </span>
 
-  <div *ngIf="essayReference.source.subTitle">
-    <span>Subtitle: {{essayReference.source.subTitle}}</span>
-  </div>
+        <span *ngIf="essayReference.source.subTitle">
+          <i>{{essayReference.source.subTitle}}</i>
+        </span>
 
-  <div>
-    <span>Chapter: {{essayReference.sourceChapter}}</span>
-  </div>
-
-  <div>
-    <span>Page: {{essayReference.sourcePage}}</span>
-  </div>
+        (<span>Boston</span>, <span>2010</span>),
+        chapter 
+        <span>
+          {{essayReference.sourceChapter}}
+        </span> ,
+        pg 
+        <span>
+          {{essayReference.sourcePage}}
+        </span>.
+    </div>
+    <div class="app-toolbar">
+        <button mat-flat-button class="material-icons">edit</button>
+    </div>
+    
+  </div>  
 </div>

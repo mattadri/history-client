@@ -10,10 +10,11 @@ $color-gray-scale-300:      #9c9dd7;
 $color-gray-scale-200:      #c5cee9;
 $color-gray-scale-100:      #e3e3f4;
 $color-gray-scale-50:       #edf0fb;
+$color-gray-scale-25:       #f0f2fb;
 
 
 $color-darkest:             #000;
-$color-medium:              #5F636D;
+$color-medium:              #303235;
 $color-medium-150:          #707070;
 $color-medium-100:          #8E929C;
 $color-light-100:           #D6D6D6;
@@ -74,7 +75,7 @@ $font-size-large-300:        1.7rem;
 
 
 // Shadows
-$shadow-light:               0px 4px 7px 0px rgba(0,0,0,.1);
+$shadow-light:               0px 2px 0px 0px rgba(0,0,0,.1);
 $shadow-glow:                0 0px 8px 8px rgb(184, 233, 134, .8);
 
 // Borders

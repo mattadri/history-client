@@ -1,28 +1,50 @@
-<div class="app-body-content" *ngIf="event">
-  <div class="app-content-toolbar">
-    <h1>{{event.label}}</h1>
+<div *ngIf="event">
+  <div class="app-body-content app-body-darker-canvas">
+    <div class="app-body-content-narrow">
+      <div class="subheading">Event</div>
+      <h1 class="no-margin-bottom">{{event.label}}</h1>
+      <div class="heading-meta">
+        {{event.formattedStartYear}} <span *ngIf="!event.isSinglePointEvent">- {{event.formattedEndYear}} • {{event.eventLength}} years</span>
+      </div>
 
-    <button mat-flat-button class="material-icons" (click)="activateAddNoteMode()">add</button>
-  </div>
-
-  <div>
-    <span>{{event.formattedStartYear}}</span>
-    <span *ngIf="!event.isSinglePointEvent">- {{event.formattedEndYear}} ({{event.eventLength}} years)</span>
-  </div>
-
-  <div>
-    {{event.description}}
-  </div>
-
-  <div *ngIf="isAddNoteMode" class="app-essay-edit-mode">
-    <div class="app-content-toolbar">
-      <button mat-flat-button class="material-icons" (click)="saveNote()">save</button>
-      <button mat-flat-button class="material-icons" (click)="deactivateAddNoteMode()">close</button>
+      <div class="text-intro">
+        {{event.description}}
+      </div>
     </div>
-
-    <div [(froalaModel)]="note.note"
-         [froalaEditor]></div>
   </div>
 
-  <app-event-details-note *ngFor="let note of event.notes" [note]="note" [event]="event" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-event-details-note>
+  <!-- Notes -->
+  <div class="app-body-content">
+    <div class="app-body-content-narrow">
+
+      <!-- Add a note CTA-->
+      <div class="app-content-toolbar margin-bottom">
+          <h2>Notes</h2>
+          <button mat-flat-button color="secondary" (click)="activateAddNoteMode()">+ Add a Note</button>
+      </div>
+
+      <!-- Add New Note -->
+      <div *ngIf="isAddNoteMode" class="app-card-note">
+        <form class="app-card-note-edit">
+          <div class=app-card-note-body-meta>
+            <h3>New Note</h3>
+            <div class="app-card-note-toolbar">
+              <button mat-flat-button color="primary" (click)="saveNote()">Save</button>
+              <button mat-flat-button color="secondary" (click)="deactivateAddNoteMode()">Cancel</button>
+            </div>
+          </div>
+
+          <div class="app-card-note-body-content">
+            <div [(froalaModel)]="note.note"
+                [froalaEditor]></div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Display Notes-->
+      <app-event-details-note *ngFor="let note of event.notes" [note]="note" [event]="event" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-event-details-note>
+      
+    </div>
+  </div>
 </div>
+

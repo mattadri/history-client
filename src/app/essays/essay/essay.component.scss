@@ -26,15 +26,15 @@ p {
 
 
 .app-essay-section {
-  margin: 2rem 0 1rem 0;
+  margin-bottom: 1rem;
 
-  .essay-content {
-    line-height: 1.5rem;
+  h2 .material-icons {
+    font-size: 0.9em;
   }
 }
 
 .app-essay-edit-mode {
-  background-color: $color-gray-scale-50;
+  background-color: $color-gray-scale-100;
   margin-left: -3rem;
   margin-right: -3rem;
   padding: 1rem 3rem 2rem 3rem;

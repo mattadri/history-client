@@ -35,6 +35,60 @@
   }
 }
 
+.app-card-note {
+  @extend .app-card-content;
+  padding: 0 1rem;
+  margin-bottom: 2rem;
+
+  .app-card-note-body-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-top: 1rem;
+
+    .app-section.horizontal {
+      padding: 0;
+      align-items: center;
+    }
+
+    h3 {
+      margin-bottom: 0;
+    }
+  }
+
+  .app-card-note-view {
+    position: relative;
+    padding: 1rem 2.9rem 1rem 0 ;
+  
+    .app-card-note-toolbar {
+      position: absolute;
+      background: white;
+      right: -16px;
+      top: 7px;
+      border-radius: 100px;
+    }
+  }
+
+  .app-card-note-edit {
+    background-color: $color-gray-scale-25;
+    margin: 0 -1rem;
+    padding: 0 1rem 1rem 1rem;
+  }
+
+  .app-card-note-toolbar {
+    
+    button.material-icons {
+      font-size: 1.3rem;
+    }
+  }
+  .app-card-note-body-content {
+    ul {
+      margin-left: 2em;
+    }
+  }
+}
+
 
 // Overwrites to the material design card component styles.
 

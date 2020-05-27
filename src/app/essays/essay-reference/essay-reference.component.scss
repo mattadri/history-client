@@ -1,3 +1,8 @@
+@import '../../../styles/_variables.scss';
+
 .essay-reference-selected {
-  border: solid 1px black;
+  background-color: $color-gray-scale-50;
+  .app-section {
+    color: $color-darkest;
+  }
 }

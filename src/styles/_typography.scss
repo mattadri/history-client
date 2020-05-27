@@ -36,12 +36,24 @@ label,
   opacity: 1 !important;
 }
 
-
 .subheading {
   text-transform: uppercase;
   font-weight: 500;
   letter-spacing: 1px;
   font-size: $font-size-small;
+}
+
+.heading-meta {
+  font-size: $font-size-large-100;
+  color: $color-gray-scale-500;
+  margin-bottom: 1rem;
+}
+
+.text-intro {
+  font-size: $font-size-large-100;
+  font-weight: 100;
+  line-height: 1.5rem;
+  color: $color-darkest;
 }
 
 

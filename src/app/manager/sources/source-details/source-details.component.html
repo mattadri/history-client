@@ -1,44 +1,77 @@
-<div class="app-body-content" *ngIf="source">
-  <div class="app-content-toolbar">
-    <h1>{{source.title}}</h1>
-
-    <button mat-flat-button class="material-icons" (click)="activateAddNoteMode()">add</button>
-  </div>
-
-  <h2 *ngIf="source.subTitle">{{source.subTitle}}</h2>
-  <h2><i>{{displayAuthors}}</i></h2>
-  <h3 *ngIf="source.publishedYear">{{source.publishedYear}}</h3>
-
-  <div *ngIf="isAddNoteMode" class="app-essay-edit-mode">
-    <div class="app-content-toolbar">
-      <button mat-flat-button class="material-icons" (click)="saveNote()">save</button>
-      <button mat-flat-button class="material-icons" (click)="deactivateAddNoteMode()">close</button>
+<div *ngIf="source">
+  <div class="app-body-content app-body-darker-canvas">
+    <div class="app-body-content-narrow">
+      <div class="subheading">Source</div>
+      <h1 class="no-margin-bottom">{{source.title}}</h1>
+      <h2 class="no-margin-bottom">{{source.subTitle}}</h2>
+      <div class="heading-meta">
+        <span *ngIf="source.subTitle">{{displayAuthors}}, </span> 
+        <span *ngIf="source.publishedYear">{{source.publishedYear}}</span>
+      </div>
     </div>
-
-    <div [(froalaModel)]="note.note"
-         [froalaEditor]></div>
-
-    <mat-form-field>
-      <input
-        matInput
-        placeholder="Chapter"
-        name="reference_chapter"
-        #eventLabel="ngModel"
-        [(ngModel)]="note.chapter">
-    </mat-form-field>
-
-    <mat-form-field>
-      <input
-        matInput
-        type="number"
-        placeholder="Page"
-        name="reference_page"
-        #eventLabel="ngModel"
-        [(ngModel)]="note.page">
-    </mat-form-field>
   </div>
 
-  <app-source-details-note *ngFor="let note of source.notes" [note]="note" [source]="source" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-source-details-note>
+  <!-- Notes -->
+  <div class="app-body-content">
+    <div class="app-body-content-narrow">
+
+      <!-- Add a note CTA-->
+      <div class="app-content-toolbar margin-bottom">
+          <h2>Notes</h2>
+          <button mat-flat-button color="secondary" (click)="activateAddNoteMode()">+ Add a Note</button>
+      </div>
+
+
+      <!-- Add New Note -->
+      <div *ngIf="isAddNoteMode" class="app-card-note">
+        <form class="app-card-note-edit">
+          <div class=app-card-note-body-meta>
+            <h3>New Note</h3>
+            <div class="app-card-note-toolbar">
+              <button mat-flat-button color="primary" (click)="saveNote()">Save</button>
+              <button mat-flat-button color="secondary" (click)="deactivateAddNoteMode()">Cancel</button>
+            </div>
+          </div>
+          
+          <div class="app-card-note-body-content">
+            <div [(froalaModel)]="note.note"
+                [froalaEditor]>
+            </div>
+
+            <section class="app-section horizontal">
+              <section class="app-subsection">
+                <mat-form-field>
+                    <input
+                      matInput
+                      placeholder="Chapter"
+                      name="reference_chapter"
+                      #eventLabel="ngModel"
+                      [(ngModel)]="note.chapter">
+                  </mat-form-field>
+              </section>
+              
+              <section class="app-subsection">
+                <mat-form-field class="app-field-page">
+                    <input
+                      matInput
+                      type="number"
+                      placeholder="Page"
+                      name="reference_page"
+                      #eventLabel="ngModel"
+                      [(ngModel)]="note.page">
+                  </mat-form-field>
+              </section>
+      
+            </section>
+          </div>
+        </form>
+      </div>
+
+      <!-- Display Notes -->
+      <app-source-details-note *ngFor="let note of source.notes" [note]="note" [source]="source" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-source-details-note>
+    
+    </div>
+  </div> 
 </div>
 
 

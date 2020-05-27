@@ -1,42 +1,63 @@
-<div class="app-body-content">
-  <div class="app-card-content">
-    <div class="app-essay-section" *ngIf="!isEditNoteMode">
-      <div class="app-content-toolbar" *ngIf="showToolbar">
-        <button mat-flat-button class="material-icons" (click)="activateEditNoteMode()">edit</button>
-        <button mat-flat-button class="material-icons" (click)="doDeleteNote()">delete</button>
-      </div>
+<div class="app-card-note">
 
-      <h3><span *ngIf="note.note" [innerHtml]="note.note | safeHtml"></span></h3>
-      <h4 *ngIf="note.chapter"><i>{{note.chapter}}<span *ngIf="note.page">, {{note.page}}</span></i></h4>
+  <!--VIEW MODE --> 
+  <div class="app-card-note-view" *ngIf="!isEditNoteMode">
+
+    <div class="app-card-note-toolbar" *ngIf="showToolbar">
+      <button mat-flat-button class="material-icons" (click)="activateEditNoteMode()">edit</button>
     </div>
-
-    <div *ngIf="isEditNoteMode" class="app-essay-edit-mode">
+    <div class="app-card-note-body-content">
+      <span *ngIf="note.note" [innerHtml]="note.note | safeHtml"></span>
+      <section class="app-section" *ngIf="note.chapter">
+        <label>Reference</label>
+        <section class="app-subsection">
+          <span >Chapter {{note.chapter}}, </span>
+          <span *ngIf="note.page">pg {{note.page}}.</span>
+        </section>
+      </section>
+    </div>
+     
+  </div>
+ 
+  <!--EDIT MODE -->
+  <div *ngIf="isEditNoteMode" class="app-card-note-edit">
+    <div class=app-card-note-body-meta>
+      <h3>Edit Note</h3>
       <div class="app-content-toolbar">
+        <button mat-flat-button class="material-icons" (click)="doDeleteNote()">delete</button>
         <button mat-flat-button class="material-icons" (click)="saveNote()">save</button>
         <button mat-flat-button class="material-icons" (click)="setNoteViewMode()">close</button>
       </div>
+    </div>
 
+    <div class="app-card-note-body-content">
       <div [(froalaModel)]="note.note"
-           [froalaEditor]></div>
+      [froalaEditor]></div>
 
-      <mat-form-field>
-        <input
-          matInput
-          placeholder="Chapter"
-          name="reference_chapter"
-          #eventLabel="ngModel"
-          [(ngModel)]="note.chapter">
-      </mat-form-field>
+      <section class="app-section horizontal">
+        <section class="app-subsection">
+          <mat-form-field>
+              <input
+                matInput
+                placeholder="Chapter"
+                name="reference_chapter"
+                #eventLabel="ngModel"
+                [(ngModel)]="note.chapter">
+            </mat-form-field>
+        </section>
 
-      <mat-form-field>
-        <input
-          matInput
-          type="number"
-          placeholder="Page"
-          name="reference_page"
-          #eventLabel="ngModel"
-          [(ngModel)]="note.page">
-      </mat-form-field>
+        <section class="app-subsection">
+          <mat-form-field class="app-field-page">
+              <input
+                matInput
+                type="number"
+                placeholder="Page"
+                name="reference_page"
+                #eventLabel="ngModel"
+                [(ngModel)]="note.page">
+            </mat-form-field>
+        </section>
+      </section>
     </div>
   </div>
 </div>

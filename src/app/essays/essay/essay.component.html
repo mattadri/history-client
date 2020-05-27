@@ -7,11 +7,13 @@
         <button mat-flat-button class="material-icons" (click)="toggleContentPanel(essayManager)">{{essayScreenSize}}</button>
       </div>
 
-
       <!-- ABSTRACT VIEW-->
       <div class="app-essay-section" *ngIf="!isAbstractEditMode">
-        <h3><span *ngIf="essay.abstract" [innerHtml]="essay.abstract | safeHtml"></span></h3>
-        <button mat-flat-button class="material-icons" *ngIf="!isAbstractEditMode" (click)="setAbstractEditMode()">edit</button>
+          <h2>Abstract
+              <button mat-flat-button class="material-icons" *ngIf="!isAbstractEditMode" (click)="setAbstractEditMode()">edit</button>
+          </h2>
+        <div class="text-intro"><span *ngIf="essay.abstract" [innerHtml]="essay.abstract | safeHtml"></span></div>
+        
       </div>
 
       <!-- ABSTRACT EDIT-->
@@ -29,8 +31,10 @@
 
       <!-- ESSAY CONTENT VIEW-->
       <div class="app-essay-section essay-content" *ngIf="!isEssayEditMode" >
+          <h2>Content
+              <button mat-flat-button class="material-icons" *ngIf="!isEssayEditMode" (click)="setEssayEditMode()">edit</button>
+          </h2>
         <div *ngIf="essayContent" [innerHtml]="essayContent | safeHtml"></div>
-        <button mat-flat-button class="material-icons" *ngIf="!isEssayEditMode" (click)="setEssayEditMode()">edit</button>
       </div>
 
 
@@ -55,58 +59,78 @@
   <mat-sidenav #essayManager mode="side" position="end" class="app-drawer">
     <mat-accordion>
       <mat-expansion-panel>
-        <button mat-icon-button class="material-icons" (click)="setAddEssayNoteMode().then()">add</button>
 
+        <!-- Add a new note CTA-->
+        <div class="app-section-cta">
+            <button mat-flat-button color="secondary" (click)="setAddEssayNoteMode().then()">+ Add a Note</button>
+        </div>
+        
         <mat-expansion-panel-header>
           <mat-panel-title>
             Notes
           </mat-panel-title>
         </mat-expansion-panel-header>
 
-        <div *ngIf="isAddEssayNoteMode">
-          <form (ngSubmit)="addNote()" #noteForm="ngForm">
-            <div [(froalaModel)]="essayNote.note"
-              [froalaEditor]></div>
+        <!-- Add a new note FORM-->
+        <div class="app-card-note" *ngIf="isAddEssayNoteMode">
+          <form (ngSubmit)="addNote()" #noteForm="ngForm" class="app-card-note-edit">
 
-            <section class="app-section inline">
-              <label>Source</label>
-              <mat-form-field class="app-field-reference">
-                <input
-                  type="text"
-                  placeholder="Select Source"
-                  aria-label="Source"
-                  matInput
-                  [formControl]="sourcesAutocompleteControl"
-                  [matAutocomplete]="auto">
+            <div class=app-card-note-body-meta>
+              <h3>New Note</h3>
+              <div class="app-card-note-toolbar">
+                  <button mat-flat-button color="primary">Save</button>
+                  <button mat-flat-button color="secondary" (click)="cancelAddEssayNoteMode()">Cancel</button>
+              </div>
+            </div>
 
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
-                  <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
-                    {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
+            <div class="app-card-note-body-content">
+              <div [(froalaModel)]="essayNote.note"
+                [froalaEditor]></div>
+              </div>
 
-              <mat-form-field>
-                <input
-                  matInput
-                  type="text"
-                  placeholder="Chapter"
-                  name="reference_chapter"
-                  [(ngModel)]="essayNote.chapter" />
-              </mat-form-field>
+              <section class="app-section horizontal">
+                <section class="app-subsection">
+                  <mat-form-field class="app-field-reference">
+                    <input
+                      type="text"
+                      placeholder="Select Source"
+                      aria-label="Source"
+                      matInput
+                      [formControl]="sourcesAutocompleteControl"
+                      [matAutocomplete]="auto">
+    
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
+                      <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+                        {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+                </section>
 
-              <mat-form-field>
-                <input
-                  matInput
-                  type="number"
-                  placeholder="Page"
-                  name="reference_page"
-                  [(ngModel)]="essayNote.page" />
-              </mat-form-field>
-            </section>
+                <section class="app-subsection">
+                  <mat-form-field>
+                      <input
+                        matInput
+                        type="text"
+                        placeholder="Chapter"
+                        name="reference_chapter"
+                        [(ngModel)]="essayNote.chapter" />
+                    </mat-form-field>
+                </section>
+                
+                <section class="app-subsection">
+                  <mat-form-field class="app-field-page">
+                      <input
+                        matInput
+                        type="number"
+                        placeholder="Page"
+                        name="reference_page"
+                        [(ngModel)]="essayNote.page" />
+                    </mat-form-field>
+                </section>
 
-            <button mat-flat-button color="primary">Save</button>
-            <button mat-flat-button color="secondary" (click)="cancelAddEssayNoteMode()">Cancel</button>
+              </section>
+
           </form>
         </div>
 
@@ -127,53 +151,70 @@
 
         <mat-tab-group>
           <mat-tab label="References">
-            <button mat-icon-button class="material-icons" (click)="setAddEssayReferenceMode()">add</button>
-
-            <div *ngIf="isAddEssayReferenceMode">
+            
+            <!-- Add a new reference CTA-->
+            <div class="app-section-cta">
+                <button mat-flat-button color="secondary" (click)="setAddEssayReferenceMode()">+ Add a Reference</button>
+            </div>
+            
+            <!-- Add a new reference FORM-->
+            <div class="app-card-note" *ngIf="isAddEssayReferenceMode">
               <form (ngSubmit)="addReference()" #referenceForm="ngForm">
-                <section class="app-section inline">
-                  <label>Source</label>
-                  <mat-form-field class="app-field-reference">
-                    <input
-                      type="text"
-                      placeholder="Select Source"
-                      aria-label="Source"
-                      matInput
-                      [formControl]="sourcesAutocompleteControl"
-                      [matAutocomplete]="autoReference">
+                <div class=app-card-note-body-meta>
+                    <h3>New Reference</h3>
+                    <div class="app-card-note-toolbar">
+                      <button type="submit" mat-flat-button color="primary">Save</button>
+                      <button type="button" mat-flat-button color="secondary" (click)="cancelAddEssayReferenceMode()">Cancel</button>
+                    </div>
+                  </div>
+                
+                <div class="app-card-note-body-content">
+                  <section class="app-section horizontal">
+                    <section class="app-subsection">
+                      <mat-form-field class="app-field-reference">
+                        <input
+                          type="text"
+                          placeholder="Select Source"
+                          aria-label="Source"
+                          matInput
+                          [formControl]="sourcesAutocompleteControl"
+                          [matAutocomplete]="autoReference">
 
-                    <mat-autocomplete #autoReference="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
-                      <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
-                        {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
-                      </mat-option>
-                    </mat-autocomplete>
-                  </mat-form-field>
+                        <mat-autocomplete #autoReference="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
+                          <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+                            {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                    </section>
 
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="text"
-                      placeholder="Chapter"
-                      name="reference_chapter"
-                      [(ngModel)]="essayReference.sourceChapter" />
-                  </mat-form-field>
+                    <section class="app-subsection">
+                      <mat-form-field>
+                        <input
+                          matInput
+                          type="text"
+                          placeholder="Chapter"
+                          name="reference_chapter"
+                          [(ngModel)]="essayReference.sourceChapter" />
+                      </mat-form-field>
+                    </section>
 
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="number"
-                      placeholder="Page"
-                      name="reference_page"
-                      [(ngModel)]="essayReference.sourcePage" />
-                  </mat-form-field>
-                </section>
-
-                <button type="submit" mat-flat-button color="primary">Save</button>
-                <button type="button" mat-flat-button color="secondary" (click)="cancelAddEssayReferenceMode()">Cancel</button>
+                    <section class="app-subsection">
+                      <mat-form-field class="app-field-page">
+                        <input
+                          matInput
+                          type="number"
+                          placeholder="Page"
+                          name="reference_page"
+                          [(ngModel)]="essayReference.sourcePage" />
+                      </mat-form-field>
+                    </section>
+                  </section>
+                </div>  
               </form>
             </div>
 
-            <div class="grid-list">
+            <div>
               <app-essay-reference
                 *ngFor="let essayReference of essay.essayReferences"
                 [essayReference]="essayReference"
