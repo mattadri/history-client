@@ -2,7 +2,7 @@
   <div class="app-body-content">
     <div class="app-content-toolbar">
       <h1>Sources</h1>
-      <button mat-flat-button color="primary" class="material-icons" (click)="activateCreateMode(sourceDetails)">add</button>
+      <button mat-flat-button color="primary" class="material-icons" (click)="activateCreateMode(sourceDetails).then()">add</button>
     </div>
 
     <div class="app-cards-container">
@@ -135,9 +135,9 @@
             <div class="app-drawer-heading">{{source.title}}</div>
           </div>
           <div class="app-drawer-tools" *ngIf="isEditSourceMode">
-            <button mat-icon-button class="material-icons" (click)="removeSource(sourceDetails)">delete</button>
-            <button mat-icon-button class="material-icons">save</button>
-            <button mat-icon-button class="material-icons" (click)="cancelEditCreateModes(sourceDetails)">close</button>
+            <button mat-icon-button class="material-icons" type="button" (click)="removeSource(sourceDetails)">delete</button>
+            <button mat-icon-button class="material-icons" type="submit">save</button>
+            <button mat-icon-button class="material-icons" type="button" (click)="cancelEditCreateModes(sourceDetails)">close</button>
           </div>
 
           <div class="app-drawer-title" *ngIf="isCreateSourceMode">

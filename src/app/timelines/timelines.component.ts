@@ -41,9 +41,7 @@ export class TimelinesComponent implements OnInit {
 
   initializeNewTimeline() {
     this.timeline = new Timeline();
-    this.timeline.label = '';
-    this.timeline.events = [];
-    this.timeline.persons = [];
+    this.timeline.initializeNewTimeline();
   }
 
   getTimelines(path) {

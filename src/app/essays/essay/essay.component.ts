@@ -147,8 +147,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
     this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(response => {
       this.sources = response.sources;
 
-      console.log(this.sources);
-
       this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
         startWith(''),
         map(source => this._filterSources(source))
@@ -157,8 +155,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label', null, null, false).subscribe(response => {
       this.events = response.events;
-
-      console.log(this.events);
 
       this.eventsFilteredOptions = this.eventsAutocompleteControl.valueChanges.pipe(
         startWith(''),
@@ -169,8 +165,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
     this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,middle_name,last_name').subscribe(response => {
       this.persons = response.persons;
 
-      console.log(this.persons);
-
       this.personsFilteredOptions = this.personsAutocompleteControl.valueChanges.pipe(
         startWith(''),
         map(person => this._filterPersons(person))
@@ -179,8 +173,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     this.timelineService.getApiTimelines('/timelines?page[size]=0&fields[timeline]=label').subscribe(response => {
       this.timelines = response.timelines;
-
-      console.log(this.timelines);
 
       this.timelinesFilteredOptions = this.timelinesAutocompleteControl.valueChanges.pipe(
         startWith(''),
@@ -782,6 +774,8 @@ export class EssayComponent implements OnInit, AfterViewInit {
   }
 
   addReference() {
+    console.log('Essay: ', this.essay);
+
     this.essayReference.source = this.source;
 
     this.essayService.createApiEssayReference(this.essay, this.essayReference).subscribe(response => {
@@ -842,13 +836,9 @@ export class EssayComponent implements OnInit, AfterViewInit {
     });
   }
 
-  async setAddEssayNoteMode() {
+  setAddEssayNoteMode() {
     this.isAddEssayNoteMode = true;
     this.initializeNewEssayNote();
-
-    await this.sleep(500);
-
-    document.getElementById('essay_note').focus();
   }
 
   setAddEssayReferenceMode() {
@@ -1029,44 +1019,44 @@ export class EssayComponent implements OnInit, AfterViewInit {
   }
 
   private _filterEvents(filterValue: string): Event[] {
-    filterValue = filterValue.toLowerCase();
+    if (typeof filterValue === 'string') {
+      filterValue = filterValue.toLowerCase();
 
-    return this.events.filter(event => {
-      return event.label.toLowerCase().includes(filterValue);
-    });
+      return this.events.filter(event => {
+        return event.label.toLowerCase().includes(filterValue);
+      });
+    }
   }
 
   private _filterPersons(filterValue: string): Person[] {
-    let valueToFilterOn = filterValue;
+    if (typeof filterValue === 'string') {
+      let valueToFilterOn = filterValue;
 
-    valueToFilterOn = valueToFilterOn.toLowerCase();
+      valueToFilterOn = valueToFilterOn.toLowerCase();
 
-    return this.persons.filter(person => {
-      let personFullName = person.firstName;
+      return this.persons.filter(person => {
+        let personFullName = person.firstName;
 
-      if (person.middleName) {
-        personFullName = personFullName + ' ' + person.middleName;
-      }
+        if (person.middleName) {
+          personFullName = personFullName + ' ' + person.middleName;
+        }
 
-      if (person.lastName) {
-        personFullName = personFullName + ' ' + person.lastName;
-      }
+        if (person.lastName) {
+          personFullName = personFullName + ' ' + person.lastName;
+        }
 
-      return personFullName.toLowerCase().includes(valueToFilterOn);
-    });
+        return personFullName.toLowerCase().includes(valueToFilterOn);
+      });
+    }
   }
 
   private _filterTimelines(filterValue: any): Timeline[] {
-    if (filterValue) {
-      if (filterValue.label) {
-        filterValue = filterValue.label.toLowerCase();
-      } else {
-        filterValue = filterValue.toLowerCase();
-      }
-    }
+    if (typeof filterValue === 'string') {
+      filterValue = filterValue.toLowerCase();
 
-    return this.timelines.filter(timeline => {
-      return timeline.label.toLowerCase().includes(filterValue);
-    });
+      return this.timelines.filter(timeline => {
+        return timeline.label.toLowerCase().includes(filterValue);
+      });
+    }
   }
 }

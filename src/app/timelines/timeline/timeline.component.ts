@@ -103,7 +103,7 @@ export class TimelineComponent implements OnInit {
         this.timeline.categories = [];
       }
 
-      this.formatDates();
+      // this.formatDates();
 
       this.setTimelineStartAndEnd();
       this.setTimeframe();
@@ -165,8 +165,6 @@ export class TimelineComponent implements OnInit {
   // this will get called if the timeline start/end points change
   calculateTimeline() {
     this.resetEvents();
-
-    this.formatDates();
 
     this.setTimelineStartAndEnd();
     this.setTimeframe();
@@ -370,8 +368,6 @@ export class TimelineComponent implements OnInit {
           for (const event of this.timeline.events) {
             if (event.id === eventId) {
               if (event.formattedStartDate === event.formattedEndDate) {
-                event.isSinglePointEvent = true;
-
                 newCategory.singlePointEvents.push(event);
 
                 eventIdsUsed.push(eventId);
@@ -393,8 +389,6 @@ export class TimelineComponent implements OnInit {
                     backupColorArray = [];
                   }
                 }
-
-                event.isSinglePointEvent = false;
 
                 newCategory.multiPointEvents.push(event);
 
@@ -424,8 +418,6 @@ export class TimelineComponent implements OnInit {
     for (const event of this.timeline.events) {
       if (!eventIdsUsed.includes(event.id)) {
         if (event.formattedStartDate === event.formattedEndDate) {
-          event.isSinglePointEvent = true;
-
           genericCategory.singlePointEvents.push(event);
 
         } else {
@@ -444,13 +436,7 @@ export class TimelineComponent implements OnInit {
 
               backupColorArray = [];
             }
-
-            // const colorIndex = Math.round(Math.random() * this.eventColorClasses.length);
-            // event.colorClass = this.eventColorClasses[colorIndex];
-            // this.eventColorClasses.splice(colorIndex, 1);
           }
-
-          event.isSinglePointEvent = false;
 
           genericCategory.multiPointEvents.push(event);
         }
@@ -480,15 +466,6 @@ export class TimelineComponent implements OnInit {
 
       return true;
     });
-  }
-
-  formatDates() {
-    for (const event of this.timeline.events) {
-      event.formatYears();
-      event.formatYears();
-
-      event.formatDates();
-    }
   }
 
   setTimelineEventLocations() {
@@ -638,9 +615,6 @@ export class TimelineComponent implements OnInit {
   }
 
   turnRelatedEventsPage(events) {
-    console.log('Page Events:', events);
-    console.log(this.relatedEventsPreviousPage);
-    console.log(this.relatedEventsNextPage);
     if (events.pageIndex < events.previousPageIndex) {
       this.getRelatedEvents(this.relatedEventsPreviousPage, true);
     } else if (events.pageIndex > events.previousPageIndex) {

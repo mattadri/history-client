@@ -1,0 +1,8 @@
+@import '../../../../styles/_variables.scss';
+@import '../../../../styles/_cards.scss';
+@import '../../../../styles/_sections.scss';
+
+.app-card-note.thought {
+  display: flex;
+  flex-direction: row;
+}

@@ -13,7 +13,9 @@ export class AppComponent implements OnInit {
   public personsLinkActive: boolean;
   public sourcesLinkActive: boolean;
   public authorsLinkActive: boolean;
+  public chartsLinkActive: boolean;
   public essaysLinkActive: boolean;
+  public brainstormsLinkActive: boolean;
 
   ngOnInit() {
     this.timelinesLinkActive = true;
@@ -21,7 +23,9 @@ export class AppComponent implements OnInit {
     this.personsLinkActive = false;
     this.sourcesLinkActive = false;
     this.authorsLinkActive = false;
+    this.chartsLinkActive = false;
     this.essaysLinkActive = false;
+    this.brainstormsLinkActive = false;
 
     this.setActiveClass(location.pathname);
   }
@@ -38,6 +42,8 @@ export class AppComponent implements OnInit {
       this.sourcesLinkActive = false;
       this.authorsLinkActive = false;
       this.essaysLinkActive = false;
+      this.brainstormsLinkActive = false;
+      this.chartsLinkActive = false;
 
     } else if (pathname.startsWith('/manager/events')) {
       this.timelinesLinkActive = false;
@@ -46,6 +52,8 @@ export class AppComponent implements OnInit {
       this.sourcesLinkActive = false;
       this.authorsLinkActive = false;
       this.essaysLinkActive = false;
+      this.brainstormsLinkActive = false;
+      this.chartsLinkActive = false;
 
     } else if (pathname.startsWith('/manager/persons')) {
       this.timelinesLinkActive = false;
@@ -54,6 +62,8 @@ export class AppComponent implements OnInit {
       this.sourcesLinkActive = false;
       this.authorsLinkActive = false;
       this.essaysLinkActive = false;
+      this.brainstormsLinkActive = false;
+      this.chartsLinkActive = false;
 
     } else if (pathname.startsWith('/manager/sources')) {
       this.timelinesLinkActive = false;
@@ -62,6 +72,9 @@ export class AppComponent implements OnInit {
       this.sourcesLinkActive = true;
       this.authorsLinkActive = false;
       this.essaysLinkActive = false;
+      this.brainstormsLinkActive = false;
+      this.chartsLinkActive = false;
+
     } else if (pathname.startsWith('/manager/authors')) {
       this.timelinesLinkActive = false;
       this.eventsLinkActive = false;
@@ -69,6 +82,18 @@ export class AppComponent implements OnInit {
       this.sourcesLinkActive = false;
       this.authorsLinkActive = true;
       this.essaysLinkActive = false;
+      this.brainstormsLinkActive = false;
+      this.chartsLinkActive = false;
+
+    } else if (pathname.startsWith('/manager/charts')) {
+      this.timelinesLinkActive = false;
+      this.eventsLinkActive = false;
+      this.personsLinkActive = false;
+      this.sourcesLinkActive = false;
+      this.authorsLinkActive = false;
+      this.essaysLinkActive = false;
+      this.brainstormsLinkActive = false;
+      this.chartsLinkActive = true;
 
     } else if (pathname.startsWith('/essay')) {
       this.timelinesLinkActive = false;
@@ -77,6 +102,18 @@ export class AppComponent implements OnInit {
       this.sourcesLinkActive = false;
       this.authorsLinkActive = false;
       this.essaysLinkActive = true;
+      this.brainstormsLinkActive = false;
+      this.chartsLinkActive = false;
+
+    } else if (pathname.startsWith('/brainstorming')) {
+      this.timelinesLinkActive = false;
+      this.eventsLinkActive = false;
+      this.personsLinkActive = false;
+      this.sourcesLinkActive = false;
+      this.authorsLinkActive = false;
+      this.essaysLinkActive = false;
+      this.brainstormsLinkActive = true;
+      this.chartsLinkActive = false;
     }
   }
 }

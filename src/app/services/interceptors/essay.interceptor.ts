@@ -38,6 +38,7 @@ export class EssayInterceptor implements HttpInterceptor {
 
           for (const data of event.body.data) {
             this.essay = new Essay();
+            this.essay.initializeNewEssay();
             this.essay.mapEssay(data);
 
             this.essays.push(this.essay);

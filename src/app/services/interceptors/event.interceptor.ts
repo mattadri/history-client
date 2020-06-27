@@ -49,6 +49,7 @@ export class EventInterceptor implements HttpInterceptor {
           event.body = this.body;
         } else if (req.headers.get('type') === 'event') {
           this.event = new Event();
+          this.event.initializeNewEvent();
           this.event.mapEvent(event.body.data, false, null, null);
 
           event.body = this.event;

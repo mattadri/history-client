@@ -1,0 +1,698 @@
+<mat-sidenav-container>
+  <app-chart-display *ngIf="chart" [notifier]="updateChartNotifier"></app-chart-display>
+
+  <div>
+    <button mat-flat-button class="material-icons" (click)="toggleContentPanel(chartDetails)">{{chartScreenSize}}</button>
+  </div>
+
+  <mat-sidenav #chartDetails mode="side" position="end" class="app-drawer" opened>
+    <div class="edit-mode" *ngIf="chart">
+      <form #chartForm="ngForm">
+        <div class="app-drawer-content">
+          <section class="app-section">
+            <mat-form-field>
+              <mat-label>Chart Type</mat-label>
+              <mat-select [(value)]="chart.type" (selectionChange)="updateChartType()">
+                <mat-option value="line">Line</mat-option>
+                <mat-option value="bar">Bar</mat-option>
+                <mat-option value="horizontalBar">Horizontal Bar</mat-option>
+                <mat-option value="pie">Pie</mat-option>
+                <mat-option value="doughnut">Doughnut</mat-option>
+                <mat-option value="polarArea">Polar Area</mat-option>
+                <mat-option value="radar">Radar</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </section>
+
+          <mat-accordion>
+            <mat-expansion-panel *ngIf="chart.options">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Title
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <mat-checkbox [(ngModel)]="chart.options.title.display"
+                            (change)="updateTitleOptions()"
+                            #titleDisplay="matCheckbox"
+                            name="show_chart_title">
+                Show Title
+              </mat-checkbox>
+
+              <mat-form-field style="width: 100%">
+                <input
+                    matInput
+                    placeholder="Chart Title"
+                    name="chart_title"
+                    #chartTitle="ngModel"
+                    [(ngModel)]="chart.options.title.text"
+                    (blur)="updateTitleOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Title Position</mat-label>
+                <mat-select [(value)]="chart.options.title.position" (selectionChange)="updateTitleOptions()">
+                  <mat-option value="top">Top</mat-option>
+                  <mat-option value="left">Left</mat-option>
+                  <mat-option value="bottom">Bottom</mat-option>
+                  <mat-option value="right">Right</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Padding"
+                  name="title_padding"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.title.padding"
+                  (blur)="updateTitleOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Line Height"
+                  name="title_line_height"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.title.lineHeight"
+                  (blur)="updateTitleOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  type="number"
+                  matInput
+                  placeholder="Font Size"
+                  name="title_font_size"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.title.fontSize"
+                  (blur)="updateTitleOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  type="color"
+                  matInput
+                  placeholder="Font Color"
+                  name="title_font_color"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.title.fontColor"
+                  (blur)="updateTitleOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Font Family"
+                  name="title_font_family"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.title.fontFamily"
+                  (blur)="updateTitleOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Font Style"
+                  name="title_font_style"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.title.fontStyle"
+                  (blur)="updateTitleOptions()" />
+              </mat-form-field>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel *ngIf="chart.options">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Tooltips
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div>
+                <mat-checkbox [(ngModel)]="chart.options.tooltips.enabled" matInput
+                              (change)="updateTooltipOptions()"
+                              #titleDisplay="matCheckbox"
+                              name="show_chart_tooltips">
+                  Show Tooltips
+                </mat-checkbox>
+              </div>
+
+              <mat-form-field>
+                <input
+                    matInput
+                    type="color"
+                    placeholder="Tooltip Background Color"
+                    name="chart_tooltip_background_color"
+                    #chartTooltipColor="ngModel"
+                    [(ngModel)]="chart.options.tooltips.backgroundColor"
+                    (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="X Padding"
+                  name="tooltip_x_padding"
+                  #chartTooltipXPadding="ngModel"
+                  [(ngModel)]="chart.options.tooltips.xPadding"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Y Padding"
+                  name="tooltip_y_padding"
+                  #chartTooltipXPadding="ngModel"
+                  [(ngModel)]="chart.options.tooltips.yPadding"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  type="number"
+                  matInput
+                  placeholder="Caret Padding"
+                  name="tooltip_caret_padding"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.caretPadding"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  type="number"
+                  matInput
+                  placeholder="Caret Size"
+                  name="tooltip_caret_size"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.caretSize"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Corner Radius"
+                  name="tooltip_corner_radius"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.cornerRadius"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="color"
+                  placeholder="Display Colors"
+                  name="tooltip_display_colors"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.displayColors"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="color"
+                  placeholder="Border Color"
+                  name="tooltip_border_color"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.borderColor"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Border Width"
+                  name="tooltip_border_width"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.borderWidth"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Title Font Family"
+                  name="tooltip_title_font_family"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.titleFontFamily"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Title Font Size"
+                  name="tooltip_title_font_size"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.titleFontSize"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Title Font Style"
+                  name="tooltip_title_font_style"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.titleFontStyle"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="color"
+                  placeholder="Title Font Color"
+                  name="tooltip_title_font_color"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.titleFontColor"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Title Align"
+                  name="tooltip_title_align"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.titleAlign"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Title Spacing"
+                  name="tooltip_title_spacing"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.titleSpacing"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Title Margin Bottom"
+                  name="tooltip_title_margin_bottom"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.titleMarginBottom"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Body Font Family"
+                  name="tooltip_body_font_family"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.bodyFontFamily"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Body Font Size"
+                  name="tooltip_body_font_size"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.bodyFontSize"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Body Font Style"
+                  name="tooltip_body_font_style"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.bodyFontStyle"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="color"
+                  placeholder="Body Font Color"
+                  name="tooltip_body_font_color"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.bodyFontColor"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Body Align"
+                  name="tooltip_body_align"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.bodyAlign"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Body Spacing"
+                  name="tooltip_body_spacing"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.bodySpacing"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Footer Font Family"
+                  name="tooltip_footer_font_family"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.footerFontFamily"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Footer Font Size"
+                  name="tooltip_footer_font_size"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.footerFontSize"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Footer Font Style"
+                  name="tooltip_footer_font_style"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.footerFontStyle"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="color"
+                  placeholder="Footer Font Color"
+                  name="tooltip_footer_font_color"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.footerFontColor"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Footer Align"
+                  name="tooltip_footer_font_align"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.footerAlign"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Footer Spacing"
+                  name="tooltip_footer_spacing"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.footerSpacing"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Footer Margin Top"
+                  name="tooltip_footer_margin_top"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.tooltips.footerMarginTop"
+                  (blur)="updateTooltipOptions()" />
+              </mat-form-field>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel *ngIf="chart.options">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Legend
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <div>
+                <mat-checkbox [(ngModel)]="chart.options.legend.display"
+                              (change)="updateLegendOptions()"
+                              #legendDisplay="matCheckbox"
+                              name="show_chart_legend">
+                  Show Legend
+                </mat-checkbox>
+              </div>
+
+              <mat-form-field>
+                <mat-label>Legend Position</mat-label>
+                <mat-select [(value)]="chart.options.legend.position" (selectionChange)="updateLegendOptions()">
+                  <mat-option value="top">Top</mat-option>
+                  <mat-option value="left">Left</mat-option>
+                  <mat-option value="bottom">Bottom</mat-option>
+                  <mat-option value="right">Right</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Legend Align</mat-label>
+                <mat-select [(value)]="chart.options.legend.align" (selectionChange)="updateLegendOptions()">
+                  <mat-option value="start">Start</mat-option>
+                  <mat-option value="center">Center</mat-option>
+                  <mat-option value="end">End</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <div>
+                <mat-checkbox [(ngModel)]="chart.options.legend.fullWidth"
+                              (change)="updateLegendOptions()"
+                              #legendDisplay="matCheckbox"
+                              name="chart_legend_full_width">
+                  Full Width
+                </mat-checkbox>
+              </div>
+
+              <div>
+                <mat-checkbox [(ngModel)]="chart.options.legend.reverse"
+                              (change)="updateLegendOptions()"
+                              #legendDisplay="matCheckbox"
+                              name="chart_legend_reverse">
+                  Reverse
+                </mat-checkbox>
+              </div>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Label Box Width"
+                  name="chart_legend_label_box_width"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.legend.labels.boxWidth"
+                  (blur)="updateLegendOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Label Padding"
+                  name="chart_legend_label_padding"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.legend.labels.padding"
+                  (blur)="updateLegendLabelOptions()" />
+              </mat-form-field>
+
+              <div>
+                <mat-checkbox [(ngModel)]="chart.options.legend.labels.usePointStyle"
+                              (change)="updateLegendLabelOptions()"
+                              #legendDisplay="matCheckbox"
+                              name="chart_legend_label_use_point_style">
+                  Label - Use Point Style
+                </mat-checkbox>
+              </div>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Label Font Size"
+                  name="chart_legend_label_font_size"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.legend.labels.fontSize"
+                  (blur)="updateLegendLabelOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Label Font Style"
+                  name="chart_legend_label_font_style"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.legend.labels.fontStyle"
+                  (blur)="updateLegendLabelOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  type="color"
+                  placeholder="Label Font Color"
+                  name="chart_legend_label_font_color"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.legend.labels.fontColor"
+                  (blur)="updateLegendLabelOptions()" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Label Font Family"
+                  name="chart_legend_label_font_family"
+                  #chartData="ngModel"
+                  [(ngModel)]="chart.options.legend.labels.fontFamily"
+                  (blur)="updateLegendLabelOptions()" />
+              </mat-form-field>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Labels
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <section class="app-section">
+                <button mat-flat-button class="material-icons" (click)="addChartLabel()">add</button>
+
+                <!-- index is used to make the name unique -->
+                <div *ngFor="let label of chart.labels; let h = index">
+                  <mat-form-field style="width: 100%">
+                    <input
+                      matInput
+                      placeholder="Label"
+                      name="chart_label_{{h}}"
+                      #chartLabel="ngModel"
+                      [(ngModel)]="label.label"
+                      (blur)="updateChartLabel(label)"  />
+                  </mat-form-field>
+                </div>
+              </section>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Datasets
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+
+              <section class="app-section">
+                <button mat-flat-button class="material-icons" (click)="addDataset()">add</button>
+
+                <mat-tab-group>
+                  <mat-tab *ngFor="let dataset of chart.datasets; let i = index" label="{{dataset.label}}">
+                    <div>
+                      <mat-form-field style="width: 100%">
+                        <input
+                            matInput
+                            placeholder="Label"
+                            name="dataset_label_{{i}}"
+                            #datasetLabel="ngModel"
+                            [(ngModel)]="dataset.label"
+                            (blur)="updateDataset(dataset)" />
+                      </mat-form-field>
+
+                      <mat-checkbox [(ngModel)]="dataset.fill"
+                                    (change)="updateDataset(dataset)"
+                                    #dataset_{{i}}_fill="matCheckbox"
+                                    name="dataset_{{i}}_fill">
+                        Show Fill
+                      </mat-checkbox>
+
+                      <mat-form-field>
+                        <input matInput
+                               type="color"
+                               placeholder="Background Color"
+                               name="dataset_background_color_{{i}}"
+                               [(ngModel)]="dataset.backgroundColor"
+                               (blur)="updateDataset(dataset)">
+                      </mat-form-field>
+
+                      <mat-form-field>
+                        <input matInput
+                               type="color"
+                               placeholder="Line Border Color"
+                               name="dataset_line_border_color_{{i}}"
+                               [(ngModel)]="dataset.borderColor"
+                               (blur)="updateDataset(dataset)">
+                      </mat-form-field>
+
+                      <mat-form-field>
+                        <input matInput
+                               type="color"
+                               placeholder="Point Background Color"
+                               name="dataset_point_background_color_{{i}}"
+                               [(ngModel)]="dataset.pointBackgroundColor"
+                               (blur)="updateDataset(dataset)">
+                      </mat-form-field>
+
+                      <mat-form-field>
+                        <input
+                          matInput
+                          type="number"
+                          placeholder="Point Radius"
+                          name="dataset_point_radius_{{j}}"
+                          #chartData="ngModel"
+                          [(ngModel)]="dataset.pointRadius"
+                          (blur)="updateDataset(dataset)" />
+                      </mat-form-field>
+
+                      <!-- index is used to make the name unique -->
+                      <!--placeholder="{{chart.labels[j].label}}"-->
+                      <div *ngFor="let data of dataset.data; let j = index; trackBy: trackByData">
+                        <mat-form-field style="width: 100%">
+                          <input
+                            matInput
+                            type="number"
+                            placeholder="{{chart.labels[j].label}}"
+                            name="chart_data_{{i}}_{{j}}"
+                            #chartData="ngModel"
+                            [(ngModel)]="data.xData"
+                            (blur)="updateDatasetData(dataset, data)" />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </mat-tab>
+                </mat-tab-group>
+              </section>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </form>
+    </div>
+
+    <!--<input type="color">-->
+  </mat-sidenav>
+</mat-sidenav-container>

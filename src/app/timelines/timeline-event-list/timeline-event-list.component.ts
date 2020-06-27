@@ -35,9 +35,6 @@ export class TimelineEventListComponent implements OnInit {
     this.listOnly = !this.timeline;
 
     this.applyStyles();
-
-    this.event.formatYears();
-    this.event.formatDates();
   }
 
   applyColorClass() {

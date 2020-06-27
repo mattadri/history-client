@@ -1,6 +1,9 @@
-<button mat-flat-button class="material-icons" color="primary" *ngIf="!isCreateMode" (click)="activateCreateMode()">
-  add
-</button>
+<div class="app-section-cta">
+  <button mat-flat-button color="secondary" *ngIf="!isCreateMode" (click)="activateCreateMode()">
+    + Add a Category
+  </button>
+</div>
+
 
 <div *ngIf="isCreateMode">
   <mat-form-field>
@@ -16,4 +19,9 @@
   <button mat-icon-button class="material-icons" (click)="cancelCreateMode()">close</button>
 </div>
 
-<app-timeline-category *ngFor="let category of timeline.categories" [category]="category" (removeCategory)="removeCategory($event)"></app-timeline-category>
+
+<app-timeline-category *ngFor="let category of timeline.categories"
+                       [category]="category" (removeCategory)="removeCategory($event)"></app-timeline-category>
+
+
+

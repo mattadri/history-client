@@ -1,0 +1,126 @@
+<mat-sidenav-container>
+  <div *ngIf="brainstorm" class="app-body-content app-body-darker-canvas">
+    <div class="app-content-toolbar">
+      <h1>{{brainstorm.title}}</h1>
+    </div>
+
+    <div *ngIf="brainstorm.description">{{brainstorm.description}}</div>
+
+    <div cdkDropListGroup class="app-brainstorm-content">
+      <div class="app-brainstorm-thoughts">
+        <div class="app-content-toolbar">
+          <h2>Thoughts</h2>
+          <button mat-flat-button class="material-icons" (click)="setCreateBrainstormThoughtMode(true)">add</button>
+        </div>
+
+        <div *ngIf="isAddBrainstormThoughtMode" class="app-card-note">
+          <form class="app-card-note-edit">
+            <div class=app-card-note-body-meta>
+              <h3>New Thought</h3>
+              <div class="app-card-note-toolbar">
+                <button mat-flat-button color="primary" (click)="createThought(topic)">Save</button>
+                <button mat-flat-button color="secondary" (click)="setCreateBrainstormThoughtMode(false)">Cancel</button>
+              </div>
+            </div>
+
+            <div class="app-card-note-body-content">
+              <div [(froalaModel)]="thought.thought"
+                  [froalaEditor]>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Add cdkDropList here -->
+        <div cdkDropList
+             class="app-thought-list"
+             [cdkDropListData]="brainstorm.thoughts"
+             (cdkDropListDropped)="reorderThought($event)"
+             id="0">
+          <!-- Add cdkDrag here -->
+          <app-thought cdkDrag
+                       [cdkDragData]="thought"
+                       *ngFor="let thought of brainstorm.thoughts"
+                       [brainstorm]="brainstorm"
+                       [topic]="null"
+                       [thought]="thought"
+                       (removeBrainstormThought)="removeBrainstormThought($event)">
+          </app-thought>
+        </div>
+      </div>
+
+      <div class="app-brainstorm-topics">
+        <div class="app-content-toolbar">
+          <h2>Topics</h2>
+          <button mat-flat-button class="material-icons" (click)="openCreateTopicDialog()">add</button>
+          <button mat-flat-button class="material-icons" (click)="openTopicReorderPanel(topicOrderManager)">reorder</button>
+        </div>
+
+        <div>
+        <!-- Add cdkDropList here -->
+          <mat-accordion multi="true">
+            <!-- Add cdkDrag here -->
+              <mat-expansion-panel *ngFor="let topic of brainstorm.topics">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{topic.label}}
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <button mat-flat-button class="material-icons" (click)="setCreateTopicThoughtMode(true)">add</button>
+
+                <div *ngIf="isAddThoughtMode" class="app-card-note">
+                  <form class="app-card-note-edit">
+                    <div class=app-card-note-body-meta>
+                      <h3>New Thought</h3>
+                      <div class="app-card-note-toolbar">
+                        <button mat-flat-button color="primary" (click)="createTopicThought(topic)">Save</button>
+                        <button mat-flat-button color="secondary" (click)="setCreateTopicThoughtMode(false)">Cancel</button>
+                      </div>
+                    </div>
+
+                    <div class="app-card-note-body-content">
+                      <div [(froalaModel)]="thought.thought"
+                          [froalaEditor]>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <div class="app-thought-list"
+                     cdkDropList
+                     [cdkDropListData]="topic.thoughts"
+                     (cdkDropListDropped)="reorderThought($event)"
+                     id="{{topic.id}}">
+                  <div class="thought" cdkDrag [cdkDragData]="thought" *ngFor="let thought of topic.thoughts">
+                    <app-thought
+                      [brainstorm]="brainstorm"
+                      [topic]="topic"
+                      [thought]="thought"
+                      (removeTopicThought)="removeTopicThought($event)">
+                    </app-thought>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <mat-sidenav #topicOrderManager mode="side" position="end" class="app-drawer">
+    <div class="app-drawer-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">Order Topics</div>
+      </div>
+      <div class="app-drawer-tools">
+        <button class="material-icons mat-icon-button mat-button-base" (click)="closeTopicReorderPanel(topicOrderManager)">close</button>
+      </div>
+    </div>
+
+    <div *ngIf="brainstorm" cdkDropList class="reorder-topic-list" (cdkDropListDropped)="reorderTopic($event)">
+      <div cdkDrag class="reorder-topic-box" *ngFor="let topic of brainstorm.topics">{{topic.label}}</div>
+    </div>
+  </mat-sidenav>
+</mat-sidenav-container>
+

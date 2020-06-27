@@ -4,5 +4,11 @@
 
 <br>
 
-<button mat-flat-button color="primary" [mat-dialog-close]="true">Delete</button>
-<button mat-flat-button color="secondary" (click)="onNoClick()">Cancel</button>
+<p [innerHtml]="data.content"></p>
+
+<br>
+
+<form>
+  <button mat-flat-button color="primary" [mat-dialog-close]="true">Delete</button>
+  <button mat-flat-button color="secondary" (click)="onNoClick()">Cancel</button>
+</form>

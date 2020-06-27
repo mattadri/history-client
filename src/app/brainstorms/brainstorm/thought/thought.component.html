@@ -1,0 +1,25 @@
+<div *ngIf="!isEditMode" class="app-card-note" (dblclick)="editThought()">
+  <div class="app-card-note-view">
+    <div class="app-card-note-body-content">
+      <div class="thought" [innerHtml]="thought.thought | safeHtml"></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="app-card-note-edit" *ngIf="isEditMode">
+  <div class=app-card-note-body-meta>
+    <h3>Edit Thought</h3>
+    <div class="app-card-note-toolbar">
+      <button mat-flat-button class="material-icons" (click)="doDeleteThought()">delete</button>
+      <button mat-flat-button class="material-icons" (click)="saveThought()">save</button>
+      <button mat-flat-button class="material-icons" (click)="cancelThoughtEditMode()">close</button>
+    </div>
+  </div>
+
+  <div class="app-card-note-body-content">
+    <div [(froalaModel)]="thought.thought"
+         [froalaEditor]>
+    </div>
+  </div>
+</div>

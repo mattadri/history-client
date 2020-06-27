@@ -25,7 +25,7 @@ export class SourceDetailsComponent implements OnInit {
 
     this.isAddNoteMode = false;
 
-    this.sourceService.getApiSource(Number.parseInt(sourceId, 0)).subscribe(source => {
+    this.sourceService.getApiSource(Number.parseInt(sourceId, 10)).subscribe(source => {
       this.source = source;
 
       this.sourceService.setSource(this.source);

@@ -1,0 +1,15 @@
+<div class="app-body-content">
+  <div class="app-content-toolbar">
+    <h1>Charts</h1>
+    <button mat-flat-button class="material-icons" color="primary" (click)="createNewChart()">add</button>
+  </div>
+
+  <div class="app-cards-container cards-large">
+    <app-chart-card
+      *ngFor="let chart of charts" [chart]="chart"
+      class="app-card">
+    </app-chart-card>
+  </div>
+
+  <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+</div>

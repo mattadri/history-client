@@ -8,7 +8,8 @@
           <input matInput
                  placeholder="Search..."
                  name="eventFilter"
-                 [(ngModel)]="filterQuery"/>
+                 [(ngModel)]="filterQuery"
+                 (keyup.enter)="filterResults()" />
         </mat-form-field>
         <button mat-icon-button class="material-icons mat-icon-button mat-button-base" (click)="filterResults()">search</button>
       </div>
@@ -240,7 +241,26 @@
             </div>
           </section>
 
-          <section class="app-section inline field-description">
+          <section class="app-section inline">
+            <label>Source</label>
+            <mat-form-field class="app-field-reference">
+              <input
+                type="text"
+                placeholder="Select..."
+                aria-label="Source"
+                matInput
+                [formControl]="sourcesAutocompleteControl"
+                [matAutocomplete]="auto">
+
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
+                <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+                  {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </section>
+
+          <section class="app-section">
             <label>Description</label>
             <mat-form-field class="app-field-description">
               <textarea
@@ -254,24 +274,7 @@
             </mat-form-field>
           </section>
 
-          <section class="app-section inline">
-            <label>Source</label>
-            <mat-form-field class="app-field-reference">
-              <input
-                type="text"
-                placeholder="Select Source"
-                aria-label="Source"
-                matInput
-                [formControl]="sourcesAutocompleteControl"
-                [matAutocomplete]="auto">
 
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
-                <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
-                  {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
-                </mat-option>
-              </mat-autocomplete>
-            </mat-form-field>
-          </section>
 
         </div>
       </form>

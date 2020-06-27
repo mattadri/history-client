@@ -5,7 +5,7 @@
       <h1 class="no-margin-bottom">{{source.title}}</h1>
       <h2 class="no-margin-bottom">{{source.subTitle}}</h2>
       <div class="heading-meta">
-        <span *ngIf="source.subTitle">{{displayAuthors}}, </span> 
+        <span *ngIf="source.subTitle">{{displayAuthors}}, </span>
         <span *ngIf="source.publishedYear">{{source.publishedYear}}</span>
       </div>
     </div>
@@ -32,7 +32,7 @@
               <button mat-flat-button color="secondary" (click)="deactivateAddNoteMode()">Cancel</button>
             </div>
           </div>
-          
+
           <div class="app-card-note-body-content">
             <div [(froalaModel)]="note.note"
                 [froalaEditor]>
@@ -49,7 +49,7 @@
                       [(ngModel)]="note.chapter">
                   </mat-form-field>
               </section>
-              
+
               <section class="app-subsection">
                 <mat-form-field class="app-field-page">
                     <input
@@ -61,7 +61,6 @@
                       [(ngModel)]="note.page">
                   </mat-form-field>
               </section>
-      
             </section>
           </div>
         </form>
@@ -69,9 +68,9 @@
 
       <!-- Display Notes -->
       <app-source-details-note *ngFor="let note of source.notes" [note]="note" [source]="source" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-source-details-note>
-    
+
     </div>
-  </div> 
+  </div>
 </div>
 
 

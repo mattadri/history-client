@@ -150,7 +150,13 @@ export class Event {
       }
     }
 
+    if (self.endYear === self.startYear) {
+      self.isSinglePointEvent = true;
+    }
+
     this.setEventLength();
+    this.formatYears();
+    this.formatDates();
   }
 
   // in the case that an event has no month and the year is greater than 999,999 the formatter will shorten with 'MYA' or 'BYA'
@@ -165,7 +171,7 @@ export class Event {
       formattedNumber = formattedNumber * -1;
     }
 
-    if (this.startEra && this.startEra.label === 'BC' && !this.startMonth) {
+    if (addBC && !this.startMonth) {
       if (formattedNumber > 999999 && formattedNumber < 1000000000) {
         formattedNumber = Math.sign(formattedNumber) * ((Math.abs(formattedNumber) / 1000000));
         formattedNumber = Math.round(100 * formattedNumber) / 100;

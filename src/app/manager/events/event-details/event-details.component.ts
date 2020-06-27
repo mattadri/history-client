@@ -25,11 +25,6 @@ export class EventDetailsComponent implements OnInit {
       this.event = event;
 
       this.eventService.setEvent(this.event);
-
-      this.event.formatYears();
-      this.event.formatDates();
-
-      console.log(this.event);
     });
 
     this.isAddNoteMode = false;

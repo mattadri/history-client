@@ -16,10 +16,7 @@ export class EventCardComponent implements OnInit {
     this.loadEvent = new EventEmitter<Event>();
   }
 
-  ngOnInit() {
-    this.event.formatYears();
-    this.event.formatYears();
-  }
+  ngOnInit() { }
 
   onLoadDetails() {
     this.loadEvent.emit(this.event);

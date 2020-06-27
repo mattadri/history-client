@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
+import {MatDialog} from '@angular/material';
+
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 
@@ -19,6 +21,8 @@ import { EraService } from '../../services/era.service';
 import { SourceService } from '../../services/source.service';
 import { TimelineService } from '../../services/timeline.service';
 import {TimelineEvent} from '../../models/timeline-event';
+
+import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
   selector: 'app-events',
@@ -69,7 +73,8 @@ export class EventsComponent implements OnInit {
               private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
-              private timelineService: TimelineService) {
+              private timelineService: TimelineService,
+              public dialog: MatDialog) {
 
     this.events = [];
 
@@ -288,9 +293,25 @@ export class EventsComponent implements OnInit {
   }
 
   removeEvent(contentPanel) {
-    this.eventService.removeApiEvent(this.event).subscribe(() => {
-      this.eventService.removeEvent(this.event);
-      this.cleanupRemovedEvent(contentPanel);
+    console.log(this.event);
+
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the event ',
+        content: '' +
+        '<li>' + this.event.notes.length.toString() + ' notes will be removed.</li>' +
+        '<li>Will impact ' + this.event.timelines.length + ' timelines.</li>'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.eventService.removeApiEvent(this.event).subscribe(() => {
+          this.eventService.removeEvent(this.event);
+          this.cleanupRemovedEvent(contentPanel);
+        });
+      }
     });
   }
 

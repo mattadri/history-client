@@ -16,9 +16,6 @@ export class EssayEventDetailsComponent implements OnInit {
   constructor(public dialogRef: MatBottomSheetRef<EssayEventDetailsComponent>,
               @Inject(MAT_BOTTOM_SHEET_DATA) public data: DialogData) { }
 
-  ngOnInit() {
-    this.data.event.formatYears();
-    this.data.event.formatDates();
-  }
+  ngOnInit() { }
 
 }

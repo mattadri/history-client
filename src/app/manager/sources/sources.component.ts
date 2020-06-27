@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import {MatDialog} from '@angular/material';
+
 import { SourceService } from '../../services/source.service';
 import { MonthService } from '../../services/month.service';
 import { EraService } from '../../services/era.service';
@@ -10,6 +12,8 @@ import { Month } from '../../models/month';
 import { Era } from '../../models/era';
 import { Author } from '../../models/author';
 import { SourceNote } from '../../models/source-note';
+
+import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
   selector: 'app-sources',
@@ -45,7 +49,8 @@ export class SourcesComponent implements OnInit {
   constructor(private sourceService: SourceService,
               private monthService: MonthService,
               private eraService: EraService,
-              private authorService: AuthorService) {
+              private authorService: AuthorService,
+              public dialog: MatDialog) {
 
     this.sources = [];
     this.initializeNewSource();
@@ -231,12 +236,24 @@ export class SourcesComponent implements OnInit {
   }
 
   removeSource(sideNav) {
-    this.sourceService.removeApiSource(this.source).subscribe(() => {
-      this.sourceService.removeSource(this.source);
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the source ',
+        content: '<li>' + this.source.notes.length.toString() + ' notes will be removed.</li>'
+      }
+    });
 
-      this.initializeNewSource();
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.sourceService.removeApiSource(this.source).subscribe(() => {
+          this.sourceService.removeSource(this.source);
 
-      this.closeSourceDetails(sideNav);
+          this.initializeNewSource();
+
+          this.closeSourceDetails(sideNav);
+        });
+      }
     });
   }
 

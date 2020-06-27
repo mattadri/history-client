@@ -2,26 +2,24 @@
   <div class="app-section list-item">
     <div class="app-label">
         <span>
-          <i>{{essayReference.source.title}},</i>
+          <i>{{essayReference.source.title}}</i>
         </span>
 
         <span *ngIf="essayReference.source.subTitle">
-          <i>{{essayReference.source.subTitle}}</i>
+          <i>: {{essayReference.source.subTitle}}</i>
         </span>
 
-        (<span>Boston</span>, <span>2010</span>),
-        chapter 
-        <span>
-          {{essayReference.sourceChapter}}
-        </span> ,
-        pg 
-        <span>
-          {{essayReference.sourcePage}}
-        </span>.
+        <span *ngIf="essayReference.source.publishedYear">
+          ({{essayReference.source.publishedYear}}),
+        </span>
+
+        <span *ngIf="essayReference.sourceChapter">
+          chapter {{essayReference.sourceChapter}},
+        </span>
+
+        <span *ngIf="essayReference.sourcePage">
+          pg {{essayReference.sourcePage}}
+        </span>
     </div>
-    <div class="app-toolbar">
-        <button mat-flat-button class="material-icons">edit</button>
-    </div>
-    
-  </div>  
+  </div>
 </div>

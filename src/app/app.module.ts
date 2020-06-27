@@ -21,6 +21,8 @@ import { MatTooltipModule } from '@angular/material';
 import { MatExpansionModule } from '@angular/material';
 import { MatAutocompleteModule } from '@angular/material';
 
+import {DragDropModule} from '@angular/cdk/drag-drop';
+
 import 'froala-editor/js/plugins.pkgd.min.js';
 import 'froala-editor/js/froala_editor.pkgd.min.js';
 import {FroalaEditorModule, FroalaViewModule} from 'angular-froala-wysiwyg';
@@ -60,6 +62,8 @@ import { PersonInterceptor } from './services/interceptors/person.interceptor';
 import { EventInterceptor } from './services/interceptors/event.interceptor';
 import { TimelineInterceptor } from './services/interceptors/timeline.interceptor';
 import { EssayInterceptor } from './services/interceptors/essay.interceptor';
+import { BrainstormInterceptor } from './services/interceptors/brainstorm.interceptor';
+import { ChartInterceptor } from './services/interceptors/chart.interceptor';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -89,6 +93,17 @@ import { SourceDetailsNoteComponent } from './manager/sources/source-details/sou
 import { ConfirmRemovalComponent } from './utilities/confirm-removal/confirm-removal.component';
 import { EventDetailsComponent } from './manager/events/event-details/event-details.component';
 import { EventDetailsNoteComponent } from './manager/events/event-details/event-details-note/event-details-note.component';
+import { BrainstormsComponent } from './brainstorms/brainstorms.component';
+import { BrainstormComponent } from './brainstorms/brainstorm/brainstorm.component';
+import { TopicComponent } from './brainstorms/brainstorm/topic/topic.component';
+import { ThoughtComponent } from './brainstorms/brainstorm/thought/thought.component';
+import {EssayService} from './services/essay.service';
+import {BrainstormService} from './services/brainstorm.service';
+import { BrainstormCardComponent } from './brainstorms/brainstorm-card/brainstorm-card.component';
+import { ChartsComponent } from './manager/charts/charts.component';
+import { ChartComponent } from './manager/charts/chart/chart.component';
+import { ChartCardComponent } from './manager/charts/chart-card/chart-card.component';
+import { ChartDisplayComponent } from './manager/charts/chart-display/chart-display.component';
 
 @NgModule({
   declarations: [
@@ -140,7 +155,16 @@ import { EventDetailsNoteComponent } from './manager/events/event-details/event-
     SourceDetailsNoteComponent,
     ConfirmRemovalComponent,
     EventDetailsComponent,
-    EventDetailsNoteComponent
+    EventDetailsNoteComponent,
+    BrainstormsComponent,
+    BrainstormComponent,
+    TopicComponent,
+    ThoughtComponent,
+    BrainstormCardComponent,
+    ChartsComponent,
+    ChartComponent,
+    ChartCardComponent,
+    ChartDisplayComponent
   ],
   entryComponents: [
     TimelineEventDetailsComponent,
@@ -171,6 +195,7 @@ import { EventDetailsNoteComponent } from './manager/events/event-details/event-
     MatTooltipModule,
     MatExpansionModule,
     MatAutocompleteModule,
+    DragDropModule,
     Ng5SliderModule,
     FroalaViewModule.forRoot(),
     FroalaEditorModule.forRoot()
@@ -182,6 +207,8 @@ import { EventDetailsNoteComponent } from './manager/events/event-details/event-
     AuthorService,
     PersonService,
     EventService,
+    EssayService,
+    BrainstormService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SourceInterceptor,
@@ -210,6 +237,16 @@ import { EventDetailsNoteComponent } from './manager/events/event-details/event-
     {
       provide: HTTP_INTERCEPTORS,
       useClass: EssayInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: BrainstormInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ChartInterceptor,
       multi: true
     }
   ],

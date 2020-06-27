@@ -1,0 +1,7 @@
+<mat-card routerLink="/brainstorming/{{brainstorm.id}}">
+  <mat-card-title>{{brainstorm.title}}</mat-card-title>
+
+  <mat-card-content>
+    <div class="mat-card-content" *ngIf="brainstorm.description">{{brainstorm.description}}</div>
+  </mat-card-content>
+</mat-card>

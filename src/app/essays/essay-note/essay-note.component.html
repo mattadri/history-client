@@ -1,6 +1,6 @@
 
 <div class="app-card-note">
-    <!--VIEW MODE -->  
+    <!--VIEW MODE -->
     <div class="app-card-note-view" *ngIf="!isEditNoteMode">
         <div class="app-card-note-toolbar" *ngIf="showToolbar">
           <button mat-flat-button class="material-icons" (click)="activateEditNoteMode()">edit</button>
@@ -9,18 +9,15 @@
         <div class="app-card-note-body-content">
           <span *ngIf="note.note" [innerHtml]="note.note | safeHtml"></span>
         </div>
-        
+
         <section *ngIf="note.source" class="app-section">
           <label>Reference</label>
           <section class="app-subsection">
-              <i>{{note.source.title}}</i>, 
-              <span *ngIf="note.chapter">chapter {{note.chapter}}</span>, 
-              <span *ngIf="note.page">pg {{note.page}}</span>.  
-          </section>  
+              <i>{{note.source.title}}</i>,
+              <span *ngIf="note.chapter">chapter {{note.chapter}}</span>,
+              <span *ngIf="note.page">pg {{note.page}}</span>.
+          </section>
         </section>
-
-        
-      
     </div>
 
     <!--EDIT MODE -->
@@ -62,7 +59,7 @@
           </section>
         </section>
       </div>
-      
+
     </div>
 </div>
 

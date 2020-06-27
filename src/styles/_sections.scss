@@ -77,7 +77,7 @@
   }
 
   .app-field-reference {
-    //margin-left: 2.6rem;
+    margin-left: 4rem;
     width: 100%;
   }
 
@@ -86,7 +86,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0 6px 12px;
+    padding: 4px 0 4px 12px;
     border: $border-light;
     font-size: $font-size-smaller;
     line-height: 1.2rem;
@@ -97,9 +97,9 @@
     }
   }
 
-  
 
-  // Use when displaying a section where items can be added to. 
+
+  // Use when displaying a section where items can be added to.
   // It will align the action to the section label.
   .app-section-action {
     display: flex;
