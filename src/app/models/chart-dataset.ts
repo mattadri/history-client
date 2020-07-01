@@ -30,8 +30,8 @@ export class ChartDataset {
     this.id = dataset.id;
     this.label = dataset.attributes.label;
 
-    if (dataset.attributes.backgroundColor) {
-      this.backgroundColor = dataset.attributes.backgroundColor;
+    if (dataset.attributes.background_color) {
+      this.backgroundColor = dataset.attributes.background_color;
     }
 
     if (dataset.attributes.borderColor) {

@@ -126,7 +126,7 @@ export class BrainstormComponent implements OnInit {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
 
       for (let i = 0; i < event.container.data.length; i++) {
-        const thought: BrainstormThought = event.container.data[i];
+        const thought: any = event.container.data[i];
         thought.position = i;
 
         if (event.container.id === '0') {

@@ -83,7 +83,6 @@ export class TimelineComponent implements OnInit {
     '#da392f',
     '#ee6e1f',
     '#c39c3b',
-
   ];
 
   constructor(private route: ActivatedRoute,

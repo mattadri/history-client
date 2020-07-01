@@ -12,6 +12,7 @@ export class LegendLabelOptions {
   fontStyle: string;
   fontColor: string;
   fontFamily: string;
+  generateLabels: any;
 
   initializeNewLegendLabelOptions() {
     this.padding = 10;
@@ -21,6 +22,7 @@ export class LegendLabelOptions {
     this.fontStyle = 'normal';
     this.fontColor = '#000000';
     this.fontFamily = '\'Helvetica Neue\', \'Helvetica\', \'Arial\', \'sans-serif\'';
+    this.generateLabels = null;
   }
 
   mapLegendLabelOptions(legendLabelOptions) {
@@ -398,6 +400,7 @@ export class ScalesOptions {
 }
 
 export class ChartOptions {
+  id: number;
   responsive: boolean;
   maintainAspectRatio: boolean;
 
@@ -461,7 +464,5 @@ export class ChartOptions {
 
       this.tooltips = newTooltipOptions;
     }
-
-    console.log(this);
   }
 }

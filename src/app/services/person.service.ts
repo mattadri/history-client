@@ -20,6 +20,8 @@ export class PersonService {
   private personNotePost: PersonNotePost;
   private persons: Person[];
 
+  private filterObject: Array<any>;
+
   constructor(private http: HttpClient) { }
 
   static removePersonNote(person: Person, note: PersonNote) {
@@ -58,11 +60,73 @@ export class PersonService {
     });
   }
 
-  getApiPersons(path): Observable<PersonResponse> {
+  getApiPersons(path, filterTerm, dateFilter, isPageLink): Observable<PersonResponse> {
+    this.filterObject = [];
+
     this.persons = [];
 
-    if (!path) {
-      path = '/persons';
+    // if this is a page link the path is already fully formed. as such skip.
+    if (!isPageLink) {
+      if (!path) {
+        path = '/persons';
+
+        if ((filterTerm) || (!filterTerm && dateFilter)) {
+          path = path + '?';
+        }
+      } else {
+        if (filterTerm || dateFilter) {
+          path = path + '&';
+        }
+      }
+
+      if (filterTerm) {
+        const searchFilter = {
+          or: [
+            {
+              name: 'description',
+              op: 'ilike',
+              val: '%' + filterTerm + '%'
+            },
+            {
+              name: 'first_name',
+              op: 'ilike',
+              val: '%' + filterTerm + '%'
+            },
+            {
+              name: 'last_name',
+              op: 'ilike',
+              val: '%' + filterTerm + '%'
+            }
+          ]
+        };
+
+        this.filterObject.push(searchFilter);
+      }
+
+      if (dateFilter) {
+        if (dateFilter.length === 2) {
+          const startDateFilter = {
+            name: 'birth_year',
+            op: 'gt',
+            val: dateFilter[0]
+          };
+
+          const endDateFilter = {
+            name: 'birth_year',
+            op: 'lt',
+            val: dateFilter[1]
+          };
+
+          this.filterObject.push(startDateFilter);
+          this.filterObject.push(endDateFilter);
+        }
+      }
+
+      if (this.filterObject.length) {
+        const filterQuery = JSON.stringify(this.filterObject);
+
+        path = path + 'filter=' + filterQuery;
+      }
     }
 
     return this.http.get<PersonResponse>(environment.apiUrl + path, {

@@ -7,8 +7,8 @@ import { Chart } from '../../../models/chart';
 
 import {ChartService} from '../../../services/chart.service';
 import {ChartLabel} from '../../../models/chart-label';
-import {ChartDataset} from '../../../models/chart-dataset';
 import {ChartDatasetData} from '../../../models/chart-dataset-data';
+import {ChartDataset} from '../../../models/chart-dataset';
 
 @Component({
   selector: 'app-chart',
@@ -75,18 +75,29 @@ export class ChartComponent implements OnInit {
   }
 
   addDataset() {
-    const dataset = {
-      label: 'New Dataset',
-      data: []
-    };
+    const dataset = new ChartDataset();
+    dataset.initializeNewDataset();
 
-    this.chart.labels.forEach(() => {
-      dataset.data.push({value: 1});
+    dataset.data = [];
+
+    this.chartService.createApiChartDataset(this.chart, dataset).subscribe(newDatasetResponse => {
+      dataset.id = newDatasetResponse.data.id;
+
+      this.chart.labels.forEach(() => {
+        const datasetData = new ChartDatasetData();
+        datasetData.initializeNewDatasetData();
+
+        this.chartService.createApiChartDatasetData(dataset, datasetData).subscribe((newDataResponse) => {
+          datasetData.id = newDataResponse.data.id;
+        });
+
+        dataset.data.push(datasetData);
+      });
+
+      this.chart.datasets.push(dataset);
+
+      this.callUpdateChart();
     });
-
-    this.chart.datasets.push(dataset);
-
-    this.updateDatasets();
   }
 
   updateChartLabel(label) {

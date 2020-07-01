@@ -29,6 +29,8 @@ export class PersonsComponent implements OnInit {
   public person: Person;
   public personNote: PersonNote;
 
+  public filterQuery: string;
+
   public timelines: Timeline[];
   public timeline: Timeline;
   public timelinePerson: TimelinePerson;
@@ -58,6 +60,13 @@ export class PersonsComponent implements OnInit {
   public sourcesAutocompleteControl = new FormControl();
   public sourcesFilteredOptions: Observable<Source[]>;
   public sourceFieldDisplayValue: string;
+
+  public searchPeople: Person[] = [];
+  public peopleLastNameAutocompleteControl = new FormControl();
+  public peopleFirstNameAutocompleteControl = new FormControl();
+  public peopleLastNameFilteredOptions: Observable<Person[]>;
+  public peopleFirstNameFilteredOptions: Observable<Person[]>;
+  public personFieldDisplayValue: string;
 
   constructor(private personService: PersonService,
               private sourceService: SourceService,
@@ -99,6 +108,20 @@ export class PersonsComponent implements OnInit {
       );
     });
 
+    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,last_name&sort=last_name', null, null, false).subscribe(response => {
+      this.searchPeople = response.persons;
+
+      this.peopleLastNameFilteredOptions = this.peopleLastNameAutocompleteControl.valueChanges.pipe(
+        startWith(''),
+        map(person => this._filterPeopleLastName(person))
+      );
+
+      this.peopleFirstNameFilteredOptions = this.peopleFirstNameAutocompleteControl.valueChanges.pipe(
+        startWith(''),
+        map(person => this._filterPeopleFirstName(person))
+      );
+    });
+
     this.timelineService.getApiTimelines('/timelines?sort=modified&fields[timeline]=label').subscribe(response => {
       for (const timeline of response.timelines) {
         this.timelineService.setTimeline(timeline);
@@ -107,7 +130,7 @@ export class PersonsComponent implements OnInit {
       this.timelines = this.timelineService.getTimelines();
     });
 
-    this.getPersons('/persons?sort=-created&page%5Bnumber%5D=1');
+    this.getPersons('/persons?sort=-created&page%5Bnumber%5D=1', null, null);
   }
 
   ngOnInit() { }
@@ -126,8 +149,8 @@ export class PersonsComponent implements OnInit {
     this.personNote = new PersonNote();
   }
 
-  getPersons(path) {
-    this.personService.getApiPersons(path).subscribe(response => {
+  getPersons(path, filterTerm, dateFilter) {
+    this.personService.getApiPersons(path, filterTerm, dateFilter, false).subscribe(response => {
       for (const person of response.persons) {
         this.personService.setPerson(person);
       }
@@ -289,6 +312,22 @@ export class PersonsComponent implements OnInit {
     this.person.source = this.sourcesAutocompleteControl.value;
   }
 
+  savePersonLastName(value) {
+    if (value) {
+      this.person.lastName = value;
+    } else {
+      this.person.lastName = this.peopleLastNameAutocompleteControl.value;
+    }
+  }
+
+  savePersonFirstName(value) {
+    if (value) {
+      this.person.firstName = value;
+    } else {
+      this.person.firstName = this.peopleFirstNameAutocompleteControl.value;
+    }
+  }
+
   displaySource(source: Source) {
     if (source) {
       this.sourceFieldDisplayValue = source.title;
@@ -299,6 +338,22 @@ export class PersonsComponent implements OnInit {
     }
 
     return this.sourceFieldDisplayValue;
+  }
+
+  displayPerson(person: Person) {
+    if (person) {
+      this.personFieldDisplayValue = '';
+
+      if (person.firstName) {
+        this.personFieldDisplayValue = person.firstName + ' ';
+      }
+
+      if (person.lastName) {
+        this.personFieldDisplayValue += person.lastName;
+      }
+    }
+
+    return this.personFieldDisplayValue;
   }
 
   removePerson(sideNav) {
@@ -398,19 +453,62 @@ export class PersonsComponent implements OnInit {
 
   turnPage(person) {
     if (person.pageIndex < person.previousPageIndex) {
-      this.getPersons(this.previousPage);
+      this.getPersons(this.previousPage, null, null);
     } else if (person.pageIndex > person.previousPageIndex) {
-      this.getPersons(this.nextPage);
+      this.getPersons(this.nextPage, null, null);
     }
   }
 
+  filterResults() {
+    const dateFilter = [];
+    let stringFilter = '';
+
+    if (this.filterQuery.split('-').length === 2) {
+      dateFilter.push(this.filterQuery.split('-')[0]);
+      dateFilter.push(this.filterQuery.split('-')[1]);
+
+    } else if (this.filterQuery) {
+      stringFilter = this.filterQuery;
+    }
+
+    this.getPersons('/persons?sort=-created', stringFilter, dateFilter);
+  }
+
   private _filterSources(filterValue: any): Source[] {
-    // when a source is actually selected the value is changed to the source itself. Do not filter if that is the case.
-    if (!filterValue.id) {
+    if (typeof filterValue === 'string') {
       filterValue = filterValue.toLowerCase();
 
       return this.sources.filter(source => {
         return source.title.toLowerCase().includes(filterValue);
+      });
+    }
+  }
+
+  private _filterPeopleLastName(filterValue: any): Person[] {
+    if (filterValue && typeof filterValue === 'string') {
+      filterValue = filterValue.toLowerCase();
+
+      return this.searchPeople.filter(person => {
+        if (person.lastName) {
+          return person.lastName.toLowerCase().includes(filterValue);
+        } else {
+          return '';
+        }
+      });
+    }
+  }
+
+  private _filterPeopleFirstName(filterValue: any): Person[] {
+    if (filterValue && typeof filterValue === 'string') {
+      filterValue = filterValue.toLowerCase();
+
+      return this.searchPeople.filter(person => {
+        if (person.firstName) {
+          return person.firstName.toLowerCase().includes(filterValue);
+
+        } else {
+          return '';
+        }
       });
     }
   }

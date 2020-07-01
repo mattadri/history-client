@@ -1,24 +1,198 @@
 <div *ngIf="event">
   <div class="app-body-content app-body-darker-canvas">
     <div class="app-body-content-narrow">
-      <div class="subheading">Event</div>
-      <h1 class="no-margin-bottom">{{event.label}}</h1>
-      <div class="heading-meta">
-        {{event.formattedStartYear}} <span *ngIf="!event.isSinglePointEvent">- {{event.formattedEndYear}} • {{event.eventLength}} years</span>
+      <div class="subheading">
+        Event
+        <button *ngIf="!isEditEventMode" mat-icon-button class="material-icons" type="button" (click)="activateEditEventMode()">edit</button>
       </div>
 
-      <div class="text-intro">
-        {{event.description}}
+      <div *ngIf="!isEditEventMode">
+        <h1 class="no-margin-bottom margin-top">{{event.label}}</h1>
+
+        <div class="heading-meta">
+          {{event.formattedStartYear}} <span *ngIf="!event.isSinglePointEvent">- {{event.formattedEndYear}} • {{event.eventLength}} years</span>
+        </div>
+
+        <div class="text-intro">
+          {{event.description}}
+        </div>
+      </div>
+
+      <div *ngIf="isEditEventMode">
+        <form (ngSubmit)="editEvent()" #editEventForm="ngForm">
+          <div class="app-drawer-header">
+            <div class="app-drawer-title">
+              <div class="app-drawer-subheading">Edit Event</div>
+            </div>
+            <div class="app-drawer-tools">
+              <button mat-icon-button type="submit" class="material-icons">save</button>
+              <button mat-icon-button type="button" class="material-icons" (click)="deactivateEditEventMode()">close</button>
+            </div>
+          </div>
+
+          <div class="app-drawer-content">
+            <section class="app-section">
+              <mat-form-field style="width: 100%">
+                <input
+                  type="text"
+                  placeholder="Title"
+                  matInput
+                  #evenLabelField
+                  required
+                  name="event_label"
+                  [(ngModel)]="event.label">
+              </mat-form-field>
+            </section>
+
+            <section class="app-section inline">
+              <label>Beginning</label>
+
+              <div class="app-field-group">
+                <mat-form-field class="app-field-era">
+                  <mat-label>Era</mat-label>
+                  <mat-select [(ngModel)]="event.startEra" name="event_start_era" required [compareWith]="selectEra">
+                    <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="app-field-year">
+                  <input
+                    matInput
+                    placeholder="Year"
+                    name="event_start_year"
+                    required
+                    [(ngModel)]="event.startYear"/>
+                </mat-form-field>
+
+                <mat-form-field class="app-field-day">
+                  <input
+                    matInput
+                    placeholder="Day"
+                    name="event_start_day"
+                    [(ngModel)]="event.startDay"/>
+                </mat-form-field>
+
+                <mat-form-field class="app-field-month">
+                  <mat-label>Month</mat-label>
+                  <mat-select [(ngModel)]="event.startMonth" name="event_start_month" [compareWith]="selectMonth">
+                    <mat-option [value]="null"></mat-option>
+                    <mat-option *ngFor="let month of months" [value]="month">{{month.label}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+            </section>
+
+            <section class="app-section inline">
+              <label>Ending</label>
+              <div class="app-field-group">
+                <mat-form-field class="app-field-era">
+                  <mat-label>Era</mat-label>
+                  <mat-select [(ngModel)]="event.endEra" name="event_end_era" [compareWith]="selectEra">
+                    <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="app-field-year">
+                  <input
+                    matInput
+                    placeholder="Year"
+                    name="event_end_year"
+                    [(ngModel)]="event.endYear" />
+                </mat-form-field>
+
+                <mat-form-field class="app-field-day">
+                  <input
+                    matInput
+                    placeholder="Day"
+                    name="event_end_day"
+                    [(ngModel)]="event.endDay" />
+                </mat-form-field>
+
+                <mat-form-field class="app-field-month">
+                  <mat-label>Month</mat-label>
+                  <mat-select [(ngModel)]="event.endMonth" name="event_end_month" [compareWith]="selectMonth">
+                    <mat-option [value]="null"></mat-option>
+                    <mat-option *ngFor="let month of months" [value]="month">{{month.label}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </section>
+
+            <section class="app-section inline">
+              <label>Source</label>
+              <mat-form-field class="app-field-reference">
+                <input
+                  type="text"
+                  placeholder="Select..."
+                  aria-label="Source"
+                  matInput
+                  [formControl]="sourcesAutocompleteControl"
+                  [matAutocomplete]="auto">
+
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
+                  <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+                    {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </section>
+
+            <section class="app-section">
+              <label>Description</label>
+              <mat-form-field class="app-field-description">
+                <textarea
+                  matInput
+                  cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize"
+                  cdkAutosizeMinRows="1"
+                  cdkAutosizeMaxRows="10"
+                  name="event_description"
+                  [(ngModel)]="event.description"></textarea>
+              </mat-form-field>
+            </section>
+
+
+
+          </div>
+        </form>
       </div>
     </div>
   </div>
 
-  <!-- Notes -->
   <div class="app-body-content">
     <div class="app-body-content-narrow">
-
-      <!-- Add a note CTA-->
+      <!-- Add a timeline CTA-->
       <div class="app-content-toolbar margin-bottom">
+          <h2>Timelines</h2>
+          <button mat-flat-button color="secondary" (click)="activateAddTimelineMode()">+ Add a Timeline</button>
+      </div>
+
+<!-- TIMELINES -->
+      <!-- Add New Timeline -->
+      <div *ngIf="isAddTimelineMode" class="app-card-note">
+        <form class="app-card-note-edit" (ngSubmit)="saveTimelineEvent()" #timelineForm="ngForm">
+          <div class=app-card-note-body-meta>
+            <mat-form-field style="width: 100%;">
+              <mat-label>Timelines</mat-label>
+              <mat-select [(ngModel)]="timeline" name="event_timelines">
+                <mat-option *ngFor="let timeline of timelines" [value]="timeline">{{timeline.label}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <button mat-flat-button color="primary">Save</button>
+          <button mat-flat-button color="secondary" (click)="deactivateAddTimelineMode()">Cancel</button>
+        </form>
+      </div>
+
+      <div *ngIf="event.timelines && event.timelines.length">
+        <app-event-timeline *ngFor="let timeline of event.timelines" [timeline]="timeline" (removeTimeline)="deleteTimeline(timeline)"></app-event-timeline>
+      </div>
+
+<!-- NOTES -->
+      <!-- Add a note CTA-->
+      <div class="app-content-toolbar margin-bottom margin-top">
           <h2>Notes</h2>
           <button mat-flat-button color="secondary" (click)="activateAddNoteMode()">+ Add a Note</button>
       </div>
@@ -43,7 +217,7 @@
 
       <!-- Display Notes-->
       <app-event-details-note *ngFor="let note of event.notes" [note]="note" [event]="event" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-event-details-note>
-      
+
     </div>
   </div>
 </div>

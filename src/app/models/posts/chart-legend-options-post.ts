@@ -1,7 +1,7 @@
 import {ChartOptions, LegendOptions} from '../chart-options';
 
 export class ChartLegendOptionsPost {
-  data: object;
+  data: any;
 
   mapToPost(chartOptions: ChartOptions, legendOptions: LegendOptions, isPatch: boolean) {
     this.data = {

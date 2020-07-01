@@ -162,7 +162,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,middle_name,last_name').subscribe(response => {
+    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,middle_name,last_name', null, null, false).subscribe(response => {
       this.persons = response.persons;
 
       this.personsFilteredOptions = this.personsAutocompleteControl.valueChanges.pipe(

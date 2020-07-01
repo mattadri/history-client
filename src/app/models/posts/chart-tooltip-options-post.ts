@@ -1,7 +1,7 @@
 import {ChartOptions, TooltipOptions} from '../chart-options';
 
 export class ChartTooltipOptionsPost {
-  data;
+  data: any;
 
   mapToPost(chartOptions: ChartOptions, tooltipOptions: TooltipOptions, isPatch: boolean) {
     this.data = {

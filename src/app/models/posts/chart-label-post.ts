@@ -2,7 +2,7 @@ import {ChartLabel} from '../chart-label';
 import {Chart} from '../chart';
 
 export class ChartLabelPost {
-  data: object;
+  data: any;
 
   mapToPost(chart: Chart, chartLabel: ChartLabel, isPatch: boolean) {
     this.data = {

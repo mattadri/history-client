@@ -17,7 +17,15 @@ export class ChartsComponent implements OnInit {
   public previousPage: string;
 
   constructor(private chartService: ChartService, private router: Router) {
-    this.chartService.getApiCharts('/charts').subscribe((response) => {
+    this.getCharts('/charts');
+  }
+
+  ngOnInit() {
+
+  }
+
+  getCharts(path) {
+    this.chartService.getApiCharts(path).subscribe((response) => {
       for (const chart of response.charts) {
         this.chartService.setChart(chart);
       }
@@ -28,10 +36,6 @@ export class ChartsComponent implements OnInit {
       this.nextPage = response.links.next;
       this.previousPage = response.links.prev;
     });
-  }
-
-  ngOnInit() {
-
   }
 
   createNewChart() {
@@ -74,9 +78,7 @@ export class ChartsComponent implements OnInit {
           this.chartService.createApiChartLegendLabelOptions(chart.options.legend, chart.options.legend.labels)
             .subscribe(legendLabelOptionsResponse => {
               chart.options.legend.labels.id = legendLabelOptionsResponse.data.id;
-
-              console.log('done');
-          });
+            });
         });
 
         // make the tooltip options
@@ -87,5 +89,13 @@ export class ChartsComponent implements OnInit {
 
       this.router.navigate(['/manager/charts', response.data.id]).then();
     });
+  }
+
+  turnPage(chart) {
+    if (chart.pageIndex < chart.previousPageIndex) {
+      this.getCharts(this.previousPage);
+    } else if (chart.pageIndex > chart.previousPageIndex) {
+      this.getCharts(this.nextPage);
+    }
   }
 }

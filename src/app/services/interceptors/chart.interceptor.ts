@@ -34,7 +34,6 @@ export class ChartInterceptor implements HttpInterceptor {
     if (event.body) {
       if (req.headers.get('type')) {
         if (req.headers.get('type') === 'charts') {
-          console.log('Intercepting charts');
           this.charts = [];
 
           for (const data of event.body.data) {

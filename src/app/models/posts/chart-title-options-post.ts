@@ -1,6 +1,6 @@
 import {ChartOptions, TitleOptions} from '../chart-options';
 export class ChartTitleOptionsPost {
-  data: object;
+  data: any;
 
   mapToPost(chartOptions: ChartOptions, titleOptions: TitleOptions, isPatch: boolean) {
     this.data = {

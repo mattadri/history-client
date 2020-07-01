@@ -2,6 +2,18 @@
   <div class="app-body-content">
     <div class="app-content-toolbar">
       <h1>People</h1>
+
+      <div class="app-search-box">
+        <mat-form-field>
+          <input matInput
+                 placeholder="Search..."
+                 name="person_filter"
+                 [(ngModel)]="filterQuery"
+                 (keyup.enter)="filterResults()" />
+        </mat-form-field>
+        <button mat-icon-button class="material-icons mat-icon-button mat-button-base" (click)="filterResults()">search</button>
+      </div>
+
       <button mat-flat-button class="material-icons" color="primary" (click)="activateCreateMode(personDetails)">add</button>
     </div>
 
@@ -142,14 +154,22 @@
 
         <div class="app-drawer-content">
           <section class="app-section inline">
-            <mat-form-field style="width: 30%">
+            <mat-form-field>
               <input
-                matInput
+                type="text"
                 placeholder="First Name"
-                required
-                name="person_first_name"
-                #personFirstName="ngModel"
-                [(ngModel)]="person.firstName" />
+                matInput
+                #firstNameField
+                name="person_first_name_search"
+                (focusout)="savePersonFirstName(firstNameField.value)"
+                [formControl]="peopleFirstNameAutocompleteControl"
+                [matAutocomplete]="personFirstNameAutoComplete">
+
+              <mat-autocomplete #personFirstNameAutoComplete="matAutocomplete" [displayWith]="displayPerson" (optionSelected)="savePersonFirstName(null)">
+                <mat-option *ngFor="let person of peopleFirstNameFilteredOptions | async" [value]="person">
+                  <span *ngIf="person.firstName">{{person.firstName}} </span><span *ngIf="person.lastName">{{person.lastName}}</span>
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
 
             <mat-form-field style="width: 30%">
@@ -161,13 +181,22 @@
                 [(ngModel)]="person.middleName" />
             </mat-form-field>
 
-            <mat-form-field style="width: 30%">
+            <mat-form-field>
               <input
-                matInput
+                type="text"
                 placeholder="Last Name"
-                name="person_last_name"
-                #personFirstName="ngModel"
-                [(ngModel)]="person.lastName" />
+                matInput
+                name="person_last_name_search"
+                #lastNameField
+                (focusout)="savePersonLastName(lastNameField.value)"
+                [formControl]="peopleLastNameAutocompleteControl"
+                [matAutocomplete]="personLastNameAutoComplete">
+
+              <mat-autocomplete #personLastNameAutoComplete="matAutocomplete" [displayWith]="displayPerson" (optionSelected)="savePersonLastName(null)">
+                <mat-option *ngFor="let person of peopleLastNameFilteredOptions | async" [value]="person.lastName">
+                  <span *ngIf="person.firstName">{{person.firstName}} </span><span *ngIf="person.lastName">{{person.lastName}}</span>
+                </mat-option>
+              </mat-autocomplete>
             </mat-form-field>
           </section>
 
@@ -283,7 +312,6 @@
               </mat-autocomplete>
             </mat-form-field>
           </section>
-
         </div>
       </form>
     </div>

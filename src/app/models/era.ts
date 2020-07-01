@@ -5,11 +5,12 @@ export class Era {
   mapEra(eraData) {
     this.id = eraData.id;
     this.label = eraData.attributes.label;
+
     return this;
   }
 
   initializeNewEra() {
     this.id = 0;
-    this.label = '';
+    this.label = 'AD';
   }
 }

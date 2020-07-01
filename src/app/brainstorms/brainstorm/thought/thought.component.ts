@@ -8,8 +8,6 @@ import {BrainstormTopic} from '../../../models/brainstorm-topic';
 import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confirm-removal.component';
 import {MatDialog} from '@angular/material';
 
-import {MAT_DIALOG_DATA} from '../../../utilities/injectionTokens';
-
 export interface ReturnRemoveData {
   topic: BrainstormTopic;
   thought: BrainstormThought;
@@ -28,7 +26,7 @@ export class ThoughtComponent implements OnInit {
   @Output() private removeTopicThought: EventEmitter<ReturnRemoveData>;
   @Output() private removeBrainstormThought: EventEmitter<ReturnRemoveData>;
 
-  public deleteReturnData: object;
+  public deleteReturnData: any;
 
   public isEditMode: boolean;
 

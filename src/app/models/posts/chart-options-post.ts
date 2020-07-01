@@ -2,7 +2,7 @@ import {ChartOptions} from '../chart-options';
 import {Chart} from '../chart';
 
 export class ChartOptionsPost {
-  data: object;
+  data: any;
 
   mapToPost(chart: Chart, chartOptions: ChartOptions, isPatch: boolean) {
     this.data = {

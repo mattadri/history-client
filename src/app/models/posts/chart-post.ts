@@ -1,7 +1,7 @@
 import {Chart} from '../chart';
 
 export class ChartPost {
-  data: object;
+  data: any;
 
   mapToPost(chart: Chart, isPatch: boolean) {
     this.data = {

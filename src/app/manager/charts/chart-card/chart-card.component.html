@@ -1,5 +1,5 @@
 <mat-card routerLink="/manager/charts/{{chart.id}}">
   <mat-card-content>
-    <canvas id="chart_preview"></canvas>
+    <app-chart-display [chart]="chart"></app-chart-display>
   </mat-card-content>
 </mat-card>

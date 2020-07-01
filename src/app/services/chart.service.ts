@@ -43,10 +43,10 @@ export class ChartService {
     this.charts = [];
   }
 
-  getApiCharts(path): Observable<ChartResponse[]> {
+  getApiCharts(path): Observable<ChartResponse> {
     this.charts = [];
 
-    return this.http.get<ChartResponse[]>(environment.apiUrl + path, {
+    return this.http.get<ChartResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'charts')

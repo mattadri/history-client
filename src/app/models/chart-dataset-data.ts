@@ -5,10 +5,16 @@ export class ChartDatasetData {
   yData: number;
   rData: number;
 
+  color: string;
+  label: string;
+
   initializeNewDatasetData() {
     this.xData = 1;
     this.yData = 1;
     this.rData = 1;
+
+    this.color = '#232bc4';
+    this.label = 'Temp Label';
   }
 
   mapDatasetData(datasetData) {
