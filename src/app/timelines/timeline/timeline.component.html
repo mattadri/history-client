@@ -58,17 +58,13 @@
          [matTooltipPosition]="cursorLineDatePosition"
          (mouseout)="showCursorTooltip(tooltip).then()">
     </div>
-
-    <!--
-    <div>
-      <ng5-slider [(value)]="pointerStart" [(highValue)]="pointerEnd" [options]="options" (mouseup)="calculateTimeline()"></ng5-slider>
-    </div>
-    -->
   </div>
 
   <mat-tab-group>
     <mat-tab label="Events">
       <div class="grid-list" *ngIf="timeline">
+        <button mat-flat-button class="material-icons" color="primary" (click)="createEvent()">add</button>
+        
         <app-timeline-event-list
           *ngFor="let event of timeline.events"
           [event]="event"

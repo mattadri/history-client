@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
+import {MatDialog} from '@angular/material';
+
 import { Options } from 'ng5-slider';
 
 import FroalaEditor from 'froala-editor/js/froala_editor.min.js';
@@ -13,6 +15,9 @@ import {Era} from '../../models/era';
 import {Category} from '../../models/category';
 
 import {EventService} from '../../services/event.service';
+
+import {QuickEventComponent} from '../../manager/events/quick-event/quick-event.component';
+import {TimelineEvent} from '../../models/timeline-event';
 
 @Component({
   selector: 'app-timeline',
@@ -34,8 +39,6 @@ export class TimelineComponent implements OnInit {
   public timelineEnd: number;
   public timelineSpanInYears: number;
   public timeframe: any[];
-  public pointerStart: number;
-  public pointerEnd: number;
   public options: Options;
 
   public categoryEvents: Category[] = [];
@@ -87,7 +90,8 @@ export class TimelineComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private timelineService: TimelineService,
-              private eventService: EventService) {
+              private eventService: EventService,
+              public dialog: MatDialog) {
     this.isTimelineEditMode = false;
 
     this.cursorLineActive = false;
@@ -102,8 +106,6 @@ export class TimelineComponent implements OnInit {
         this.timeline.categories = [];
       }
 
-      // this.formatDates();
-
       this.setTimelineStartAndEnd();
       this.setTimeframe();
 
@@ -115,6 +117,9 @@ export class TimelineComponent implements OnInit {
       this.setPersons();
 
       this.getRelatedEvents(null, false);
+
+      console.log('Timeline: ', this.timeline);
+      console.log('Category Events: ', this.categoryEvents);
     });
   }
 
@@ -610,6 +615,50 @@ export class TimelineComponent implements OnInit {
   editTimeline() {
     this.timelineService.patchApiTimeline(this.timeline).subscribe(() => {
       this.isTimelineEditMode = false;
+    });
+  }
+
+  createEvent() {
+    const dialogRef = this.dialog.open(QuickEventComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(event => {
+      if (event) {
+        console.log(event);
+        this.eventService.createApiEvent(event).subscribe(newEventResponse => {
+          event.id = newEventResponse.data.id;
+
+          event.formatYears();
+          event.formatDates();
+
+          const timelineEvent = new TimelineEvent();
+          timelineEvent.initializeNewTimelineEvent();
+
+          timelineEvent.event = event;
+          timelineEvent.timeline = this.timeline;
+
+          this.timelineService.createEventApiTimeline(timelineEvent).subscribe(timelineEventResponse => {
+            timelineEvent.id = timelineEventResponse.data.id;
+
+            this.timeline.events.push(event);
+
+            for (const categoryEvent of this.categoryEvents) {
+              if (categoryEvent.id === null) {
+                if (event.formattedStartYear === event.formattedEndYear) {
+                  categoryEvent.singlePointEvents.push(event);
+                } else {
+                  categoryEvent.multiPointEvents.push(event);
+                }
+
+                break;
+              }
+            }
+
+            this.setTimelineEventLocations();
+          });
+        });
+      }
     });
   }
 

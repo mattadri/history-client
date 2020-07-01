@@ -108,7 +108,9 @@ export class PersonsComponent implements OnInit {
       );
     });
 
-    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,last_name&sort=last_name', null, null, false).subscribe(response => {
+    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,last_name&sort=last_name', null, null, false)
+      .subscribe(response => {
+
       this.searchPeople = response.persons;
 
       this.peopleLastNameFilteredOptions = this.peopleLastNameAutocompleteControl.valueChanges.pipe(
