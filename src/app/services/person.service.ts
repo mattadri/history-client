@@ -159,7 +159,7 @@ export class PersonService {
 
   createApiPersonNote(note: PersonNote, person: Person): Observable<any> {
     this.personNotePost = new PersonNotePost();
-    this.personNotePost.mapToNotePost(note, person);
+    this.personNotePost.mapToNotePost(note, person, false);
 
     return this.http.post(environment.apiUrl + '/person_notes', this.personNotePost, {
       headers: new HttpHeaders()

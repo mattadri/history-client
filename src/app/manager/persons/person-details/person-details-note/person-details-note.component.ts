@@ -3,6 +3,7 @@ import {PersonNote} from '../../../../models/person-note';
 import {PersonService} from '../../../../services/person.service';
 import {MatDialog} from '@angular/material';
 import {ConfirmRemovalComponent} from '../../../../utilities/confirm-removal/confirm-removal.component';
+import {Person} from '../../../../models/person';
 
 @Component({
   selector: 'app-person-details-note',
@@ -11,7 +12,7 @@ import {ConfirmRemovalComponent} from '../../../../utilities/confirm-removal/con
 })
 export class PersonDetailsNoteComponent implements OnInit {
   @Input() public note: PersonNote;
-  @Input() public person: Event;
+  @Input() public person: Person;
   @Input() public showToolbar: boolean;
 
   @Output() private removeNote: EventEmitter<PersonNote>;
