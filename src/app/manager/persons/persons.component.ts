@@ -21,6 +21,7 @@ import { EraService } from '../../services/era.service';
 import { SourceService } from '../../services/source.service';
 import { TimelineService } from '../../services/timeline.service';
 import {PersonNote} from '../../models/person-note';
+import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
   selector: 'app-persons',
@@ -343,11 +344,25 @@ export class PersonsComponent implements OnInit {
     return this.personFieldDisplayValue;
   }
 
-  removePerson(sideNav) {
-    this.personService.removeApiPerson(this.person).subscribe(() => {
-      this.personService.removePerson(this.person);
+  removePerson(contentPanel) {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the person ',
+        content: '' +
+        '<li>' + this.person.notes.length.toString() + ' notes will be removed.</li>' +
+        '<li>Will impact ' + this.person.timelines.length + ' timelines.</li>'
+      }
+    });
 
-      this.closePersonDetails(sideNav);
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.personService.removeApiPerson(this.person).subscribe(() => {
+          this.personService.removePerson(this.person);
+
+          this.closePersonDetails(contentPanel);
+        });
+      }
     });
   }
 
