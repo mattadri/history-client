@@ -105,6 +105,9 @@ import { ChartComponent } from './manager/charts/chart/chart.component';
 import { ChartCardComponent } from './manager/charts/chart-card/chart-card.component';
 import { ChartDisplayComponent } from './manager/charts/chart-display/chart-display.component';
 import { QuickEventComponent } from './manager/events/quick-event/quick-event.component';
+import { QuickPersonComponent } from './manager/persons/quick-person/quick-person.component';
+import { PersonDetailsComponent } from './manager/persons/person-details/person-details.component';
+import { PersonDetailsNoteComponent } from './manager/persons/person-details/person-details-note/person-details-note.component';
 
 @NgModule({
   declarations: [
@@ -166,7 +169,10 @@ import { QuickEventComponent } from './manager/events/quick-event/quick-event.co
     ChartComponent,
     ChartCardComponent,
     ChartDisplayComponent,
-    QuickEventComponent
+    QuickEventComponent,
+    QuickPersonComponent,
+    PersonDetailsComponent,
+    PersonDetailsNoteComponent
   ],
   entryComponents: [
     TimelineEventDetailsComponent,
@@ -176,7 +182,8 @@ import { QuickEventComponent } from './manager/events/quick-event/quick-event.co
     EssayPersonDetailsComponent,
     EssayTimelineDetailsComponent,
     ConfirmRemovalComponent,
-    QuickEventComponent
+    QuickEventComponent,
+    QuickPersonComponent
   ],
   imports: [
     BrowserModule,

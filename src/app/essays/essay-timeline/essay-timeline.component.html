@@ -1,5 +1,9 @@
-<div id="timeline-container" (click)="onSelectTimeline()">
-  <div>
-    {{essayTimeline.timeline.label}}
+<div id="timeline-container" (click)="onSelectTimeline().then()">
+  <div class="app-section list-item">
+    <div class="app-label">
+        <span>
+          {{essayTimeline.timeline.label}}
+        </span>
+    </div>
   </div>
 </div>

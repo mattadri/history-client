@@ -36,6 +36,7 @@ export class PersonInterceptor implements HttpInterceptor {
 
           for (const data of event.body.data) {
             this.person = new Person();
+            this.person.initializeNewPerson();
             this.person.mapPerson(data);
 
             this.persons.push(this.person);
@@ -48,6 +49,7 @@ export class PersonInterceptor implements HttpInterceptor {
           event.body = this.body;
         } else if ((req.headers.get('type') === 'person')) {
           this.person = new Person();
+          this.person.initializeNewPerson();
           this.person.mapPerson(event.body.data);
 
           event.body = this.person;

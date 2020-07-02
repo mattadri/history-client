@@ -4,7 +4,7 @@ import {Person} from '../person';
 export class PersonNotePost {
   data;
 
-  mapToNotePost(personNote: PersonNote, person: Person) {
+  mapToNotePost(personNote: PersonNote, person: Person, isPatch: boolean) {
     this.data = {
       type: 'person_note',
       attributes: {
@@ -17,5 +17,9 @@ export class PersonNotePost {
         }
       }
     };
+
+    if (isPatch) {
+      this.data.id = personNote.id;
+    }
   }
 }

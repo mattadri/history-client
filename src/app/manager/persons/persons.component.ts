@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl} from '@angular/forms';
 
+import {MatDialog} from '@angular/material';
+
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
+
+import {QuickPersonComponent} from './quick-person/quick-person.component';
 
 import { Person } from '../../models/person';
 import { Era } from '../../models/era';
@@ -68,11 +72,15 @@ export class PersonsComponent implements OnInit {
   public peopleFirstNameFilteredOptions: Observable<Person[]>;
   public personFieldDisplayValue: string;
 
+  public personLink: string;
+
   constructor(private personService: PersonService,
               private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
-              private timelineService: TimelineService) {
+              private timelineService: TimelineService,
+              public dialog: MatDialog) {
+
     this.persons = [];
 
     this.initializeNewPerson();
@@ -172,46 +180,23 @@ export class PersonsComponent implements OnInit {
     this.openPersonDetails(this.person, sideNav, true, false);
   }
 
-  createPerson(sideNav) {
-    // set the era objects
-    for (const era of this.eras) {
-      if (this.birthEraLabel === era.label) {
-        this.person.birthEra = era;
+  createPerson() {
+    const dialogRef = this.dialog.open(QuickPersonComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(person => {
+      if (person) {
+        this.personService.createApiPerson(person).subscribe(response => {
+          person.id = response.data.id;
+
+          person.formatYears();
+
+          this.personService.setPerson(person);
+
+          this.persons.unshift(person);
+        });
       }
-    }
-
-    if (this.deathEraLabel) {
-      for (const era of this.eras) {
-        if (this.deathEraLabel === era.label) {
-          this.person.deathEra = era;
-        }
-      }
-    }
-
-    for (const month of this.months) {
-      if (this.birthMonthLabel === month.label) {
-        this.person.birthMonth = month;
-      }
-    }
-
-    if (this.deathMonthLabel) {
-      for (const month of this.months) {
-        if (this.deathMonthLabel === month.label) {
-          this.person.deathMonth = month;
-        }
-      }
-    }
-
-    return this.personService.createApiPerson(this.person).subscribe(response => {
-      this.person.id = response.data.id;
-
-      this.personService.setPerson(this.person);
-
-      this.isCreatePersonMode = false;
-
-      this.closePersonDetails(sideNav);
-
-      this.initializeNewPerson();
     });
   }
 
@@ -362,8 +347,6 @@ export class PersonsComponent implements OnInit {
     this.personService.removeApiPerson(this.person).subscribe(() => {
       this.personService.removePerson(this.person);
 
-      this.initializeNewPerson();
-
       this.closePersonDetails(sideNav);
     });
   }
@@ -386,6 +369,8 @@ export class PersonsComponent implements OnInit {
 
   openPersonDetails(person, sideNav, isCreateMode, isEditMode) {
     this.person = person;
+
+    this.personLink = this.person.id.toString();
 
     if (!isCreateMode) {
       isCreateMode = false;

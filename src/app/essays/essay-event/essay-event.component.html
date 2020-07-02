@@ -1,5 +1,9 @@
-<div id="event-container" (click)="onSelectEvent()">
-  <div>
-    <span>Label: {{essayEvent.event.label}}</span>
+<div id="event-container" (click)="onSelectEvent().then()">
+  <div class="app-section list-item">
+    <div class="app-label">
+        <span>
+          {{essayEvent.event.label}}
+        </span>
+    </div>
   </div>
 </div>

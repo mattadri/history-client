@@ -1,5 +1,9 @@
 @import '../../../styles/_variables.scss';
 
+.list-item {
+  margin: 5px;
+}
+
 .essay-reference-selected {
   background-color: $color-gray-scale-50;
   .app-section {

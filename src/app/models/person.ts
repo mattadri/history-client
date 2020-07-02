@@ -52,6 +52,7 @@ export class Person {
     this.deathEra = new Era();
     this.source = new Source();
     this.notes = [];
+    this.timelines = [];
 
     this.timelineStartLocation = null;
     this.listEventIsHighlighted = false;
@@ -179,7 +180,7 @@ export class Person {
     // BIRTH
     this.formattedBirth = '';
 
-    if (this.birthMonth) {
+    if (this.birthMonth && this.birthMonth.label) {
       this.formattedBirth = this.birthMonth.label;
     }
 
@@ -192,7 +193,7 @@ export class Person {
     // DEATH
     this.formattedDeath = '';
 
-    if (this.deathMonth) {
+    if (this.deathMonth && this.deathMonth.label) {
       this.formattedDeath = this.deathMonth.label;
     }
 

@@ -30,8 +30,6 @@ export class EssayReferenceComponent implements OnInit {
     const el = this.elementRef.nativeElement.querySelector('#reference-container');
 
     this.renderer.addClass(el, 'essay-reference-selected');
-
-    console.log(el);
   }
 
   async onSelectReference() {

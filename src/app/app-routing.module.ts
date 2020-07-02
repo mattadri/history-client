@@ -16,6 +16,7 @@ import {EventDetailsComponent} from './manager/events/event-details/event-detail
 import {BrainstormComponent} from './brainstorms/brainstorm/brainstorm.component';
 import {ChartsComponent} from './manager/charts/charts.component';
 import {ChartComponent} from './manager/charts/chart/chart.component';
+import {PersonDetailsComponent} from './manager/persons/person-details/person-details.component';
 
 
 const routes: Routes = [
@@ -23,6 +24,7 @@ const routes: Routes = [
   {path: 'manager/sources/:id', component: SourceDetailsComponent},
   {path: 'manager/authors', component: AuthorsComponent},
   {path: 'manager/persons', component: PersonsComponent},
+  {path: 'manager/persons/:id', component: PersonDetailsComponent},
   {path: 'manager/events', component: EventsComponent},
   {path: 'manager/events/:id', component: EventDetailsComponent},
   {path: 'manager/charts', component: ChartsComponent},

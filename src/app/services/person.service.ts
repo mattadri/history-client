@@ -22,7 +22,9 @@ export class PersonService {
 
   private filterObject: Array<any>;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.persons = [];
+  }
 
   static removePersonNote(person: Person, note: PersonNote) {
     for (let i = 0; i < person.notes.length; i++) {
@@ -48,6 +50,17 @@ export class PersonService {
     this.personPost.mapToPost(person, true);
 
     return this.http.patch(environment.apiUrl + '/persons/' + person.id, this.personPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  patchApiPersonNote(note: PersonNote, person: Person) {
+    this.personNotePost = new PersonNotePost();
+    this.personNotePost.mapToNotePost(note, person, true);
+
+    return this.http.patch(environment.apiUrl + '/person_notes/' + note.id, this.personNotePost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')

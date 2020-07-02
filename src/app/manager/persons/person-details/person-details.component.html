@@ -1,51 +1,71 @@
-<div *ngIf="event">
+<div *ngIf="person">
   <div class="app-body-content app-body-darker-canvas">
     <div class="app-body-content-narrow">
       <div class="subheading">
-        Event
-        <button *ngIf="!isEditEventMode" mat-icon-button class="material-icons" type="button" (click)="activateEditEventMode()">edit</button>
+        Person
+        <button *ngIf="!isEditPersonMode" mat-icon-button class="material-icons" type="button" (click)="activateEditPersonMode()">edit</button>
       </div>
 
-      <div *ngIf="!isEditEventMode">
-        <h1 class="no-margin-bottom margin-top">{{event.label}}</h1>
+      <div *ngIf="!isEditPersonMode">
+        <h1 class="no-margin-bottom margin-top">
+          {{person.firstName}}
+          <span *ngIf="person.middleName"> {{person.middleName}}</span>
+          <span *ngIf="person.lastName"> {{person.lastName}}</span>
+        </h1>
 
         <div class="heading-meta">
-          {{event.formattedStartYear}} <span *ngIf="!event.isSinglePointEvent">- {{event.formattedEndYear}} • {{event.eventLength}} years</span>
+          {{person.formattedBirth}} - {{person.formattedDeath}} ({{person.age}} years old)
         </div>
 
-        <div class="text-intro" [innerHTML]="event.description"></div>
+        <div class="text-intro" [innerHTML]="person.description"></div>
       </div>
 
-      <div *ngIf="isEditEventMode">
-        <form (ngSubmit)="editEvent()" #editEventForm="ngForm">
+      <div *ngIf="isEditPersonMode">
+        <form (ngSubmit)="editPerson()" #editPersonForm="ngForm">
           <div class="app-drawer-header">
             <div class="app-drawer-tools">
               <button mat-icon-button type="submit" class="material-icons">save</button>
-              <button mat-icon-button type="button" class="material-icons" (click)="deactivateEditEventMode()">close</button>
+              <button mat-icon-button type="button" class="material-icons" (click)="deactivateEditPersonMode()">close</button>
             </div>
           </div>
 
           <div class="app-drawer-content">
             <section class="app-section">
-              <mat-form-field style="width: 100%">
+              <mat-form-field>
                 <input
-                  type="text"
-                  placeholder="Title"
+                  placeholder="First Name"
                   matInput
-                  #evenLabelField
-                  required
-                  name="event_label"
-                  [(ngModel)]="event.label">
+                  #firstNameField
+                  name="person_first_name_search"
+                  [(ngModel)]="person.firstName" />
+              </mat-form-field>
+
+              <mat-form-field style="width: 30%">
+                <input
+                  matInput
+                  placeholder="Middle Name"
+                  name="person_middle_name"
+                  #personFirstName="ngModel"
+                  [(ngModel)]="person.middleName" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  placeholder="Last Name"
+                  matInput
+                  name="person_last_name_search"
+                  #lastNameField
+                  [(ngModel)]="person.lastName">
               </mat-form-field>
             </section>
 
             <section class="app-section inline">
-              <label>Beginning</label>
+              <label>Birth Date</label>
 
               <div class="app-field-group">
                 <mat-form-field class="app-field-era">
                   <mat-label>Era</mat-label>
-                  <mat-select [(ngModel)]="event.startEra" name="event_start_era" required [compareWith]="selectEra">
+                  <mat-select [(ngModel)]="person.birthEra" name="person_birth_era" required [compareWith]="selectEra">
                     <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -54,36 +74,37 @@
                   <input
                     matInput
                     placeholder="Year"
-                    name="event_start_year"
+                    name="person_birth_year"
                     required
-                    [(ngModel)]="event.startYear"/>
+                    [(ngModel)]="person.birthYear" />
                 </mat-form-field>
+
 
                 <mat-form-field class="app-field-day">
                   <input
                     matInput
                     placeholder="Day"
-                    name="event_start_day"
-                    [(ngModel)]="event.startDay"/>
+                    name="person_birth_day"
+                    [(ngModel)]="person.birthDay" />
                 </mat-form-field>
 
                 <mat-form-field class="app-field-month">
                   <mat-label>Month</mat-label>
-                  <mat-select [(ngModel)]="event.startMonth" name="event_start_month" [compareWith]="selectMonth">
+                  <mat-select [(ngModel)]="person.birthMonth" name="person_birth_month" [compareWith]="selectMonth">
                     <mat-option [value]="null"></mat-option>
                     <mat-option *ngFor="let month of months" [value]="month">{{month.label}}</mat-option>
                   </mat-select>
                 </mat-form-field>
               </div>
-
             </section>
 
             <section class="app-section inline">
-              <label>Ending</label>
+              <label>Death Date</label>
+
               <div class="app-field-group">
                 <mat-form-field class="app-field-era">
                   <mat-label>Era</mat-label>
-                  <mat-select [(ngModel)]="event.endEra" name="event_end_era" [compareWith]="selectEra">
+                  <mat-select [(ngModel)]="person.deathEra" name="person_death_era" [compareWith]="selectEra">
                     <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
                   </mat-select>
                 </mat-form-field>
@@ -92,21 +113,21 @@
                   <input
                     matInput
                     placeholder="Year"
-                    name="event_end_year"
-                    [(ngModel)]="event.endYear" />
+                    name="person_death_year"
+                    [(ngModel)]="person.deathYear" />
                 </mat-form-field>
 
                 <mat-form-field class="app-field-day">
                   <input
                     matInput
                     placeholder="Day"
-                    name="event_end_day"
-                    [(ngModel)]="event.endDay" />
+                    name="person_death_day"
+                    [(ngModel)]="person.deathDay" />
                 </mat-form-field>
 
                 <mat-form-field class="app-field-month">
                   <mat-label>Month</mat-label>
-                  <mat-select [(ngModel)]="event.endMonth" name="event_end_month" [compareWith]="selectMonth">
+                  <mat-select [(ngModel)]="person.deathMonth" name="person_death_month" [compareWith]="selectMonth">
                     <mat-option [value]="null"></mat-option>
                     <mat-option *ngFor="let month of months" [value]="month">{{month.label}}</mat-option>
                   </mat-select>
@@ -136,7 +157,7 @@
               <label>Description</label>
 
               <div class="app-card-note-body-content">
-                <div [(froalaModel)]="event.description"
+                <div [(froalaModel)]="person.description"
                     [froalaEditor]></div>
               </div>
             </section>
@@ -157,7 +178,7 @@
 <!-- TIMELINES -->
       <!-- Add New Timeline -->
       <div *ngIf="isAddTimelineMode" class="app-card-note">
-        <form class="app-card-note-edit" (ngSubmit)="saveTimelineEvent()" #timelineForm="ngForm">
+        <form class="app-card-note-edit" (ngSubmit)="saveTimelinePerson()" #timelineForm="ngForm">
           <div class=app-card-note-body-meta>
             <mat-form-field style="width: 100%;">
               <mat-label>Timelines</mat-label>
@@ -172,8 +193,8 @@
         </form>
       </div>
 
-      <div *ngIf="event.timelines && event.timelines.length">
-        <app-event-timeline *ngFor="let timeline of event.timelines" [timeline]="timeline" (removeTimeline)="deleteTimeline(timeline)"></app-event-timeline>
+      <div *ngIf="person.timelines && person.timelines.length">
+        <app-event-timeline *ngFor="let timeline of person.timelines" [timeline]="timeline" (removeTimeline)="deleteTimeline(timeline)"></app-event-timeline>
       </div>
 
 <!-- NOTES -->
@@ -202,7 +223,7 @@
       </div>
 
       <!-- Display Notes-->
-      <app-event-details-note *ngFor="let note of event.notes" [note]="note" [event]="event" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-event-details-note>
+      <app-person-details-note *ngFor="let note of person.notes" [note]="note" [person]="person" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-person-details-note>
 
     </div>
   </div>

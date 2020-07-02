@@ -1,7 +1,11 @@
-<div id="person-container" (click)="onSelectPerson()">
-  <div>
-    {{essayPerson.person.firstName}}
-    <span *ngIf="essayPerson.person.middleName"> {{essayPerson.person.middleName}}</span>
-    <span *ngIf="essayPerson.person.lastName"> {{essayPerson.person.lastName}}</span>
+<div id="person-container" (click)="onSelectPerson().then()">
+  <div class="app-section list-item">
+    <div class="app-label">
+        <span>
+          {{essayPerson.person.firstName}}
+          <span *ngIf="essayPerson.person.middleName"> {{essayPerson.person.middleName}}</span>
+          <span *ngIf="essayPerson.person.lastName"> {{essayPerson.person.lastName}}</span>
+        </span>
+    </div>
   </div>
 </div>

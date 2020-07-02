@@ -44,11 +44,6 @@ export class EventDetailsComponent implements OnInit {
   public sourcesFilteredOptions: Observable<Source[]>;
   public sourceFieldDisplayValue: string;
 
-  public searchEvents: Event[] = [];
-  public eventTitleAutocompleteControl = new FormControl();
-  public eventTitleFilteredOptions: Observable<Event[]>;
-  public eventTitleFieldDisplayValue: string;
-
   constructor(private route: ActivatedRoute,
               private eventService: EventService,
               private timelineService: TimelineService,
@@ -88,15 +83,6 @@ export class EventDetailsComponent implements OnInit {
         this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
           startWith(''),
           map(source => this._filterSources(source))
-        );
-      });
-
-      this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label&sort=label', null, null, false).subscribe(response => {
-        this.searchEvents = response.events;
-
-        this.eventTitleFilteredOptions = this.eventTitleAutocompleteControl.valueChanges.pipe(
-          startWith(''),
-          map(returnedEvent => this._filterEventsTitle(returnedEvent))
         );
       });
 
@@ -172,14 +158,6 @@ export class EventDetailsComponent implements OnInit {
     this.event.source = this.sourcesAutocompleteControl.value;
   }
 
-  saveEventTitle(value) {
-    if (value) {
-      this.event.label = value;
-    } else {
-      this.event.label = this.eventTitleAutocompleteControl.value;
-    }
-  }
-
   editEvent() {
     console.log('Editing event: ', this.event);
 
@@ -252,20 +230,6 @@ export class EventDetailsComponent implements OnInit {
 
       return this.sources.filter(source => {
         return source.title.toLowerCase().includes(filterValue);
-      });
-    }
-  }
-
-  private _filterEventsTitle(filterValue: any): Event[] {
-    if (filterValue && typeof filterValue === 'string') {
-      filterValue = filterValue.toLowerCase();
-
-      return this.searchEvents.filter(event => {
-        if (event.label) {
-          return event.label.toLowerCase().includes(filterValue);
-        } else {
-          return '';
-        }
       });
     }
   }
