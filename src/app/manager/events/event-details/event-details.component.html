@@ -13,17 +13,12 @@
           {{event.formattedStartYear}} <span *ngIf="!event.isSinglePointEvent">- {{event.formattedEndYear}} • {{event.eventLength}} years</span>
         </div>
 
-        <div class="text-intro">
-          {{event.description}}
-        </div>
+        <div class="text-intro" [innerHTML]="event.description"></div>
       </div>
 
       <div *ngIf="isEditEventMode">
         <form (ngSubmit)="editEvent()" #editEventForm="ngForm">
           <div class="app-drawer-header">
-            <div class="app-drawer-title">
-              <div class="app-drawer-subheading">Edit Event</div>
-            </div>
             <div class="app-drawer-tools">
               <button mat-icon-button type="submit" class="material-icons">save</button>
               <button mat-icon-button type="button" class="material-icons" (click)="deactivateEditEventMode()">close</button>
@@ -120,11 +115,10 @@
             </section>
 
             <section class="app-section inline">
-              <label>Source</label>
               <mat-form-field class="app-field-reference">
                 <input
                   type="text"
-                  placeholder="Select..."
+                  placeholder="Source"
                   aria-label="Source"
                   matInput
                   [formControl]="sourcesAutocompleteControl"
@@ -140,20 +134,22 @@
 
             <section class="app-section">
               <label>Description</label>
-              <mat-form-field class="app-field-description">
-                <textarea
-                  matInput
-                  cdkTextareaAutosize
-                  #autosize="cdkTextareaAutosize"
-                  cdkAutosizeMinRows="1"
-                  cdkAutosizeMaxRows="10"
-                  name="event_description"
-                  [(ngModel)]="event.description"></textarea>
-              </mat-form-field>
+
+              <div class="app-card-note-body-content">
+                <div [(froalaModel)]="event.description"
+                    [froalaEditor]></div>
+              </div>
+              <!--<mat-form-field class="app-field-description">-->
+                <!--<textarea-->
+                  <!--matInput-->
+                  <!--cdkTextareaAutosize-->
+                  <!--#autosize="cdkTextareaAutosize"-->
+                  <!--cdkAutosizeMinRows="1"-->
+                  <!--cdkAutosizeMaxRows="10"-->
+                  <!--name="event_description"-->
+                  <!--[(ngModel)]="event.description"></textarea>-->
+              <!--</mat-form-field>-->
             </section>
-
-
-
           </div>
         </form>
       </div>
