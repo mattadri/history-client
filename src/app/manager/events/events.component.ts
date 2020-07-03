@@ -32,7 +32,10 @@ export class EventsComponent implements OnInit {
 
     this.events = [];
 
-    this.getEvents('/events?sort=-created&page%5Bnumber%5D=1', null, null);
+    this.getEvents(
+      '/events?sort=-created&page%5Bnumber%5D=1&fields[event]=label,description,event_start_day,event_start_month,event_start_year,' +
+      'event_start_era,event_end_day,event_end_month,event_end_year,event_end_era,reference',
+      null, null);
   }
 
   ngOnInit() {

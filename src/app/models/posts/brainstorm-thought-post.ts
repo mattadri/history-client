@@ -1,7 +1,7 @@
 import {BrainstormThought} from '../brainstorm-thought';
 
 export class BrainstormThoughtPost {
-  data;
+  data: any;
 
   mapToPost(brainstormThought: BrainstormThought, isPatch: boolean) {
     this.data = {

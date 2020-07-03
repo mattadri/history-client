@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+
+import {MatDialog} from '@angular/material';
 
 import {BrainstormService} from '../../services/brainstorm.service';
 
 import {Brainstorm} from '../../models/brainstorm';
 import {BrainstormThought} from '../../models/brainstorm-thought';
 import {BrainstormTopic} from '../../models/brainstorm-topic';
+import {QuickBrainstormTopicComponent} from './quick-brainstorm-topic/quick-brainstorm-topic.component';
 
 @Component({
   selector: 'app-brainstorm',
@@ -22,7 +24,8 @@ export class BrainstormComponent implements OnInit {
   public isAddBrainstormThoughtMode: boolean;
 
   constructor(private route: ActivatedRoute,
-              private brainstormService: BrainstormService) {
+              private brainstormService: BrainstormService,
+              public dialog: MatDialog) {
     this.isAddThoughtMode = false;
     this.isAddBrainstormThoughtMode = false;
 
@@ -79,8 +82,25 @@ export class BrainstormComponent implements OnInit {
     });
   }
 
-  openCreateTopicDialog() {
-    console.log('Creating new topic for brainstorm: ', this.brainstorm);
+  createNewTopic() {
+    const dialogRef = this.dialog.open(QuickBrainstormTopicComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(brainstormTopic => {
+      if (brainstormTopic) {
+        console.log('Brainstorm Topic: ', brainstormTopic);
+        console.log('Brainstorm: ', this.brainstorm);
+
+        brainstormTopic.position = this.brainstorm.topics.length;
+
+        this.brainstormService.createApiBrainstormTopic(this.brainstorm, brainstormTopic).subscribe(response => {
+          brainstormTopic.id = response.data.id;
+
+          this.brainstorm.topics.push(brainstormTopic);
+        });
+      }
+    });
   }
 
   removeTopicThought(response: any) {

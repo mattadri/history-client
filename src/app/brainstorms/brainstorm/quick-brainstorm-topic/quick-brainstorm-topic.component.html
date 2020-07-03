@@ -1,0 +1,25 @@
+<form #brainstormTopicForm="ngForm">
+  <div class="app-drawer-header">
+    <div class="app-drawer-title">
+      <div class="app-drawer-subheading">New Brainstorm Topic</div>
+    </div>
+    <div class="app-drawer-tools">
+      <button mat-icon-button type="button" class="material-icons" [mat-dialog-close]="brainstormTopic">save</button>
+      <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
+    </div>
+  </div>
+
+  <div class="app-drawer-content">
+    <section class="app-section">
+      <mat-form-field style="width: 100%">
+        <input
+          matInput
+          placeholder="Label"
+          name="brainstorm_topic_label"
+          id="brainstorm_topic_label"
+          #brainstormTitle="ngModel"
+          [(ngModel)]="brainstormTopic.label" />
+      </mat-form-field>
+    </section>
+  </div>
+</form>

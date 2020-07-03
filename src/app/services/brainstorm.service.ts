@@ -3,14 +3,17 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 import {Observable} from 'rxjs';
 
-import {Brainstorm} from '../models/brainstorm';
 import {BrainstormResponse} from '../models/responses/brainstorm-response';
 
 import { environment } from '../../environments/environment';
+
 import {BrainstormTopicPost} from '../models/posts/brainstorm-topic-post';
 import {BrainstormTopicThoughtPost} from '../models/posts/brainstorm-topic-thought-post';
 import {BrainstormThought} from '../models/brainstorm-thought';
 import {BrainstormThoughtPost} from '../models/posts/brainstorm-thought-post';
+import {BrainstormPost} from '../models/posts/brainstorm-post';
+import {BrainstormTopic} from '../models/brainstorm-topic';
+import {Brainstorm} from '../models/brainstorm';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +21,7 @@ import {BrainstormThoughtPost} from '../models/posts/brainstorm-thought-post';
 export class BrainstormService {
   public brainstorms: Brainstorm[];
 
+  private brainstormPost: BrainstormPost;
   private topicPost: BrainstormTopicPost;
   private topicThoughtPost: BrainstormTopicThoughtPost;
   private brainstormThoughtPost: BrainstormThoughtPost;
@@ -26,7 +30,7 @@ export class BrainstormService {
     this.brainstorms = [];
   }
 
-  getApiBrainstorms(path): Observable<BrainstormResponse> {
+  getApiBrainstorms(path: string): Observable<BrainstormResponse> {
     this.brainstorms = [];
 
     return this.http.get<BrainstormResponse>(environment.apiUrl + path, {
@@ -36,7 +40,7 @@ export class BrainstormService {
     });
   }
 
-  getApiBrainstorm(brainstormId) {
+  getApiBrainstorm(brainstormId: number) {
     return this.http.get<Brainstorm>(environment.apiUrl + '/brainstorms/' + brainstormId, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
@@ -44,7 +48,29 @@ export class BrainstormService {
     });
   }
 
-  createApiBrainstormTopicThought(thought): Observable<any> {
+  createApiBrainstorm(brainstorm: Brainstorm): Observable<any> {
+    this.brainstormPost = new BrainstormPost();
+    this.brainstormPost.mapToPost(brainstorm, false);
+
+    return this.http.post(environment.apiUrl + '/brainstorms', this.brainstormPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  createApiBrainstormTopic(brainstorm: Brainstorm, topic: BrainstormTopic): Observable<any> {
+    this.topicPost = new BrainstormTopicPost();
+    this.topicPost.mapToPost(brainstorm, topic, false);
+
+    return this.http.post(environment.apiUrl + '/brainstorm_topics', this.topicPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  createApiBrainstormTopicThought(thought: BrainstormThought): Observable<any> {
     this.topicThoughtPost = new BrainstormTopicThoughtPost();
     this.topicThoughtPost.mapToPost(thought, false);
 
@@ -55,7 +81,7 @@ export class BrainstormService {
     });
   }
 
-  createApiBrainstormThought(thought): Observable<any> {
+  createApiBrainstormThought(thought: BrainstormThought): Observable<any> {
     this.brainstormThoughtPost = new BrainstormThoughtPost();
     this.brainstormThoughtPost.mapToPost(thought, false);
 
@@ -66,9 +92,9 @@ export class BrainstormService {
     });
   }
 
-  patchApiTopic(topic): Observable<any> {
+  patchApiTopic(topic: BrainstormTopic): Observable<any> {
     this.topicPost = new BrainstormTopicPost();
-    this.topicPost.mapToPost(topic, true);
+    this.topicPost.mapToPost(null, topic, true);
 
     return this.http.patch(environment.apiUrl + '/brainstorm_topics/' + topic.id, this.topicPost, {
       headers: new HttpHeaders()
@@ -77,7 +103,7 @@ export class BrainstormService {
     });
   }
 
-  patchApiBrainstormThought(thought): Observable<any> {
+  patchApiBrainstormThought(thought: BrainstormThought): Observable<any> {
     this.brainstormThoughtPost = new BrainstormThoughtPost();
     this.brainstormThoughtPost.mapToPost(thought, true);
 
@@ -88,7 +114,7 @@ export class BrainstormService {
     });
   }
 
-  patchApiTopicThought(thought): Observable<any> {
+  patchApiTopicThought(thought: BrainstormThought): Observable<any> {
     this.topicThoughtPost = new BrainstormTopicThoughtPost();
     this.topicThoughtPost.mapToPost(thought, true);
 
@@ -99,19 +125,19 @@ export class BrainstormService {
     });
   }
 
-  deleteApiBrainstormThought(thought): Observable<any> {
+  deleteApiBrainstormThought(thought: BrainstormThought): Observable<any> {
     return this.http.delete(environment.apiUrl + '/brainstorm_thoughts/' + thought.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
 
-  deleteApiBrainstormTopicThought(thought): Observable<any> {
+  deleteApiBrainstormTopicThought(thought: BrainstormThought): Observable<any> {
     return this.http.delete(environment.apiUrl + '/brainstorm_topic_thoughts/' + thought.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
 
-  setBrainstorm(brainstorm) {
+  setBrainstorm(brainstorm: Brainstorm) {
     this.brainstorms.push(brainstorm);
   }
 
@@ -119,7 +145,7 @@ export class BrainstormService {
     return this.brainstorms;
   }
 
-  removeBrainstormThought(brainstorm, thought) {
+  removeBrainstormThought(brainstorm: Brainstorm, thought: BrainstormThought) {
     for (let i = 0; i < brainstorm.thoughts.length; i++) {
       if (parseInt(brainstorm.thoughts[i].id, 10) === parseInt(thought.id, 10)) {
         console.log('Found thought to splice', brainstorm.thoughts[i]);
@@ -130,7 +156,7 @@ export class BrainstormService {
     }
   }
 
-  removeTopicThought(topic, thought) {
+  removeTopicThought(topic: BrainstormTopic, thought: BrainstormThought) {
     for (let i = 0; i < topic.thoughts.length; i++) {
       if (parseInt(topic.thoughts[i].id, 10) === parseInt(thought.id, 10)) {
         topic.thoughts.splice(i, 1);

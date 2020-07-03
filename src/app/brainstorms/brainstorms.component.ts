@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+
+import {MatDialog} from '@angular/material';
+
 import {Brainstorm} from '../models/brainstorm';
+
 import {BrainstormService} from '../services/brainstorm.service';
+import {QuickBrainstormComponent} from './quick-brainstorm/quick-brainstorm.component';
 
 @Component({
   selector: 'app-brainstorms',
@@ -15,7 +20,7 @@ export class BrainstormsComponent implements OnInit {
   public nextPage: string;
   public previousPage: string;
 
-  constructor(private brainstormService: BrainstormService) {
+  constructor(private brainstormService: BrainstormService, public dialog: MatDialog) {
     this.getBrainstorms('/brainstorms?page%5Bnumber%5D=1&fields[brainstorm]=title,description');
   }
 
@@ -33,6 +38,24 @@ export class BrainstormsComponent implements OnInit {
       this.totalResults = response.total;
       this.nextPage = response.links.next;
       this.previousPage = response.links.prev;
+    });
+  }
+
+  createBrainstorm() {
+    const dialogRef = this.dialog.open(QuickBrainstormComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(brainstorm => {
+      if (brainstorm) {
+        this.brainstormService.createApiBrainstorm(brainstorm).subscribe(response => {
+          brainstorm.id = response.data.id;
+
+          this.brainstormService.setBrainstorm(brainstorm);
+
+          this.brainstorms.unshift(brainstorm);
+        });
+      }
     });
   }
 

@@ -141,7 +141,11 @@ export class PersonsComponent implements OnInit {
       this.timelines = this.timelineService.getTimelines();
     });
 
-    this.getPersons('/persons?sort=-created&page%5Bnumber%5D=1', null, null);
+    this.getPersons(
+      '/persons?sort=-created&page%5Bnumber%5D=1' +
+      '&fields[person]=first_name,middle_name,last_name,description,birth_day,birth_month,birth_year,' +
+      'birth_era,death_day,death_month,death_year,death_era,reference',
+      null, null);
   }
 
   ngOnInit() { }

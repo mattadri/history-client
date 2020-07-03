@@ -10,7 +10,7 @@
         <h1 class="no-margin-bottom margin-top">{{event.label}}</h1>
 
         <div class="heading-meta">
-          {{event.formattedStartYear}} <span *ngIf="!event.isSinglePointEvent">- {{event.formattedEndYear}} • {{event.eventLength}} years</span>
+          {{event.formattedStartDate}} <span *ngIf="!event.isSinglePointEvent">- {{event.formattedEndDate}} • {{event.eventLength}} years</span>
         </div>
 
         <div class="text-intro" [innerHTML]="event.description"></div>

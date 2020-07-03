@@ -1,9 +1,10 @@
 import {BrainstormTopic} from '../brainstorm-topic';
+import {Brainstorm} from '../brainstorm';
 
 export class BrainstormTopicPost {
   data;
 
-  mapToPost(brainstormTopic: BrainstormTopic, isPatch: boolean) {
+  mapToPost(brainstorm: Brainstorm, brainstormTopic: BrainstormTopic, isPatch: boolean) {
     this.data = {
       type: 'brainstorm_topic',
       attributes: {
@@ -11,6 +12,15 @@ export class BrainstormTopicPost {
         position: brainstormTopic.position
       }
     };
+
+    if (brainstorm) {
+      this.data.attributes.brainstorm_rel = {
+        data: {
+          type: 'brainstorm',
+          id: brainstorm.id
+        }
+      };
+    }
 
     if (isPatch) {
       this.data.id = brainstormTopic.id.toString();

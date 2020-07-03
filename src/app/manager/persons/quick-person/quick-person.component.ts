@@ -1,4 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
+import {FormControl} from '@angular/forms';
+
+import {MatDialogRef} from '@angular/material';
 
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
@@ -6,15 +9,14 @@ import {map, startWith} from 'rxjs/operators';
 import {Sleep} from '../../../utilities/sleep';
 
 import {Source} from '../../../models/source';
-import {FormControl} from '@angular/forms';
 import {Era} from '../../../models/era';
 import {Month} from '../../../models/month';
+import {Person} from '../../../models/person';
+
 import {PersonService} from '../../../services/person.service';
 import {SourceService} from '../../../services/source.service';
 import {EraService} from '../../../services/era.service';
 import {MonthService} from '../../../services/month.service';
-import {MatDialogRef} from '@angular/material';
-import {Person} from '../../../models/person';
 
 @Component({
   selector: 'app-quick-person',

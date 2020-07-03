@@ -50,16 +50,12 @@
         <section class="app-section horizontal">
           <section class="app-subsection">
             <label>Beginning Date</label>
-            <span *ngIf="event.startMonth">{{event.startMonth.label}} </span>
-            <span *ngIf="event.startDay">{{event.startDay}}, </span>
-            <span>{{event.formattedStartYear}}</span>
+            <span>{{event.formattedStartDate}}</span>
           </section>
 
           <section class="app-subsection">
             <label>Ending Date</label>
-            <span *ngIf="event.endMonth">{{event.endMonth.label}} </span>
-            <span *ngIf="event.endDay">{{event.endDay}}, </span>
-            <span>{{event.formattedEndYear}}</span>
+            <span>{{event.formattedEndDate}}</span>
           </section>
         </section>
 
