@@ -147,8 +147,7 @@ export class BrainstormService {
 
   removeBrainstormThought(brainstorm: Brainstorm, thought: BrainstormThought) {
     for (let i = 0; i < brainstorm.thoughts.length; i++) {
-      if (parseInt(brainstorm.thoughts[i].id, 10) === parseInt(thought.id, 10)) {
-        console.log('Found thought to splice', brainstorm.thoughts[i]);
+      if (brainstorm.thoughts[i].id === thought.id) {
         brainstorm.thoughts.splice(i, 1);
 
         break;
@@ -158,7 +157,7 @@ export class BrainstormService {
 
   removeTopicThought(topic: BrainstormTopic, thought: BrainstormThought) {
     for (let i = 0; i < topic.thoughts.length; i++) {
-      if (parseInt(topic.thoughts[i].id, 10) === parseInt(thought.id, 10)) {
+      if (topic.thoughts[i].id === thought.id) {
         topic.thoughts.splice(i, 1);
       }
     }

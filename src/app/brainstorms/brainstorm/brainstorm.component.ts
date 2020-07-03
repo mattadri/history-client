@@ -8,7 +8,6 @@ import {BrainstormService} from '../../services/brainstorm.service';
 
 import {Brainstorm} from '../../models/brainstorm';
 import {BrainstormThought} from '../../models/brainstorm-thought';
-import {BrainstormTopic} from '../../models/brainstorm-topic';
 import {QuickBrainstormTopicComponent} from './quick-brainstorm-topic/quick-brainstorm-topic.component';
 
 @Component({
@@ -26,10 +25,11 @@ export class BrainstormComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private brainstormService: BrainstormService,
               public dialog: MatDialog) {
+
     this.isAddThoughtMode = false;
     this.isAddBrainstormThoughtMode = false;
 
-    const brainstormId = this.route.snapshot.paramMap.get('id');
+    const brainstormId = parseInt(this.route.snapshot.paramMap.get('id'), 10);
 
     this.initializeNewBrainstormThought();
 
@@ -89,9 +89,6 @@ export class BrainstormComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(brainstormTopic => {
       if (brainstormTopic) {
-        console.log('Brainstorm Topic: ', brainstormTopic);
-        console.log('Brainstorm: ', this.brainstorm);
-
         brainstormTopic.position = this.brainstorm.topics.length;
 
         this.brainstormService.createApiBrainstormTopic(this.brainstorm, brainstormTopic).subscribe(response => {
