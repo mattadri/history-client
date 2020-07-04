@@ -21,9 +21,7 @@
     </div>
 
     <div class="app-drawer-content">
-      <div class="app-drawer-description">
-        {{data.event.description}}
-      </div>
+      <div class="app-drawer-description" [innerHTML]="data.event.description"></div>
 
       <div class="app-drawer-notes" *ngIf="displayNotes.length">
         <div class="app-drawer-subheading">Notes</div>

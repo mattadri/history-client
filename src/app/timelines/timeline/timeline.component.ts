@@ -473,6 +473,7 @@ export class TimelineComponent implements OnInit {
   }
 
   setTimelineEventLocations() {
+    console.log('seeting loction');
     // if the timeline is less than some minimum length create percentages based on month instead of year
     if (this.timelineLength <= this.minYearToMonths) {
       const timelineLengthInMonths = this.timelineLength * 12;

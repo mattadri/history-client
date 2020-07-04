@@ -161,7 +161,6 @@ export class Event {
 
   // in the case that an event has no month and the year is greater than 999,999 the formatter will shorten with 'MYA' or 'BYA'
   public formatYears() {
-    console.log('formatting years');
     // START DATE FORMATTED YEAR
     let formattedNumber: number = this.startYear;
     let postfix = '';
@@ -232,7 +231,6 @@ export class Event {
   }
 
   public formatDates() {
-    console.log('formatting dates');
     // in the case of BC dates format to year only
     if (this.startEra.label === 'BC') {
       this.formattedStartDate = this.formattedStartYear;

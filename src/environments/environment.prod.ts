@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://history.com:5000'
+  apiUrl: 'http://54.210.108.154:5000'
 };
