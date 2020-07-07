@@ -17,12 +17,14 @@ import {BrainstormComponent} from './brainstorms/brainstorm/brainstorm.component
 import {ChartsComponent} from './manager/charts/charts.component';
 import {ChartComponent} from './manager/charts/chart/chart.component';
 import {PersonDetailsComponent} from './manager/persons/person-details/person-details.component';
+import {AuthorDetailsComponent} from './manager/authors/author-details/author-details.component';
 
 
 const routes: Routes = [
   {path: 'manager/sources', component: SourcesComponent},
   {path: 'manager/sources/:id', component: SourceDetailsComponent},
   {path: 'manager/authors', component: AuthorsComponent},
+  {path: 'manager/authors/:id', component: AuthorDetailsComponent},
   {path: 'manager/persons', component: PersonsComponent},
   {path: 'manager/persons/:id', component: PersonDetailsComponent},
   {path: 'manager/events', component: EventsComponent},

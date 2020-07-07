@@ -48,6 +48,13 @@ export class AuthorInterceptor implements HttpInterceptor {
           this.body.links = event.body.links;
 
           event.body = this.body;
+
+        } else if ((req.headers.get('type') === 'author')) {
+          this.author = new Author();
+          this.author.initializeAuthor();
+          this.author.mapAuthor(event.body.data);
+
+          event.body = this.author;
         }
       }
     }

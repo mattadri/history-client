@@ -2,7 +2,7 @@
   <div class="app-body-content">
     <div class="app-content-toolbar">
       <h1>Authors</h1>
-      <button mat-flat-button class="material-icons" color="primary" (click)="activateCreateMode(authorDetails)">add</button>
+      <button mat-flat-button class="material-icons" color="primary" (click)="createAuthor()">add</button>
     </div>
 
     <div class="app-cards-container">
@@ -18,19 +18,25 @@
 
   <mat-sidenav #authorDetails mode="side" position="end" class="app-drawer">
     <!-- Event Read-Only Mode -->
-    <div *ngIf="!isEditAuthorMode && !isCreateAuthorMode">
+    <div>
       <div class="app-drawer-header">
         <div class="app-drawer-title">
           <div class="app-drawer-subheading">Author</div>
           <div class="app-drawer-heading">
-            <span>{{author.firstName}}</span>
+            {{author.firstName}}
             <span *ngIf="author.middleName"> {{author.middleName}}</span>
             <span *ngIf="author.lastName"> {{author.lastName}}</span>
           </div>
         </div>
         <div class="app-drawer-tools">
-          <button class="material-icons" (click)="isEditAuthorMode = true">edit</button>
-          <button class="material-icons" (click)="closeAuthorDetails(authorDetails)">close</button>
+          <a routerLink="{{authorLink}}">
+            <span class="material-icons mat-icon-button mat-button-base">
+              launch
+            </span>
+          </a>
+
+          <button mat-icon-button class=" material-icons" type="button" (click)="removeAuthor(authorDetails)">delete</button>
+          <button mat-icon-button class=" material-icons" (click)="closeAuthorDetails(authorDetails)">close</button>
         </div>
       </div>
     </div>

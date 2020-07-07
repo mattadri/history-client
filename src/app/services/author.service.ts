@@ -54,6 +54,14 @@ export class AuthorService {
     });
   }
 
+  getApiAuthor(authorId): Observable<Author> {
+    return this.http.get<Author>(environment.apiUrl + '/authors/' + authorId, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'person')
+    });
+  }
+
   removeApiAuthor(author: Author): Observable<any> {
     return this.http.delete(environment.apiUrl + '/authors/' + author.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')

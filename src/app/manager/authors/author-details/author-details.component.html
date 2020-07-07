@@ -1,0 +1,64 @@
+<div *ngIf="author">
+  <div class="app-body-content app-body-darker-canvas">
+    <div class="app-body-content-narrow">
+      <div class="subheading">
+        Author
+        <button *ngIf="!isEditAuthorMode" mat-icon-button class="material-icons" type="button" (click)="activateEditAuthorMode()">edit</button>
+      </div>
+
+      <div *ngIf="!isEditAuthorMode">
+        <h1 class="no-margin-bottom margin-top">
+          {{author.firstName}}
+          <span *ngIf="author.middleName"> {{author.middleName}}</span>
+          <span *ngIf="author.lastName"> {{author.lastName}}</span>
+        </h1>
+      </div>
+
+      <div *ngIf="isEditAuthorMode">
+        <form (ngSubmit)="editAuthor()" #editPersonForm="ngForm">
+          <div class="app-drawer-header">
+            <div class="app-drawer-tools">
+              <button mat-icon-button type="submit" class="material-icons">save</button>
+              <button mat-icon-button type="button" class="material-icons" (click)="deactivateEditAuthorMode()">close</button>
+            </div>
+          </div>
+
+          <div class="app-drawer-content">
+            <section class="app-section">
+              <mat-form-field>
+                <input
+                  type="search"
+                  placeholder="First Name"
+                  matInput
+                  #firstNameField
+                  name="author_first_name"
+                  [(ngModel)]="author.firstName" />
+              </mat-form-field>
+
+              <mat-form-field style="width: 30%">
+                <input
+                  type="search"
+                  matInput
+                  placeholder="Middle Name"
+                  name="author_middle_name"
+                  #personFirstName="ngModel"
+                  [(ngModel)]="author.middleName" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <input
+                  type="search"
+                  placeholder="Last Name"
+                  matInput
+                  name="author_last_name"
+                  #lastNameField
+                  [(ngModel)]="author.lastName">
+              </mat-form-field>
+            </section>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+

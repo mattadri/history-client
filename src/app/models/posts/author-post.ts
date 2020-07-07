@@ -7,17 +7,11 @@ export class AuthorPost {
     this.data = {
       type: 'author',
       attributes: {
-        first_name: author.firstName
+        first_name: author.firstName,
+        middle_name: author.middleName,
+        last_name: author.lastName
       }
     };
-
-    if (author.middleName) {
-      this.data.attributes.middle_name = author.middleName;
-    }
-
-    if (author.lastName) {
-      this.data.attributes.last_name = author.lastName;
-    }
 
     if (isPatch) {
       this.data.id = author.id;

@@ -110,6 +110,8 @@ import { PersonDetailsComponent } from './manager/persons/person-details/person-
 import { PersonDetailsNoteComponent } from './manager/persons/person-details/person-details-note/person-details-note.component';
 import { QuickBrainstormComponent } from './brainstorms/quick-brainstorm/quick-brainstorm.component';
 import { QuickBrainstormTopicComponent } from './brainstorms/brainstorm/quick-brainstorm-topic/quick-brainstorm-topic.component';
+import { QuickAuthorComponent } from './manager/authors/quick-author/quick-author.component';
+import { AuthorDetailsComponent } from './manager/authors/author-details/author-details.component';
 
 @NgModule({
   declarations: [
@@ -176,7 +178,9 @@ import { QuickBrainstormTopicComponent } from './brainstorms/brainstorm/quick-br
     PersonDetailsComponent,
     PersonDetailsNoteComponent,
     QuickBrainstormComponent,
-    QuickBrainstormTopicComponent
+    QuickBrainstormTopicComponent,
+    QuickAuthorComponent,
+    AuthorDetailsComponent
   ],
   entryComponents: [
     TimelineEventDetailsComponent,
@@ -189,7 +193,8 @@ import { QuickBrainstormTopicComponent } from './brainstorms/brainstorm/quick-br
     QuickEventComponent,
     QuickPersonComponent,
     QuickBrainstormComponent,
-    QuickBrainstormTopicComponent
+    QuickBrainstormTopicComponent,
+    QuickAuthorComponent
   ],
   imports: [
     BrowserModule,

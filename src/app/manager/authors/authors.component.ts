@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
+import {MatDialog} from '@angular/material';
+
 import { Author } from '../../models/author';
 
 import { AuthorService } from '../../services/author.service';
+import {QuickAuthorComponent} from './quick-author/quick-author.component';
 
 @Component({
   selector: 'app-authors',
@@ -14,28 +17,22 @@ export class AuthorsComponent implements OnInit {
   public authors: Author[];
   public author: Author;
 
-  public isCreateAuthorMode: boolean;
-  public isEditAuthorMode: boolean;
+  public authorLink: string;
 
   public totalResults: number;
   public nextPage: string;
   public previousPage: string;
 
-  constructor(private authorService: AuthorService) {
-    this.isCreateAuthorMode = false;
-    this.isEditAuthorMode = false;
+  constructor(private authorService: AuthorService, public dialog: MatDialog) {
+    this.author = new Author();
+    this.author.initializeAuthor();
 
-    this.initializeNewAuthor();
+    this.authorLink = '';
 
-    this.getAuthors('/authors?sort=last_name');
+    this.getAuthors('/authors?sort=last_name&page%5Bnumber%5D=1');
   }
 
   ngOnInit() { }
-
-  initializeNewAuthor() {
-    this.author = new Author();
-    this.author.initializeAuthor();
-  }
 
   getAuthors(path) {
     this.authorService.getApiAuthors(path).subscribe(response => {
@@ -51,23 +48,20 @@ export class AuthorsComponent implements OnInit {
     });
   }
 
-  createAuthor(sideNav) {
-    this.authorService.createApiAuthor(this.author).subscribe(response => {
-      this.author.id = response.data.id;
-
-      this.authorService.setAuthor(this.author);
-
-      this.isCreateAuthorMode = false;
-
-      this.closeAuthorDetails(sideNav);
-
-      this.initializeNewAuthor();
+  createAuthor() {
+    const dialogRef = this.dialog.open(QuickAuthorComponent, {
+      width: '750px'
     });
-  }
 
-  editAuthor() {
-    return this.authorService.patchApiAuthor(this.author).subscribe(() => {
-      this.isEditAuthorMode = false;
+    dialogRef.afterClosed().subscribe(author => {
+      console.log('Author: ', author);
+      if (author) {
+        this.authorService.createApiAuthor(author).subscribe(response => {
+          author.id = response.data.id;
+
+          this.authors.unshift(author);
+        });
+      }
     });
   }
 
@@ -75,49 +69,22 @@ export class AuthorsComponent implements OnInit {
     this.authorService.removeApiAuthor(this.author).subscribe(() => {
       this.authorService.removeAuthor(this.author);
 
-      this.initializeNewAuthor();
-
       this.closeAuthorDetails(sideNav);
     });
   }
 
-  openAuthorDetails(author, sideNav, isCreateMode, isEditMode) {
+  openAuthorDetails(author, contentPanel) {
     this.author = author;
 
-    if (!isCreateMode) {
-      isCreateMode = false;
-    }
+    this.authorLink = this.author.id;
 
-    if (!isEditMode) {
-      isEditMode = false;
-    }
-
-    this.isEditAuthorMode = isEditMode;
-    this.isCreateAuthorMode = isCreateMode;
-
-    if (sideNav.opened) {
-      sideNav.close().then(() => {
-        sideNav.open();
+    if (contentPanel.opened) {
+      contentPanel.close().then(() => {
+        contentPanel.open();
       });
     } else {
-      sideNav.open();
+      contentPanel.open();
     }
-  }
-
-  cancelEditCreateModes(sideNav) {
-    if (this.isCreateAuthorMode) {
-      this.closeAuthorDetails(sideNav);
-    }
-
-    this.isCreateAuthorMode = false;
-    this.isEditAuthorMode = false;
-  }
-
-  activateCreateMode(sideNav) {
-    this.isCreateAuthorMode = true;
-    this.initializeNewAuthor();
-
-    this.openAuthorDetails(this.author, sideNav, true, false);
   }
 
   closeAuthorDetails(sideNav) {
