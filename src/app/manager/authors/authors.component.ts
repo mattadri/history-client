@@ -6,6 +6,7 @@ import { Author } from '../../models/author';
 
 import { AuthorService } from '../../services/author.service';
 import {QuickAuthorComponent} from './quick-author/quick-author.component';
+import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
   selector: 'app-authors',
@@ -66,10 +67,22 @@ export class AuthorsComponent implements OnInit {
   }
 
   removeAuthor(sideNav) {
-    this.authorService.removeApiAuthor(this.author).subscribe(() => {
-      this.authorService.removeAuthor(this.author);
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the author ' + this.author.firstName + ' ' + this.author.lastName,
+        content: ''
+      }
+    });
 
-      this.closeAuthorDetails(sideNav);
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.authorService.removeApiAuthor(this.author).subscribe(() => {
+          this.authorService.removeAuthor(this.author);
+
+          this.closeAuthorDetails(sideNav);
+        });
+      }
     });
   }
 

@@ -19,7 +19,7 @@
 
     <div class="app-cards-container">
       <app-person-card
-        *ngFor="let person of persons" [person]="person" (loadPerson)="openPersonDetails($event, personDetails, false, false)"
+        *ngFor="let person of persons" [person]="person" (loadPerson)="openPersonDetails($event, personDetails)"
         class="app-card">
       </app-person-card>
     </div>
@@ -29,7 +29,7 @@
 
   <mat-sidenav #personDetails mode="side" position="end" class="app-drawer">
     <!-- Person Read-Only Mode -->
-    <div *ngIf="!isEditPersonMode && !isCreatePersonMode">
+    <div>
       <div class="app-drawer-header">
         <div class="app-drawer-title">
           <div class="app-drawer-subheading">Person</div>

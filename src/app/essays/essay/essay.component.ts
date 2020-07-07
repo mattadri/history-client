@@ -1,3 +1,7 @@
+/*
+tslint:disable:no-conditional-assignment
+ */
+
 import {Component, ElementRef, OnInit, AfterViewInit, Renderer2, ViewEncapsulation} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
@@ -162,7 +166,9 @@ export class EssayComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,middle_name,last_name', null, null, false).subscribe(response => {
+    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,middle_name,last_name', null, null, false)
+      .subscribe(response => {
+
       this.persons = response.persons;
 
       this.personsFilteredOptions = this.personsAutocompleteControl.valueChanges.pipe(
@@ -697,7 +703,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
   tokenizeReferences() {
     let match;
 
-    while (match = this.referenceRegex.exec(this.essayContent)) {
+    while ((match = this.referenceRegex.exec(this.essayContent))) {
       this.essayContent = this.essayContent.replace(
         match[0],
         '<span data-referenceid="' + match[1] + '" class="essay-reference">' + match[2] + '</span>'
@@ -757,13 +763,11 @@ export class EssayComponent implements OnInit, AfterViewInit {
   }
 
   saveAbstractContent() {
-    console.log(this.essay.abstract);
     this.essayService.patchApiEssay(this.essay).subscribe();
   }
 
   saveEssayContent() {
-    console.log(this.essay.essay);
-    this.essayService.patchApiEssay(this.essay).subscribe(() => {
+      this.essayService.patchApiEssay(this.essay).subscribe(() => {
       this.setEssayContent();
 
       this.tokenizeReferences();
@@ -774,8 +778,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
   }
 
   addReference() {
-    console.log('Essay: ', this.essay);
-
     this.essayReference.source = this.source;
 
     this.essayService.createApiEssayReference(this.essay, this.essayReference).subscribe(response => {
