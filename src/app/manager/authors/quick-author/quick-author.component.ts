@@ -32,7 +32,7 @@ export class QuickAuthorComponent implements OnInit, AfterViewInit {
     this.author = new Author();
     this.author.initializeAuthor();
 
-    this.authorService.getApiAuthors('/authors?page[size]=0&fields[author]=first_name,last_name&sort=last_name', null, null, false)
+    this.authorService.getApiAuthors('/authors?page[size]=0&fields[author]=first_name,last_name&sort=last_name')
       .subscribe(response => {
 
       this.searchAuthors = response.authors;

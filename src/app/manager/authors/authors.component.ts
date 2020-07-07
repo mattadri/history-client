@@ -76,7 +76,7 @@ export class AuthorsComponent implements OnInit {
   openAuthorDetails(author, contentPanel) {
     this.author = author;
 
-    this.authorLink = this.author.id;
+    this.authorLink = this.author.id.toString();
 
     if (contentPanel.opened) {
       contentPanel.close().then(() => {

@@ -52,7 +52,7 @@ export class AuthorInterceptor implements HttpInterceptor {
         } else if ((req.headers.get('type') === 'author')) {
           this.author = new Author();
           this.author.initializeAuthor();
-          this.author.mapAuthor(event.body.data);
+          this.author.mapAuthor(event.body.data, null);
 
           event.body = this.author;
         }
