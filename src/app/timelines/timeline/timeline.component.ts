@@ -29,6 +29,7 @@ export class TimelineComponent implements OnInit {
   public timeline: Timeline;
 
   public isTimelineEditMode: boolean;
+  public isAddDescriptionMode: boolean;
 
   public cursorLineActive: boolean;
   public cursorLineStyles: object;
@@ -93,6 +94,7 @@ export class TimelineComponent implements OnInit {
               private eventService: EventService,
               public dialog: MatDialog) {
     this.isTimelineEditMode = false;
+    this.isAddDescriptionMode = false;
 
     this.cursorLineActive = false;
     this.cursorLineDatePosition = 'above';
@@ -117,9 +119,6 @@ export class TimelineComponent implements OnInit {
       this.setPersons();
 
       this.getRelatedEvents(null, false);
-
-      console.log('Timeline: ', this.timeline);
-      console.log('Category Events: ', this.categoryEvents);
     });
   }
 
@@ -473,7 +472,6 @@ export class TimelineComponent implements OnInit {
   }
 
   setTimelineEventLocations() {
-    console.log('seeting loction');
     // if the timeline is less than some minimum length create percentages based on month instead of year
     if (this.timelineLength <= this.minYearToMonths) {
       const timelineLengthInMonths = this.timelineLength * 12;
@@ -613,6 +611,12 @@ export class TimelineComponent implements OnInit {
     this.isTimelineEditMode = false;
   }
 
+  saveDescription(content) {
+    this.timeline.description = content;
+
+    this.editTimeline();
+  }
+
   editTimeline() {
     this.timelineService.patchApiTimeline(this.timeline).subscribe(() => {
       this.isTimelineEditMode = false;
@@ -626,7 +630,6 @@ export class TimelineComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(event => {
       if (event) {
-        console.log(event);
         this.eventService.createApiEvent(event).subscribe(newEventResponse => {
           event.id = newEventResponse.data.id;
 

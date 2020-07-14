@@ -1,0 +1,32 @@
+<p>
+  Select a timeline
+</p>
+
+<br>
+
+<div>
+  <form #timelineSelectForm="ngForm">
+    <section>
+      <div>
+        <mat-form-field class="app-field-reference" style="width: 100%">
+          <input
+            type="text"
+            placeholder="Timeline"
+            aria-label="Timeline"
+            matInput
+            [formControl]="timelinesAutocompleteControl"
+            [matAutocomplete]="auto">
+
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTimeline" (optionSelected)="saveTimeline()">
+            <mat-option *ngFor="let timeline of timelinesFilteredOptions | async" [value]="timeline">
+              {{timeline.label}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <button mat-flat-button color="primary" [mat-dialog-close]="responseObject">Select</button>
+    <button mat-flat-button color="secondary" (click)="onNoClick()">Cancel</button>
+  </form>
+</div>

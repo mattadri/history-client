@@ -1,4 +1,4 @@
-<div class="app-body-content">
+<div class="app-body-content" *ngIf="timeline">
   <div class="app-content-toolbar">
     <h1 *ngIf="timeline && !isTimelineEditMode">{{timeline.label}}</h1>
 
@@ -13,10 +13,10 @@
           [(ngModel)]="timeline.label" />
       </mat-form-field>
 
-      <div id="essay-editor"
-           (froalaInit)="initializeTimelineDescriptionEditor($event)"
-           [(froalaModel)]="timeline.description"
-           [froalaEditor]></div>
+      <!--<div id="essay-editor"-->
+           <!--(froalaInit)="initializeTimelineDescriptionEditor($event)"-->
+           <!--[(froalaModel)]="timeline.description"-->
+           <!--[froalaEditor]></div>-->
 
       <button mat-icon-button class="material-icons" (click)="editTimeline()">
         save
@@ -34,37 +34,63 @@
     <h3 *ngIf="timeline && !isTimelineEditMode">Spans {{this.timelineSpanInYears}} years</h3>
   </div>
 
-  <span *ngIf="timeline && timeline.description" [innerHtml]="timeline.description | safeHtml"></span>
-
-  <div id="timeline-container" class="timeline-container" (dblclick)="showCursorLine($event)">
-    <app-category
-      *ngFor="let category of categoryEvents"
-      [category]="category"
-      [persons]="persons"
-      [timeline]="timeline"
-      [categoryEvents]="categoryEvents"></app-category>
-
-    <div class="timeline-timeframe">
-      <div class="segment" *ngFor="let segment of timeframe" [ngStyle]="{left: segment.leftPercentage}">
-        <div class="segment-year">{{segment.year}}</div>
-      </div>
-    </div>
-
-    <div class="timeline-cursor-line"
-         *ngIf="cursorLineActive"
-         [ngStyle]="cursorLineStyles"
-         #tooltip="matTooltip"
-         matTooltip="{{cursorLineDate}}"
-         [matTooltipPosition]="cursorLineDatePosition"
-         (mouseout)="showCursorTooltip(tooltip).then()">
-    </div>
+  <div *ngIf="!timeline.description">
+    <button mat-flat-button color="secondary" (click)="isAddDescriptionMode = true">+ Add a Description</button>
   </div>
+
+  <app-editor
+    *ngIf="isAddDescriptionMode"
+    [content]="timeline.description"
+    [autoEdit]="true"
+    [isNote]="false"
+    [isEditable]="true"
+    (saveContent)="saveDescription($event)">
+  </app-editor>
+
+  <app-editor
+    *ngIf="!isAddDescriptionMode"
+    [content]="timeline.description"
+    [autoEdit]="false"
+    [isNote]="false"
+    [isEditable]="true"
+    (saveContent)="saveDescription($event)">
+  </app-editor>
+
+  <!--<div id="timeline-container" class="timeline-container" (dblclick)="showCursorLine($event)">-->
+    <!--<app-category-->
+      <!--*ngFor="let category of categoryEvents"-->
+      <!--[category]="category"-->
+      <!--[persons]="persons"-->
+      <!--[timeline]="timeline"-->
+      <!--[categoryEvents]="categoryEvents"></app-category>-->
+
+    <!--<div class="timeline-timeframe">-->
+      <!--<div class="segment" *ngFor="let segment of timeframe" [ngStyle]="{left: segment.leftPercentage}">-->
+        <!--<div class="segment-year">{{segment.year}}</div>-->
+      <!--</div>-->
+    <!--</div>-->
+
+    <!--<div class="timeline-cursor-line"-->
+         <!--*ngIf="cursorLineActive"-->
+         <!--[ngStyle]="cursorLineStyles"-->
+         <!--#tooltip="matTooltip"-->
+         <!--matTooltip="{{cursorLineDate}}"-->
+         <!--[matTooltipPosition]="cursorLineDatePosition"-->
+         <!--(mouseout)="showCursorTooltip(tooltip).then()">-->
+    <!--</div>-->
+  <!--</div>-->
+
+  <app-timeline-display
+    *ngIf="timeline"
+    [timeline]="timeline"
+    [categoryEvents]="categoryEvents">
+  </app-timeline-display>
 
   <mat-tab-group>
     <mat-tab label="Events">
       <div class="grid-list" *ngIf="timeline">
         <button mat-flat-button class="material-icons" color="primary" (click)="createEvent()">add</button>
-        
+
         <app-timeline-event-list
           *ngFor="let event of timeline.events"
           [event]="event"

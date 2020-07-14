@@ -17,9 +17,12 @@ import {ConfirmRemovalComponent} from '../../../../utilities/confirm-removal/con
 export class EventDetailsNoteComponent implements OnInit {
   @Input() public note: EventNote;
   @Input() public event: Event;
+  @Input() public autoEdit: boolean;
   @Input() public showToolbar: boolean;
+  @Input() public isCreate: boolean;
 
   @Output() private removeNote: EventEmitter<EventNote>;
+  @Output() private createNote: EventEmitter<EventNote>;
 
   public isEditNoteMode: boolean;
 
@@ -27,6 +30,7 @@ export class EventDetailsNoteComponent implements OnInit {
     this.isEditNoteMode = false;
 
     this.removeNote = new EventEmitter<EventNote>();
+    this.createNote = new EventEmitter<EventNote>();
   }
 
   ngOnInit() { }
@@ -39,10 +43,27 @@ export class EventDetailsNoteComponent implements OnInit {
     this.isEditNoteMode = false;
   }
 
-  saveNote() {
-    this.eventService.patchApiEventNote(this.note, this.event).subscribe(() => {
-      this.setNoteViewMode();
-    });
+  saveNote(content) {
+    if (this.isCreate) {
+      this.note.note = content;
+
+      this.eventService.createApiEventNote(this.note, this.event).subscribe(response => {
+        this.note.id = response.data.id;
+
+        this.event.notes.unshift(this.note);
+
+        this.isCreate = false;
+
+        this.setNoteViewMode();
+
+        this.createNote.emit();
+      });
+
+    } else {
+      this.eventService.patchApiEventNote(this.note, this.event).subscribe(() => {
+        this.setNoteViewMode();
+      });
+    }
   }
 
   doDeleteNote() {

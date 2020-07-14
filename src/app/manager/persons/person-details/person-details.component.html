@@ -17,7 +17,11 @@
           {{person.formattedBirth}} - {{person.formattedDeath}} ({{person.age}} years old)
         </div>
 
-        <div class="text-intro" [innerHTML]="person.description"></div>
+        <app-editor
+          [content]="person.description"
+          (saveContent)="saveDescription($event)"
+          [isEditable]="true">
+        </app-editor>
       </div>
 
       <div *ngIf="isEditPersonMode">
@@ -152,15 +156,6 @@
                 </mat-autocomplete>
               </mat-form-field>
             </section>
-
-            <section class="app-section">
-              <label>Description</label>
-
-              <div class="app-card-note-body-content">
-                <div [(froalaModel)]="person.description"
-                    [froalaEditor]></div>
-              </div>
-            </section>
           </div>
         </form>
       </div>
@@ -206,24 +201,24 @@
 
       <!-- Add New Note -->
       <div *ngIf="isAddNoteMode" class="app-card-note">
-        <form class="app-card-note-edit">
-          <div class=app-card-note-body-meta>
-            <h3>New Note</h3>
-            <div class="app-card-note-toolbar">
-              <button mat-flat-button color="primary" (click)="saveNote()">Save</button>
-              <button mat-flat-button color="secondary" (click)="deactivateAddNoteMode()">Cancel</button>
-            </div>
-          </div>
-
-          <div class="app-card-note-body-content">
-            <div [(froalaModel)]="note.note"
-                [froalaEditor]></div>
-          </div>
-        </form>
+        <app-person-details-note
+          [note]="note"
+          [person]="person"
+          [showToolbar]="true"
+          [autoEdit]="true"
+          [isCreate]="true"
+          (createNote)="deactivateAddNoteMode()">
+        </app-person-details-note>
       </div>
 
       <!-- Display Notes-->
-      <app-person-details-note *ngFor="let note of person.notes" [note]="note" [person]="person" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-person-details-note>
+      <app-person-details-note
+        *ngFor="let note of person.notes"
+        [note]="note"
+        [person]="person"
+        [showToolbar]="true"
+        (removeNote)="deleteNote($event)">
+      </app-person-details-note>
 
     </div>
   </div>

@@ -198,6 +198,12 @@ export class PersonDetailsComponent implements OnInit {
     }
   }
 
+  saveDescription(content) {
+    this.person.description = content;
+
+    this.editPerson();
+  }
+
   editPerson() {
     return this.personService.patchApiPerson(this.person).subscribe(() => {
       this.isEditPersonMode = false;

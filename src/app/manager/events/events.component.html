@@ -61,7 +61,7 @@
 
         <section class="app-section">
           <label>Description</label>
-          <span *ngIf="event.description" [innerHTML]="event.description"></span>
+          <app-editor [isEditable]="false" [content]="event.description"></app-editor>
         </section>
 
         <section class="app-section">

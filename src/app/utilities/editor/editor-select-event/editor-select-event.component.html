@@ -1,0 +1,32 @@
+<p>
+  Select an event
+</p>
+
+<br>
+
+<div>
+  <form #eventSelectForm="ngForm">
+    <section>
+      <div>
+        <mat-form-field class="app-field-reference" style="width: 100%">
+          <input
+            type="text"
+            placeholder="Event"
+            aria-label="Event"
+            matInput
+            [formControl]="eventsAutocompleteControl"
+            [matAutocomplete]="auto">
+
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayEvent" (optionSelected)="saveEvent()">
+            <mat-option *ngFor="let event of eventsFilteredOptions | async" [value]="event">
+              {{event.label}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <button mat-flat-button color="primary" [mat-dialog-close]="responseObject">Select</button>
+    <button mat-flat-button color="secondary" (click)="onNoClick()">Cancel</button>
+  </form>
+</div>

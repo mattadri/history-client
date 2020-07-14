@@ -1,0 +1,68 @@
+<p>
+  Select a source
+</p>
+
+<br>
+
+<div>
+  <form #sourceSelectForm="ngForm">
+    <section>
+      <div>
+        <mat-form-field class="app-field-reference" style="width: 100%">
+          <input
+            type="text"
+            placeholder="Source"
+            aria-label="Source"
+            matInput
+            [formControl]="sourcesAutocompleteControl"
+            [matAutocomplete]="auto">
+
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
+            <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+              {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <section>
+      <div>
+        <mat-form-field style="width: 100%">
+          <input
+            type="text"
+            placeholder="Chapter"
+            name="source_chapter"
+            #chapter="ngModel"
+            matInput
+            [(ngModel)]="responseObject.chapter">
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field>
+          <input
+            type="number"
+            placeholder="Start Page"
+            name="source_start_page"
+            matInput
+            #startPage="ngModel"
+            [(ngModel)]="responseObject.startPage">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input
+            type="number"
+            placeholder="End Page"
+            name="source_end_page"
+            matInput
+            #endPage="ngModel"
+            [(ngModel)]="responseObject.endPage">
+        </mat-form-field>
+      </div>
+    </section>
+
+    <button mat-flat-button color="primary" [mat-dialog-close]="responseObject">Select</button>
+    <button mat-flat-button color="secondary" (click)="onNoClick()">Cancel</button>
+  </form>
+</div>

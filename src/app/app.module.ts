@@ -112,6 +112,15 @@ import { QuickBrainstormComponent } from './brainstorms/quick-brainstorm/quick-b
 import { QuickBrainstormTopicComponent } from './brainstorms/brainstorm/quick-brainstorm-topic/quick-brainstorm-topic.component';
 import { QuickAuthorComponent } from './manager/authors/quick-author/quick-author.component';
 import { AuthorDetailsComponent } from './manager/authors/author-details/author-details.component';
+import { EditorComponent } from './utilities/editor/editor.component';
+import { EditorSelectSourceComponent } from './utilities/editor/editor-select-source/editor-select-source.component';
+import { MessageDialogComponent } from './utilities/message-dialog/message-dialog.component';
+import { EditorSelectEventComponent } from './utilities/editor/editor-select-event/editor-select-event.component';
+import { EditorSelectPersonComponent } from './utilities/editor/editor-select-person/editor-select-person.component';
+import { EditorSelectTimelineComponent } from './utilities/editor/editor-select-timeline/editor-select-timeline.component';
+import { EditorSelectChartComponent } from './utilities/editor/editor-select-chart/editor-select-chart.component';
+import { EssayChartDetailsComponent } from './essays/essay-chart-details/essay-chart-details.component';
+import { TimelineDisplayComponent } from './timelines/timeline/timeline-display/timeline-display.component';
 
 @NgModule({
   declarations: [
@@ -180,7 +189,16 @@ import { AuthorDetailsComponent } from './manager/authors/author-details/author-
     QuickBrainstormComponent,
     QuickBrainstormTopicComponent,
     QuickAuthorComponent,
-    AuthorDetailsComponent
+    AuthorDetailsComponent,
+    EditorComponent,
+    EditorSelectSourceComponent,
+    MessageDialogComponent,
+    EditorSelectEventComponent,
+    EditorSelectPersonComponent,
+    EditorSelectTimelineComponent,
+    EditorSelectChartComponent,
+    EssayChartDetailsComponent,
+    TimelineDisplayComponent
   ],
   entryComponents: [
     TimelineEventDetailsComponent,
@@ -189,12 +207,19 @@ import { AuthorDetailsComponent } from './manager/authors/author-details/author-
     EssayEventDetailsComponent,
     EssayPersonDetailsComponent,
     EssayTimelineDetailsComponent,
+    EssayChartDetailsComponent,
     ConfirmRemovalComponent,
     QuickEventComponent,
     QuickPersonComponent,
     QuickBrainstormComponent,
     QuickBrainstormTopicComponent,
-    QuickAuthorComponent
+    QuickAuthorComponent,
+    EditorSelectSourceComponent,
+    EditorSelectEventComponent,
+    EditorSelectPersonComponent,
+    EditorSelectTimelineComponent,
+    EditorSelectChartComponent,
+    MessageDialogComponent
   ],
   imports: [
     BrowserModule,

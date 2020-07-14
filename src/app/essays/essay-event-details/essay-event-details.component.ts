@@ -17,5 +17,4 @@ export class EssayEventDetailsComponent implements OnInit {
               @Inject(MAT_BOTTOM_SHEET_DATA) public data: DialogData) { }
 
   ngOnInit() { }
-
 }

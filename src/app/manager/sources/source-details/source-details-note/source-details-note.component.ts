@@ -18,8 +18,11 @@ export class SourceDetailsNoteComponent implements OnInit {
   @Input() public note: SourceNote;
   @Input() public source: Source;
   @Input() public showToolbar: boolean;
+  @Input() public autoEdit: boolean;
+  @Input() public isCreate: boolean;
 
   @Output() private removeNote: EventEmitter<SourceNote>;
+  @Output() private createNote: EventEmitter<SourceNote>;
 
   public isEditNoteMode: boolean;
 
@@ -27,6 +30,7 @@ export class SourceDetailsNoteComponent implements OnInit {
     this.isEditNoteMode = false;
 
     this.removeNote = new EventEmitter<SourceNote>();
+    this.createNote = new EventEmitter<SourceNote>();
   }
 
   ngOnInit() { }
@@ -39,10 +43,29 @@ export class SourceDetailsNoteComponent implements OnInit {
     this.isEditNoteMode = false;
   }
 
-  saveNote() {
-    this.sourceService.patchApiSourceNote(this.source, this.note).subscribe(() => {
-      this.setNoteViewMode();
-    });
+  saveNote(content) {
+    if (this.isCreate) {
+      this.note.note = content;
+
+      this.sourceService.createApiSourceNote(this.note, this.source).subscribe(response => {
+        this.note.id = response.data.id;
+
+        this.source.notes.unshift(this.note);
+
+        this.isCreate = false;
+
+        this.setNoteViewMode();
+
+        this.createNote.emit();
+      });
+
+    } else {
+      this.note.note = content;
+
+      this.sourceService.patchApiSourceNote(this.source, this.note).subscribe(() => {
+        this.setNoteViewMode();
+      });
+    }
   }
 
   doDeleteNote() {

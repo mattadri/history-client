@@ -5,7 +5,5 @@
       <span>{{event.formattedStartYear}}</span>
       <span *ngIf="event.formattedStartYear != event.formattedEndYear"> - {{event.formattedEndYear}}</span>
     </div>
-    <div class="mat-card-content" *ngIf="event.description" [innerHTML]="event.description"></div>
-
   </mat-card-content>
 </mat-card>

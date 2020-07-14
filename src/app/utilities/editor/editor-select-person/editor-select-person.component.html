@@ -1,0 +1,34 @@
+<p>
+  Select a person
+</p>
+
+<br>
+
+<div>
+  <form #eventSelectForm="ngForm">
+    <section>
+      <div>
+        <mat-form-field class="app-field-reference" style="width: 100%">
+          <input
+            type="text"
+            placeholder="Person"
+            aria-label="Person"
+            matInput
+            [formControl]="personsAutocompleteControl"
+            [matAutocomplete]="auto">
+
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayPerson" (optionSelected)="savePerson()">
+            <mat-option *ngFor="let person of personsFilteredOptions | async" [value]="person">
+              {{person.firstName}}
+              <span *ngIf="person.middleName"> {{person.middleName}}</span>
+              <span *ngIf="person.lastName"> {{person.lastName}}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <button mat-flat-button color="primary" [mat-dialog-close]="responseObject">Select</button>
+    <button mat-flat-button color="secondary" (click)="onNoClick()">Cancel</button>
+  </form>
+</div>

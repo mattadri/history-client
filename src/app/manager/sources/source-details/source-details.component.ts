@@ -34,8 +34,7 @@ export class SourceDetailsComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   initializeNewNote() {
     this.note = new SourceNote();

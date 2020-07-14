@@ -1,0 +1,40 @@
+<div *ngIf="isNote" class="app-body-content">
+  <div class="app-card-content">
+    <div class="app-essay-section essay-content" *ngIf="!isEditMode" >
+        <h2>
+          <button *ngIf="canDelete" mat-flat-button class="material-icons" (click)="doDeleteNote()">delete</button>
+        </h2>
+
+      <div (dblclick)="setEditMode()" [innerHtml]="displayContent | safeHtml"></div>
+    </div>
+
+
+    <div *ngIf="isEditMode" class="app-essay-edit-mode">
+      <div class="app-content-toolbar">
+        <h2>Content</h2>
+        <button mat-flat-button class="material-icons" (click)="doSaveContent()">save</button>
+        <button mat-flat-button class="material-icons" (click)="setViewMode()">close</button>
+      </div>
+
+      <div (froalaInit)="initializeEditor($event)"
+           [(froalaModel)]="content"
+           [froalaEditor]></div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!isNote">
+  <div *ngIf="!isEditMode" (dblclick)="setEditMode()" [innerHtml]="displayContent | safeHtml"></div>
+
+  <div *ngIf="isEditMode" class="app-essay-edit-mode">
+    <div class="app-content-toolbar">
+      <h2>Content</h2>
+      <button mat-flat-button class="material-icons" (click)="doSaveContent()">save</button>
+      <button mat-flat-button class="material-icons" (click)="setViewMode()">close</button>
+    </div>
+
+    <div (froalaInit)="initializeEditor($event)"
+         [(froalaModel)]="content"
+         [froalaEditor]></div>
+  </div>
+</div>

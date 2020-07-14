@@ -13,6 +13,11 @@
           </a>
         </div>
       </div>
+
+      <app-timeline-display
+        *ngIf="data.timeline"
+        [timeline]="data.timeline">
+      </app-timeline-display>
     </div>
   </div>
 </div>

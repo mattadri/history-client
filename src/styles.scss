@@ -9,3 +9,8 @@
 @import 'styles/_grid-list.scss';
 @import 'styles/_search.scss';
 @import 'styles/_drawer-bottom.scss';
+
+// makes the bottomsheet that shows the timeline when clicked from text link wide
+.timeline-bottomsheet-width {
+  width: 100vw;
+}

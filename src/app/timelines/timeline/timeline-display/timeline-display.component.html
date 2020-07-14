@@ -1,0 +1,23 @@
+<div id="timeline-container" class="timeline-container" (dblclick)="showCursorLine($event)">
+  <app-category
+    *ngFor="let category of categoryEvents"
+    [category]="category"
+    [persons]="persons"
+    [timeline]="timeline"
+    [categoryEvents]="categoryEvents"></app-category>
+
+  <div class="timeline-timeframe">
+    <div class="segment" *ngFor="let segment of timeframe" [ngStyle]="{left: segment.leftPercentage}">
+      <div class="segment-year">{{segment.year}}</div>
+    </div>
+  </div>
+
+  <div class="timeline-cursor-line"
+       *ngIf="cursorLineActive"
+       [ngStyle]="cursorLineStyles"
+       #tooltip="matTooltip"
+       matTooltip="{{cursorLineDate}}"
+       [matTooltipPosition]="cursorLineDatePosition"
+       (mouseout)="showCursorTooltip(tooltip).then()">
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<p>
+  Select a chart
+</p>
+
+<br>
+
+<div>
+  <form #chartSelectForm="ngForm">
+    <section>
+      <div>
+        <mat-form-field class="app-field-reference" style="width: 100%">
+          <input
+            type="text"
+            placeholder="Chart"
+            aria-label="Chart"
+            matInput
+            [formControl]="chartsAutocompleteControl"
+            [matAutocomplete]="auto">
+
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayChart" (optionSelected)="saveChart()">
+            <mat-option *ngFor="let chart of chartsFilteredOptions | async" [value]="chart">
+              {{chart.options.title.text}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <button mat-flat-button color="primary" [mat-dialog-close]="responseObject">Select</button>
+    <button mat-flat-button color="secondary" (click)="onNoClick()">Cancel</button>
+  </form>
+</div>

@@ -158,9 +158,13 @@ export class EventDetailsComponent implements OnInit {
     this.event.source = this.sourcesAutocompleteControl.value;
   }
 
-  editEvent() {
-    console.log('Editing event: ', this.event);
+  saveDescription(content) {
+    this.event.description = content;
 
+    this.editEvent();
+  }
+
+  editEvent() {
     return this.eventService.patchApiEvent(this.event).subscribe(() => {
       this.isEditEventMode = false;
     });

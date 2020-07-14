@@ -1,0 +1,51 @@
+@import '../../../styles/_drawer-side.scss';
+@import '../../../styles/_sections.scss';
+@import '../../../styles/_cards.scss';
+
+p {
+  color: $color-darkest;
+}
+
+// styles for links in essay content
+.content-reference {
+  color: blue;
+}
+
+.content-event {
+  color: green;
+}
+
+.content-person {
+  color: purple;
+}
+
+.content-timeline {
+  color: red;
+}
+
+.content-chart {
+  color: yellow;
+}
+
+
+.app-essay-section {
+  margin-bottom: 1rem;
+
+  h2 .material-icons {
+    font-size: 0.9em;
+  }
+}
+
+.app-essay-edit-mode {
+  background-color: $color-gray-scale-100;
+  margin-left: -3rem;
+  margin-right: -3rem;
+  padding: 1rem 3rem 2rem 3rem;
+
+  .app-content-toolbar {
+    margin-bottom: 0;
+    h2 {
+      flex-grow: 1;
+    }
+  }
+}

@@ -14,8 +14,7 @@ export interface DialogData {
 export class EssayTimelineDetailsComponent implements OnInit {
   public timelineLink: string;
 
-  constructor(private dialogRef: MatBottomSheetRef<EssayTimelineDetailsComponent>,
-              @Inject(MAT_BOTTOM_SHEET_DATA) public data: DialogData) { }
+  constructor(@Inject(MAT_BOTTOM_SHEET_DATA) public data: DialogData) { }
 
   ngOnInit() {
     this.timelineLink = '/timeline/' + this.data.timeline.id.toString();

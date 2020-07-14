@@ -24,50 +24,24 @@
 
       <!-- Add New Note -->
       <div *ngIf="isAddNoteMode" class="app-card-note">
-        <form class="app-card-note-edit">
-          <div class=app-card-note-body-meta>
-            <h3>New Note</h3>
-            <div class="app-card-note-toolbar">
-              <button mat-flat-button color="primary" (click)="saveNote()">Save</button>
-              <button mat-flat-button color="secondary" (click)="deactivateAddNoteMode()">Cancel</button>
-            </div>
-          </div>
-
-          <div class="app-card-note-body-content">
-            <div [(froalaModel)]="note.note"
-                [froalaEditor]>
-            </div>
-
-            <section class="app-section horizontal">
-              <section class="app-subsection">
-                <mat-form-field>
-                    <input
-                      matInput
-                      placeholder="Chapter"
-                      name="reference_chapter"
-                      #eventLabel="ngModel"
-                      [(ngModel)]="note.chapter">
-                  </mat-form-field>
-              </section>
-
-              <section class="app-subsection">
-                <mat-form-field class="app-field-page">
-                    <input
-                      matInput
-                      type="number"
-                      placeholder="Page"
-                      name="reference_page"
-                      #eventLabel="ngModel"
-                      [(ngModel)]="note.page">
-                  </mat-form-field>
-              </section>
-            </section>
-          </div>
-        </form>
+        <app-source-details-note
+          [note]="note"
+          [source]="source"
+          [showToolbar]="true"
+          [autoEdit]="true"
+          [isCreate]="true"
+          (createNote)="deactivateAddNoteMode()">
+        </app-source-details-note>
       </div>
 
       <!-- Display Notes -->
-      <app-source-details-note *ngFor="let note of source.notes" [note]="note" [source]="source" [showToolbar]="true" (removeNote)="deleteNote($event)"></app-source-details-note>
+      <app-source-details-note
+        *ngFor="let note of source.notes"
+        [note]="note"
+        [source]="source"
+        [showToolbar]="true"
+        (removeNote)="deleteNote($event)">
+      </app-source-details-note>
 
     </div>
   </div>
