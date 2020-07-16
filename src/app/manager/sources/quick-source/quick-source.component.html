@@ -1,0 +1,57 @@
+<form #sourceForm="ngForm">
+  <div class="app-drawer-header">
+    <div class="app-drawer-title">
+      <div class="app-drawer-subheading">New Source</div>
+    </div>
+    <div class="app-drawer-tools">
+      <button mat-icon-button type="button" class="material-icons" [mat-dialog-close]="source">save</button>
+      <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
+    </div>
+  </div>
+
+  <div class="app-drawer-content">
+    <section class="app-section">
+      <mat-form-field style="width: 100%">
+        <input
+          type="text"
+          placeholder="Title"
+          matInput
+          #sourceTitleField
+          name="source_title"
+          id="source_title"
+          (focusout)="saveSourceTitle(sourceTitleField.value)"
+          [formControl]="sourcesAutocompleteControl"
+          [matAutocomplete]="sourceTitleAutoComplete">
+
+        <mat-autocomplete #sourceTitleAutoComplete="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSourceTitle(null)">
+          <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+            {{source.title}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field style="width: 100%">
+        <input
+          matInput
+          placeholder="Subtitle"
+          name="source_subtitle"
+          [(ngModel)]="source.subTitle" />
+      </mat-form-field>
+    </section>
+
+    <section class="app-section inline">
+      <label>Beginning</label>
+
+      <div class="app-field-group">
+        <mat-form-field class="app-field-year">
+          <input
+            matInput
+            placeholder="Published Year"
+            name="source_published_year"
+            required
+            [(ngModel)]="source.publishedYear"/>
+        </mat-form-field>
+      </div>
+    </section>
+  </div>
+</form>

@@ -46,6 +46,7 @@ export class SourceInterceptor implements HttpInterceptor {
           event.body = this.body;
         } else if (req.headers.get('type') === 'source') {
           this.source = new Source();
+          this.source.initializeSource();
           this.source.mapSource(event.body.data);
 
           event.body = this.source;

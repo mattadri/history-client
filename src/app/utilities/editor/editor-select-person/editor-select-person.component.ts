@@ -33,7 +33,9 @@ export class EditorSelectPersonComponent implements OnInit {
 
     this.loadAutoComplete = false;
 
-    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,middle_name,last_name').subscribe(persons => {
+    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,middle_name,last_name', null, null, false)
+      .subscribe(persons => {
+
       for (const person of persons.persons) {
         this.personService.setPerson(person);
       }

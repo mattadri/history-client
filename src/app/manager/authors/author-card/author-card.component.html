@@ -10,6 +10,6 @@
 <!-- shows if displayed on the reference -->
 <div class="app-section list-item" *ngIf="isSourceAttachment">
   <div class="app-label">{{author.firstName}}<span *ngIf="author.lastName"> {{author.lastName}}</span></div>
-  <button mat-icon-button class="material-icons" (click)="doRemoveAuthorFromSource()">delete</button>
+  <button mat-icon-button type="button" class="material-icons" (click)="doRemoveAuthorFromSource()">delete</button>
 </div>
 

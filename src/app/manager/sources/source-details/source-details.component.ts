@@ -1,10 +1,20 @@
 import { Component, OnInit } from '@angular/core';
+import {FormControl} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+
 import {SourceService} from '../../../services/source.service';
+import {EraService} from '../../../services/era.service';
+import {MonthService} from '../../../services/month.service';
+import {AuthorService} from '../../../services/author.service';
 
 import {Source} from '../../../models/source';
 import {SourceNote} from '../../../models/source-note';
+import {Era} from '../../../models/era';
+import {Month} from '../../../models/month';
+import {Author} from '../../../models/author';
 
 @Component({
   selector: 'app-source-details',
@@ -14,16 +24,62 @@ import {SourceNote} from '../../../models/source-note';
 export class SourceDetailsComponent implements OnInit {
   public source: Source;
   public note: SourceNote;
+  public author: Author;
+
+  public eras: Era[];
+  public months: Month[];
 
   public displayAuthors: string;
 
   public isAddNoteMode: boolean;
+  public isAddAuthorMode: boolean;
+  public isEditSourceMode: boolean;
+
+  public authors: Author[];
+
+  public authorsAutocompleteControl = new FormControl();
+  public authorsFilteredOptions: Observable<Author[]>;
+  public authorFieldDisplayValue: string;
 
   constructor(private route: ActivatedRoute,
-              private sourceService: SourceService) {
+              private sourceService: SourceService,
+              private eraService: EraService,
+              private monthService: MonthService,
+              private authorService: AuthorService) {
+
     const sourceId = this.route.snapshot.paramMap.get('id');
 
     this.isAddNoteMode = false;
+    this.isEditSourceMode = false;
+    this.isAddAuthorMode = true;
+
+    this.eras = [];
+    this.months = [];
+
+    this.authorService.getApiAuthors('/authors?page[size]=0&fields[author]=first_name,last_name').subscribe(authors => {
+        for (const author of authors.authors) {
+          this.authorService.setAuthor(author);
+        }
+
+        this.authors = this.authorService.getAuthors();
+
+        this.authorsFilteredOptions = this.authorsAutocompleteControl.valueChanges.pipe(
+          startWith(''),
+          map(author => this._filterAuthors(author))
+        );
+      });
+
+    this.eraService.getEras().subscribe(eras => {
+      for (const era of eras.data) {
+        this.eras.push(new Era().mapEra(era));
+      }
+    });
+
+    this.monthService.getMonths().subscribe(months => {
+      for (const month of months.data) {
+        this.months.push(new Month().mapMonth(month));
+      }
+    });
 
     this.sourceService.getApiSource(Number.parseInt(sourceId, 10)).subscribe(source => {
       this.source = source;
@@ -61,6 +117,26 @@ export class SourceDetailsComponent implements OnInit {
     }
   }
 
+  editSource() {
+    return this.sourceService.patchApiSource(this.source).subscribe(() => {
+      this.deactivateEditSourceMode();
+
+      this.makeAuthorsDisplay();
+
+      this.source.formatPublishedDate();
+    });
+  }
+
+  activateEditSourceMode() {
+    this.isEditSourceMode = true;
+  }
+
+  deactivateEditSourceMode() {
+    this.makeAuthorsDisplay();
+
+    this.isEditSourceMode = false;
+  }
+
   activateAddNoteMode() {
     this.isAddNoteMode = true;
 
@@ -69,6 +145,30 @@ export class SourceDetailsComponent implements OnInit {
 
   deactivateAddNoteMode() {
     this.isAddNoteMode = false;
+  }
+
+  activateAddAuthorMode() {
+    this.isAddAuthorMode = true;
+  }
+
+  deactivateAddAuthorMode() {
+    this.isAddAuthorMode = false;
+  }
+
+  selectMonth(option, value) {
+    if (value && option) {
+      return option.id === value.id;
+    } else {
+      return null;
+    }
+  }
+
+  selectEra(option, value) {
+    if (value && option) {
+      return option.id === value.id;
+    } else {
+      return null;
+    }
   }
 
   saveNote() {
@@ -82,7 +182,7 @@ export class SourceDetailsComponent implements OnInit {
 
       this.initializeNewNote();
 
-      this.isAddNoteMode = false;
+      this.deactivateAddNoteMode();
     });
   }
 
@@ -90,5 +190,45 @@ export class SourceDetailsComponent implements OnInit {
     this.sourceService.removeApiNote(note).subscribe(() => {
       SourceService.removeNote(this.source, note);
     });
+  }
+
+  saveAuthor() {
+    this.author = this.authorsAutocompleteControl.value;
+
+    return this.sourceService.createApiSourceAuthor(this.source, this.author).subscribe(response => {
+      this.author.id = response.data.id;
+
+      this.isAddAuthorMode = false;
+
+      this.source.authors.push(this.author);
+    });
+  }
+
+  removeAuthor(author: Author) {
+    this.sourceService.removeApiSourceAuthor(author).subscribe(() => {
+      this.sourceService.removeAuthor(this.source, author);
+    });
+  }
+
+  displayAuthor(author: Author) {
+    if (author) {
+      this.authorFieldDisplayValue = author.firstName;
+
+      if (author.lastName) {
+        this.authorFieldDisplayValue += ' ' + author.lastName;
+      }
+    }
+
+    return this.authorFieldDisplayValue;
+  }
+
+  private _filterAuthors(filterValue: any): Author[] {
+    if (filterValue && typeof filterValue === 'string') {
+      filterValue = filterValue.toLowerCase();
+
+      return this.authors.filter(author => {
+        return author.firstName.toLowerCase().includes(filterValue) || author.lastName.toLowerCase().includes(filterValue);
+      });
+    }
   }
 }

@@ -46,7 +46,9 @@ export class ThoughtComponent implements OnInit {
   ngOnInit() {
   }
 
-  saveThought() {
+  saveThought(thoughtContent) {
+    this.thought.thought = thoughtContent;
+
     if (!this.topic) {
       this.brainstormService.patchApiBrainstormThought(this.thought).subscribe(() => { });
     } else {

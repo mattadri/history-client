@@ -23,6 +23,12 @@ export class TimelineDisplayComponent implements OnInit {
   public cursorLineDatePosition: string;
   public timeframe: any[];
   public persons: Person[];
+  public timelineStart: number;
+  public timelineEnd: number;
+  public timelineSpanInYears: number;
+
+  private timelineLength: number;
+  private  minYearToMonths = 11;
 
   private eventColorClasses = [
     '#39ab28',

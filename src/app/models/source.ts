@@ -14,6 +14,8 @@ export class Source {
   authors: Author[];
   notes: SourceNote[];
 
+  formattedPublishedDate: string;
+
   // Api uses JsonAPI protocol. This maps that standard to this Angular Model
   mapSource(source) {
     const month = new Month();
@@ -69,6 +71,8 @@ export class Source {
       }
     }
 
+    this.formatPublishedDate();
+
     return self;
   }
 
@@ -81,5 +85,25 @@ export class Source {
     this.publishedEra = new Era();
     this.authors = [];
     this.notes = [];
+
+    this.formattedPublishedDate = '';
+  }
+
+  formatPublishedDate() {
+    this.formattedPublishedDate = '';
+
+    if (this.publishedMonth && this.publishedMonth.label) {
+      this.formattedPublishedDate += this.publishedMonth.label;
+
+      if (this.publishedDay) {
+        this.formattedPublishedDate += ' ' + this.publishedDay.toString() + ', ' + this.publishedYear.toString();
+      } else {
+        this.formattedPublishedDate += ' ' + this.publishedYear.toString();
+      }
+    } else {
+      if (this.publishedYear) {
+        this.formattedPublishedDate += this.publishedYear.toString();
+      }
+    }
   }
 }

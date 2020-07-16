@@ -1,5 +1,10 @@
 <mat-card (click)="onLoadDetails()">
-  <mat-card-title>{{source.title}}</mat-card-title>
+  <mat-card-title>
+    {{source.title}}
+    <span *ngIf="source.subTitle">
+      <h2>{{source.subTitle}}</h2>
+    </span>
+  </mat-card-title>
   <mat-card-content>
     <div class="mat-card-subtitle">
       Published {{source.publishedYear}}

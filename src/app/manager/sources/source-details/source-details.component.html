@@ -1,12 +1,122 @@
 <div *ngIf="source">
   <div class="app-body-content app-body-darker-canvas">
     <div class="app-body-content-narrow">
-      <div class="subheading">Source</div>
-      <h1 class="no-margin-bottom">{{source.title}}</h1>
-      <h2 class="no-margin-bottom">{{source.subTitle}}</h2>
-      <div class="heading-meta">
-        <span *ngIf="source.subTitle">{{displayAuthors}}, </span>
-        <span *ngIf="source.publishedYear">{{source.publishedYear}}</span>
+      <div class="subheading">
+        Source
+        <button *ngIf="!isEditSourceMode" mat-icon-button class="material-icons" type="button" (click)="activateEditSourceMode()">edit</button>
+      </div>
+
+      <div *ngIf="!isEditSourceMode">
+        <h1 class="no-margin-bottom">{{source.title}}</h1>
+        <h2 class="no-margin-bottom">{{source.subTitle}}</h2>
+
+        <div class="heading-meta">
+          <span *ngIf="displayAuthors">{{displayAuthors}}, </span>
+          <span *ngIf="source.publishedYear">{{source.formattedPublishedDate}}</span>
+        </div>
+      </div>
+
+      <div *ngIf="isEditSourceMode">
+        <form (ngSubmit)="editSource()" #editPersonForm="ngForm">
+          <div class="app-drawer-header">
+            <div class="app-drawer-tools">
+              <button mat-icon-button type="submit" class="material-icons">save</button>
+              <button mat-icon-button type="button" class="material-icons" (click)="deactivateEditSourceMode()">close</button>
+            </div>
+          </div>
+
+          <div class="app-drawer-content">
+            <section class="app-section">
+              <mat-form-field style="width: 100%">
+                <input
+                  matInput
+                  placeholder="Title"
+                  required
+                  name="source_title"
+                  id="source_title"
+                  #sourceTitle="ngModel"
+                  [(ngModel)]="source.title" />
+              </mat-form-field>
+
+              <mat-form-field style="width: 100%">
+                <input
+                  matInput
+                  placeholder="Sub Title"
+                  name="source_sub_title"
+                  #sourceSubtitle="ngModel"
+                  [(ngModel)]="source.subTitle" />
+              </mat-form-field>
+            </section>
+
+            <section class="app-section">
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Published Day"
+                  name="source_published_day"
+                  [(ngModel)]="source.publishedDay" />
+              </mat-form-field>
+
+              <mat-form-field class="app-field-month">
+                <mat-label>Published Month</mat-label>
+                <mat-select [(ngModel)]="source.publishedMonth" name="source_published_month" [compareWith]="selectMonth">
+                  <mat-option [value]="null"></mat-option>
+                  <mat-option *ngFor="let month of months" [value]="month">{{month.label}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="app-field-year">
+                  <input
+                    matInput
+                    placeholder="Published Year"
+                    name="source_published_year"
+                    [(ngModel)]="source.publishedYear" />
+                </mat-form-field>
+
+              <mat-form-field class="app-field-era">
+                <mat-label>Published Era</mat-label>
+                <mat-select [(ngModel)]="source.publishedEra" name="source_published_era" [compareWith]="selectEra">
+                  <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </section>
+
+            <section class="app-section">
+              <div class="app-section-action">
+                <label>Author<span *ngIf="source.authors.length > 1">s</span></label>
+                <button *ngIf="!isAddAuthorMode" mat-icon-button type="button" class="material-icons" (click)="activateAddAuthorMode()">add</button>
+              </div>
+
+              <div *ngIf="isAddAuthorMode">
+                <form #authorForm="ngForm">
+                  <mat-form-field class="app-field-reference">
+                    <input
+                      type="text"
+                      placeholder="Author"
+                      aria-label="Author"
+                      matInput
+                      [formControl]="authorsAutocompleteControl"
+                      [matAutocomplete]="auto">
+
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayAuthor" (optionSelected)="saveAuthor()">
+                      <mat-option *ngFor="let author of authorsFilteredOptions | async" [value]="author">
+                        {{author.firstName}} <span *ngIf="author.lastName"> {{author.lastName}}</span>
+                      </mat-option>
+                    </mat-autocomplete>
+                  </mat-form-field>
+
+                  <button mat-flat-button type="button" color="secondary" (click)="deactivateAddAuthorMode()">Cancel</button>
+                </form>
+              </div>
+
+              <app-author-card *ngFor="let author of source.authors"
+                               [author]="author"
+                               [isSourceAttachment]="true"
+                               (removeAuthorFromSource)="removeAuthor(author)">
+              </app-author-card>
+            </section>
+          </div>
+        </form>
       </div>
     </div>
   </div>

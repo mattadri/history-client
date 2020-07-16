@@ -121,6 +121,7 @@ import { EditorSelectTimelineComponent } from './utilities/editor/editor-select-
 import { EditorSelectChartComponent } from './utilities/editor/editor-select-chart/editor-select-chart.component';
 import { EssayChartDetailsComponent } from './essays/essay-chart-details/essay-chart-details.component';
 import { TimelineDisplayComponent } from './timelines/timeline/timeline-display/timeline-display.component';
+import { QuickSourceComponent } from './manager/sources/quick-source/quick-source.component';
 
 @NgModule({
   declarations: [
@@ -198,7 +199,8 @@ import { TimelineDisplayComponent } from './timelines/timeline/timeline-display/
     EditorSelectTimelineComponent,
     EditorSelectChartComponent,
     EssayChartDetailsComponent,
-    TimelineDisplayComponent
+    TimelineDisplayComponent,
+    QuickSourceComponent
   ],
   entryComponents: [
     TimelineEventDetailsComponent,
@@ -214,6 +216,7 @@ import { TimelineDisplayComponent } from './timelines/timeline/timeline-display/
     QuickBrainstormComponent,
     QuickBrainstormTopicComponent,
     QuickAuthorComponent,
+    QuickSourceComponent,
     EditorSelectSourceComponent,
     EditorSelectEventComponent,
     EditorSelectPersonComponent,

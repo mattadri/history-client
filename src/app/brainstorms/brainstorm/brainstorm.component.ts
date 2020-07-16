@@ -53,7 +53,9 @@ export class BrainstormComponent implements OnInit {
     contentPanel.close();
   }
 
-  createThought() {
+  createThought(thoughtContent) {
+    this.thought.thought = thoughtContent;
+
     this.thought.source = null;
     this.thought.brainstormId = this.brainstorm.id;
     this.thought.position = this.brainstorm.thoughts.length;
@@ -67,9 +69,11 @@ export class BrainstormComponent implements OnInit {
     });
   }
 
-  createTopicThought(topic) {
+  createTopicThought(thought, topic) {
     this.thought.topicId = topic.id;
     this.thought.source = null;
+
+    this.thought.thought = thought;
 
     this.thought.position = topic.thoughts.length;
 

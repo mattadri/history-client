@@ -17,16 +17,20 @@
           <form class="app-card-note-edit">
             <div class=app-card-note-body-meta>
               <h3>New Thought</h3>
-              <div class="app-card-note-toolbar">
-                <button mat-flat-button color="primary" (click)="createThought()">Save</button>
-                <button mat-flat-button color="secondary" (click)="setCreateBrainstormThoughtMode(false)">Cancel</button>
-              </div>
+              <!--<div class="app-card-note-toolbar">-->
+                <!--<button mat-flat-button color="primary" (click)="createThought()">Save</button>-->
+                <!--<button mat-flat-button color="secondary" (click)="setCreateBrainstormThoughtMode(false)">Cancel</button>-->
+              <!--</div>-->
             </div>
 
             <div class="app-card-note-body-content">
-              <div [(froalaModel)]="thought.thought"
-                  [froalaEditor]>
-              </div>
+              <app-editor
+                [content]="thought.thought"
+                [isEditable]="true"
+                [autoEdit]="true"
+                [isNote]="true"
+                (saveContent)="createThought($event)">
+              </app-editor>
             </div>
           </form>
         </div>
@@ -38,14 +42,13 @@
              (cdkDropListDropped)="reorderThought($event)"
              id="0">
           <!-- Add cdkDrag here -->
-          <app-thought cdkDrag
-                       [cdkDragData]="thought"
-                       *ngFor="let thought of brainstorm.thoughts"
-                       [brainstorm]="brainstorm"
-                       [topic]="null"
-                       [thought]="thought"
-                       (removeBrainstormThought)="removeBrainstormThought($event)">
-          </app-thought>
+          <div class="thought" cdkDrag [cdkDragData]="thought" *ngFor="let thought of brainstorm.thoughts">
+            <app-thought [brainstorm]="brainstorm"
+                         [topic]="null"
+                         [thought]="thought"
+                         (removeBrainstormThought)="removeBrainstormThought($event)">
+            </app-thought>
+          </div>
         </div>
       </div>
 
@@ -73,16 +76,16 @@
                   <form class="app-card-note-edit">
                     <div class=app-card-note-body-meta>
                       <h3>New Thought</h3>
-                      <div class="app-card-note-toolbar">
-                        <button mat-flat-button color="primary" (click)="createTopicThought(topic)">Save</button>
-                        <button mat-flat-button color="secondary" (click)="setCreateTopicThoughtMode(false)">Cancel</button>
-                      </div>
                     </div>
 
                     <div class="app-card-note-body-content">
-                      <div [(froalaModel)]="thought.thought"
-                          [froalaEditor]>
-                      </div>
+                      <app-editor
+                        [content]="thought.thought"
+                        [isEditable]="true"
+                        [autoEdit]="true"
+                        [isNote]="true"
+                        (saveContent)="createTopicThought($event, topic)">
+                      </app-editor>
                     </div>
                   </form>
                 </div>
@@ -92,6 +95,7 @@
                      [cdkDropListData]="topic.thoughts"
                      (cdkDropListDropped)="reorderThought($event)"
                      id="{{topic.id}}">
+
                   <div class="thought" cdkDrag [cdkDragData]="thought" *ngFor="let thought of topic.thoughts">
                     <app-thought
                       [brainstorm]="brainstorm"

@@ -70,7 +70,7 @@ export class EditorComponent implements OnInit {
 
   public chart: Chart;
 
-  private referenceRegex = this.referenceRegex = /\(\(r (\d+) &quot;(.*?)&quot; &quot;(.*?)&quot; ([^))]*)\)\)/gi;
+  private referenceRegex = /\(\(r (\d+) &quot;(.*?)&quot; &quot;(.*?)&quot; ([^))]*)\)\)/gi;
   private eventRegex = /\(\(e (\d+) ([^))]*)\)\)/ig;
   private personRegex = /\(\(p (\d+) ([^))]*)\)\)/ig;
   private timelineRegex = /\(\(t (\d+) ([^))]*)\)\)/ig;

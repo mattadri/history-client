@@ -33,7 +33,7 @@ export class EditorSelectEventComponent implements OnInit {
 
     this.loadAutoComplete = false;
 
-    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label&sort=label').subscribe(events => {
+    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label&sort=label', null, null, false).subscribe(events => {
       for (const event of events.events) {
         this.eventService.setEvent(event);
       }
