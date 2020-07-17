@@ -3,11 +3,14 @@ import {EssayReference} from './essay-reference';
 import {EssayEvent} from './essay-event';
 import {EssayPerson} from './essay-person';
 import {EssayTimeline} from './essay-timeline';
+import {EssayType} from './essay-type';
+
 export class Essay {
   id: number;
   title: string;
   abstract: string;
   essay: string;
+  type: EssayType;
   essayNotes: EssayNote[];
   essayReferences: EssayReference[];
   essayEvents: EssayEvent[];
@@ -24,6 +27,9 @@ export class Essay {
     this.essayEvents = [];
     this.essayPeople = [];
     this.essayTimelines = [];
+
+    this.type = new EssayType();
+    this.type.initializeNewEssayType();
   }
 
   mapEssay(essay) {
@@ -37,6 +43,10 @@ export class Essay {
 
     if (essay.attributes.essay) {
       this.essay = essay.attributes.essay;
+    }
+
+    if (essay.attributes.type && essay.attributes.type.data) {
+      this.type.mapEssayType(essay.attributes.type.data);
     }
 
     // map essay notes
@@ -88,5 +98,7 @@ export class Essay {
         this.essayTimelines.push(newTimeline);
       }
     }
+
+    return this;
   }
 }

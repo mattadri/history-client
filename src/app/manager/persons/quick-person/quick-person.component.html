@@ -101,23 +101,23 @@
       </div>
     </section>
 
-    <section class="app-section inline">
-      <label>Source</label>
-      <mat-form-field class="app-field-reference">
-        <input
-          type="text"
-          placeholder="Select Source"
-          aria-label="Source"
-          matInput
-          [formControl]="sourcesAutocompleteControl"
-          [matAutocomplete]="auto">
+    <!--<section class="app-section inline">-->
+      <!--<label>Source</label>-->
+      <!--<mat-form-field class="app-field-reference">-->
+        <!--<input-->
+          <!--type="text"-->
+          <!--placeholder="Select Source"-->
+          <!--aria-label="Source"-->
+          <!--matInput-->
+          <!--[formControl]="sourcesAutocompleteControl"-->
+          <!--[matAutocomplete]="auto">-->
 
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
-          <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
-            {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </section>
+        <!--<mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">-->
+          <!--<mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">-->
+            <!--{{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>-->
+          <!--</mat-option>-->
+        <!--</mat-autocomplete>-->
+      <!--</mat-form-field>-->
+    <!--</section>-->
   </div>
 </form>

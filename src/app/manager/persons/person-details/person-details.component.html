@@ -139,23 +139,23 @@
               </div>
             </section>
 
-            <section class="app-section inline">
-              <mat-form-field class="app-field-reference">
-                <input
-                  type="text"
-                  placeholder="Source"
-                  aria-label="Source"
-                  matInput
-                  [formControl]="sourcesAutocompleteControl"
-                  [matAutocomplete]="auto">
+            <!--<section class="app-section inline">-->
+              <!--<mat-form-field class="app-field-reference">-->
+                <!--<input-->
+                  <!--type="text"-->
+                  <!--placeholder="Source"-->
+                  <!--aria-label="Source"-->
+                  <!--matInput-->
+                  <!--[formControl]="sourcesAutocompleteControl"-->
+                  <!--[matAutocomplete]="auto">-->
 
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
-                  <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
-                    {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
-                  </mat-option>
-                </mat-autocomplete>
-              </mat-form-field>
-            </section>
+                <!--<mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">-->
+                  <!--<mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">-->
+                    <!--{{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>-->
+                  <!--</mat-option>-->
+                <!--</mat-autocomplete>-->
+              <!--</mat-form-field>-->
+            <!--</section>-->
           </div>
         </form>
       </div>
@@ -164,13 +164,43 @@
 
   <div class="app-body-content">
     <div class="app-body-content-narrow">
+<!-- BIOGRAPHIES -->
+      <!-- Add a timeline CTA-->
+      <div class="app-content-toolbar margin-bottom">
+          <h2>Biographies</h2>
+          <button mat-flat-button color="secondary" (click)="activateAddBiographyMode()">+ Add a Biography</button>
+      </div>
+
+      <!-- Add New Biography -->
+      <div *ngIf="isAddBiographyMode" class="app-card-note">
+        <form class="app-card-note-edit" #biographyForm="ngForm">
+          <div class=app-card-note-body-meta>
+            <mat-form-field style="width: 100%;">
+              <mat-label>Biographies</mat-label>
+              <mat-select [(ngModel)]="biography" name="person_biography" (selectionChange)="saveBiography()">
+                <mat-option *ngFor="let biography of availableBiographies" [value]="biography">{{biography.title}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <button mat-flat-button color="secondary" (click)="deactivateAddBiographyMode()">Cancel</button>
+        </form>
+      </div>
+
+      <div *ngIf="person.biographies && person.biographies.length">
+        <div class="app-section list-item" *ngFor="let biography of person.biographies">
+          <div>{{biography.biography.title}}</div>
+          <button mat-icon-button class="material-icons" (click)="deleteBiography(biography)">delete</button>
+        </div>
+      </div>
+
+<!-- TIMELINES -->
       <!-- Add a timeline CTA-->
       <div class="app-content-toolbar margin-bottom">
           <h2>Timelines</h2>
           <button mat-flat-button color="secondary" (click)="activateAddTimelineMode()">+ Add a Timeline</button>
       </div>
 
-<!-- TIMELINES -->
       <!-- Add New Timeline -->
       <div *ngIf="isAddTimelineMode" class="app-card-note">
         <form class="app-card-note-edit" (ngSubmit)="saveTimelinePerson()" #timelineForm="ngForm">
@@ -219,7 +249,6 @@
         [showToolbar]="true"
         (removeNote)="deleteNote($event)">
       </app-person-details-note>
-
     </div>
   </div>
 </div>

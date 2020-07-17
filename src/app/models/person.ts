@@ -3,6 +3,8 @@ import { Month } from './month';
 import { Era } from './era';
 import { Timeline } from './timeline';
 import { PersonNote } from './person-note';
+import {Essay} from './essay';
+import {PersonBiography} from './person-biography';
 
 export class Person {
   id: number;
@@ -21,6 +23,7 @@ export class Person {
   source: Source;
   timelines: Timeline[];
   notes: PersonNote[];
+  biographies: PersonBiography[];
 
   timelinePersonId: number;
 
@@ -53,6 +56,7 @@ export class Person {
     this.source = new Source();
     this.notes = [];
     this.timelines = [];
+    this.biographies = [];
 
     this.timelineStartLocation = null;
     this.listEventIsHighlighted = false;
@@ -147,6 +151,21 @@ export class Person {
         timeline.mapTimeline(returnedTimeline.attributes.timeline.data, null, returnedTimeline.id);
 
         self.timelines.push(timeline);
+      }
+    }
+
+    if (person.attributes.person_biography && person.attributes.person_biography.data.length) {
+      self.biographies = [];
+
+      console.log(person.attributes.person_biography.data);
+
+      for (const returnedBiography of person.attributes.person_biography.data) {
+        console.log('bio: ', returnedBiography);
+
+        const biography: PersonBiography = new PersonBiography();
+        biography.initializeBiography();
+
+        self.biographies.push(biography.mapBiography(returnedBiography));
       }
     }
 

@@ -64,11 +64,6 @@
           <label>Description</label>
           <app-editor *ngIf="person.description" [isEditable]="false" [content]="person.description" [isNote]="false"></app-editor>
         </section>
-
-        <section class="app-section">
-          <label>Source</label>
-          <span *ngIf="person.source">{{ person.source.title}}</span>
-        </section>
       </div>
     </div>
   </mat-sidenav>

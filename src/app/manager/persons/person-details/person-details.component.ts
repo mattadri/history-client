@@ -17,6 +17,9 @@ import {Person} from '../../../models/person';
 import {PersonNote} from '../../../models/person-note';
 import {TimelinePerson} from '../../../models/timeline-person';
 import {PersonService} from '../../../services/person.service';
+import {PersonBiography} from '../../../models/person-biography';
+import {EssayService} from '../../../services/essay.service';
+import {Essay} from '../../../models/essay';
 
 @Component({
   selector: 'app-person-details',
@@ -28,6 +31,9 @@ export class PersonDetailsComponent implements OnInit {
   public note: PersonNote;
   public timeline: Timeline;
   public timelinePerson: TimelinePerson;
+  public biography: Essay;
+  public personBiography: PersonBiography;
+  public availableBiographies: Essay[];
 
   public sources: Source[] = [];
   public timelines: Timeline[] = [];
@@ -37,6 +43,7 @@ export class PersonDetailsComponent implements OnInit {
 
   public isAddNoteMode: boolean;
   public isAddTimelineMode: boolean;
+  public isAddBiographyMode: boolean;
   public isEditPersonMode: boolean;
 
   public sourcesAutocompleteControl = new FormControl();
@@ -57,6 +64,7 @@ export class PersonDetailsComponent implements OnInit {
               private personService: PersonService,
               private timelineService: TimelineService,
               private sourceService: SourceService,
+              private essayService: EssayService,
               private eraService: EraService,
               private monthService: MonthService) {
 
@@ -64,6 +72,8 @@ export class PersonDetailsComponent implements OnInit {
 
     this.personService.getApiPerson(personId).subscribe(person => {
       this.person = person;
+
+      console.log('Person: ', this.person);
 
       this.personService.setPerson(this.person);
 
@@ -82,17 +92,11 @@ export class PersonDetailsComponent implements OnInit {
         }
       });
 
-      this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
-        for (const source of sources.sources) {
-          this.sourceService.setSource(source);
-        }
+      this.essayService.getApiEssays(
+        '/essays?fields[essay]=title,type&filter=[{"name": "type_rel", "op": "has", "val": ' +
+        '{"name": "label", "op": "eq", "val": "Biography"}}]').subscribe((response) => {
 
-        this.sources = this.sourceService.getSources();
-
-        this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
-          startWith(''),
-          map(source => this._filterSources(source))
-        );
+        this.availableBiographies = response.essays;
       });
 
       this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,last_name&sort=last_name', null, null, false)
@@ -122,6 +126,7 @@ export class PersonDetailsComponent implements OnInit {
     this.isEditPersonMode = false;
     this.isAddNoteMode = false;
     this.isAddTimelineMode = false;
+    this.isAddBiographyMode = false;
   }
 
   ngOnInit() { }
@@ -166,6 +171,10 @@ export class PersonDetailsComponent implements OnInit {
     this.isAddTimelineMode = true;
   }
 
+  activateAddBiographyMode() {
+    this.isAddBiographyMode = true;
+  }
+
   deactivateEditPersonMode() {
     this.isEditPersonMode = false;
   }
@@ -178,8 +187,8 @@ export class PersonDetailsComponent implements OnInit {
     this.isAddTimelineMode = false;
   }
 
-  saveSource() {
-    this.person.source = this.sourcesAutocompleteControl.value;
+  deactivateAddBiographyMode() {
+    this.isAddBiographyMode = false;
   }
 
   savePersonFirstName(value) {
@@ -218,7 +227,6 @@ export class PersonDetailsComponent implements OnInit {
     this.timelinePerson.person = this.person;
     this.timelinePerson.timeline = this.timeline;
 
-    // call service
     this.timelineService.createPersonApiTimeline(this.timelinePerson).subscribe(response => {
       this.timelinePerson.id = response.data.id;
       this.timeline.personId = this.timelinePerson.id;
@@ -227,7 +235,19 @@ export class PersonDetailsComponent implements OnInit {
 
       this.initializeNewTimeline();
 
-      this.isAddTimelineMode = false;
+      this.deactivateAddTimelineMode();
+    });
+  }
+
+  saveBiography() {
+    this.personService.createPersonBiography(this.person, this.biography).subscribe(response => {
+      this.personBiography = new PersonBiography();
+      this.personBiography.id = response.data.id;
+      this.personBiography.biography = this.biography;
+
+      this.person.biographies.push(this.personBiography);
+
+      this.deactivateAddBiographyMode();
     });
   }
 
@@ -238,7 +258,7 @@ export class PersonDetailsComponent implements OnInit {
 
       this.initializeNewNote();
 
-      this.isAddNoteMode = false;
+      this.deactivateAddNoteMode();
     });
   }
 
@@ -258,16 +278,14 @@ export class PersonDetailsComponent implements OnInit {
     });
   }
 
-  displaySource(source: Source) {
-    if (source) {
-      this.sourceFieldDisplayValue = source.title;
-
-      if (source.subTitle) {
-        this.sourceFieldDisplayValue = this.sourceFieldDisplayValue + ': ' + source.subTitle;
+  deleteBiography(biography) {
+    this.personService.removeApiPersonBiography(biography).subscribe(() => {
+      for (let i = 0; i < this.person.biographies.length; i++) {
+        if (this.person.biographies[i].id === biography.id) {
+          this.person.biographies.splice(i, 1);
+        }
       }
-    }
-
-    return this.sourceFieldDisplayValue;
+    });
   }
 
   displayPersonFirstName(person: Person) {
@@ -292,17 +310,6 @@ export class PersonDetailsComponent implements OnInit {
     }
 
     return this.personLastNameFieldDisplayValue;
-  }
-
-  private _filterSources(filterValue: any): Source[] {
-    // when a source is actually selected the value is changed to the source itself. Do not filter if that is the case.
-    if (!filterValue.id) {
-      filterValue = filterValue.toLowerCase();
-
-      return this.sources.filter(source => {
-        return source.title.toLowerCase().includes(filterValue);
-      });
-    }
   }
 
   private _filterPersonsFirstName(filterValue: any): Person[] {

@@ -1,9 +1,38 @@
 <mat-sidenav-container>
   <div class="app-body-content">
     <div class="app-card-content">
-      <div class="app-content-toolbar">
-        <h1 *ngIf="essay.title">{{essay.title}}</h1>
-        <button mat-flat-button class="material-icons" (click)="toggleContentPanel(essayManager)">{{essayScreenSize}}</button>
+      <div>
+        <div class="app-content-toolbar" *ngIf="!isEssayTitleEditMode">
+          <h1 *ngIf="essay.title">{{essay.title}} <span *ngIf="essay.type && essay.type.label">({{essay.type.label}})</span></h1>
+          <button mat-flat-button class="material-icons" (click)="setEssayTitleEditMode()">edit</button>
+          <button mat-flat-button class="material-icons" (click)="toggleContentPanel(essayManager)">{{essayScreenSize}}</button>
+        </div>
+
+        <div *ngIf="isEssayTitleEditMode">
+          <mat-form-field style="width: 100%">
+            <input
+              matInput
+              placeholder="Title"
+              required
+              name="essay_title"
+              #essayTitle="ngModel"
+              [(ngModel)]="essay.title" />
+          </mat-form-field>
+
+          <mat-form-field class="app-field-era">
+            <mat-label>Essay Type</mat-label>
+            <mat-select [(ngModel)]="essay.type" name="essay_type" [compareWith]="selectEssayType">
+              <mat-option [value]="null"></mat-option>
+              <mat-option *ngFor="let type of essayTypes" [value]="type">{{type.label}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-icon-button class="material-icons" (click)="editEssayTitle()">
+            save
+          </button>
+
+          <button mat-icon-button class="material-icons" (click)="setEssayTitleViewMode()">close</button>
+        </div>
       </div>
 
       <!-- ABSTRACT VIEW-->

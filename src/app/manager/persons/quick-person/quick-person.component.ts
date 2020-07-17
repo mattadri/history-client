@@ -14,7 +14,7 @@ import {Month} from '../../../models/month';
 import {Person} from '../../../models/person';
 
 import {PersonService} from '../../../services/person.service';
-import {SourceService} from '../../../services/source.service';
+// import {SourceService} from '../../../services/source.service';
 import {EraService} from '../../../services/era.service';
 import {MonthService} from '../../../services/month.service';
 
@@ -24,9 +24,9 @@ import {MonthService} from '../../../services/month.service';
   styleUrls: ['./quick-person.component.scss']
 })
 export class QuickPersonComponent implements OnInit, AfterViewInit {
-  public sourcesAutocompleteControl = new FormControl();
-  public sourcesFilteredOptions: Observable<Source[]>;
-  public sourceFieldDisplayValue: string;
+  // public sourcesAutocompleteControl = new FormControl();
+  // public sourcesFilteredOptions: Observable<Source[]>;
+  // public sourceFieldDisplayValue: string;
 
   public searchPersons: Person[] = [];
 
@@ -45,7 +45,7 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
   public person: Person;
 
   constructor(private personService: PersonService,
-              private sourceService: SourceService,
+              // private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
               public dialogRef: MatDialogRef<QuickPersonComponent>) {
@@ -73,18 +73,18 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
-      for (const source of sources.sources) {
-        this.sourceService.setSource(source);
-      }
-
-      this.sources = this.sourceService.getSources();
-
-      this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
-        startWith(''),
-        map(source => this._filterSources(source))
-      );
-    });
+    // this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
+    //   for (const source of sources.sources) {
+    //     this.sourceService.setSource(source);
+    //   }
+    //
+    //   this.sources = this.sourceService.getSources();
+    //
+    //   this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
+    //     startWith(''),
+    //     map(source => this._filterSources(source))
+    //   );
+    // });
 
     this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,last_name&sort=last_name', null, null, false)
       .subscribe(response => {
@@ -113,9 +113,9 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
     this.dialogRef.close();
   }
 
-  saveSource() {
-    this.person.source = this.sourcesAutocompleteControl.value;
-  }
+  // saveSource() {
+  //   this.person.source = this.sourcesAutocompleteControl.value;
+  // }
 
   savePersonFirstName(value) {
     if (value) {
@@ -133,17 +133,17 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
     }
   }
 
-  displaySource(source: Source) {
-    if (source) {
-      this.sourceFieldDisplayValue = source.title;
-
-      if (source.subTitle) {
-        this.sourceFieldDisplayValue = this.sourceFieldDisplayValue + ': ' + source.subTitle;
-      }
-    }
-
-    return this.sourceFieldDisplayValue;
-  }
+  // displaySource(source: Source) {
+  //   if (source) {
+  //     this.sourceFieldDisplayValue = source.title;
+  //
+  //     if (source.subTitle) {
+  //       this.sourceFieldDisplayValue = this.sourceFieldDisplayValue + ': ' + source.subTitle;
+  //     }
+  //   }
+  //
+  //   return this.sourceFieldDisplayValue;
+  // }
 
   displayPersonFirstName(person: Person) {
     if (person) {
@@ -169,16 +169,16 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
     return this.personLastNameFieldDisplayValue;
   }
 
-  private _filterSources(filterValue: any): Source[] {
-    // when a source is actually selected the value is changed to the source itself. Do not filter if that is the case.
-    if (!filterValue.id) {
-      filterValue = filterValue.toLowerCase();
-
-      return this.sources.filter(source => {
-        return source.title.toLowerCase().includes(filterValue);
-      });
-    }
-  }
+  // private _filterSources(filterValue: any): Source[] {
+  //   // when a source is actually selected the value is changed to the source itself. Do not filter if that is the case.
+  //   if (!filterValue.id) {
+  //     filterValue = filterValue.toLowerCase();
+  //
+  //     return this.sources.filter(source => {
+  //       return source.title.toLowerCase().includes(filterValue);
+  //     });
+  //   }
+  // }
 
   private _filterPersonsFirstName(filterValue: any): Person[] {
     if (filterValue && typeof filterValue === 'string') {

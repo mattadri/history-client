@@ -18,12 +18,14 @@ import {EssayPersonPost} from '../models/posts/essay-person-post';
 import {EssayTimelinePost} from '../models/posts/essay-timeline-post';
 import {EssayTimeline} from '../models/essay-timeline';
 import {EssayResponse} from '../models/responses/essay-response';
+import {EssayType} from '../models/essay-type';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EssayService {
   public essays: Essay[];
+  public essayTypes: EssayType[];
 
   public essayPost: EssayPost;
   public essayNotePost: EssayNotePost;
@@ -42,6 +44,15 @@ export class EssayService {
         essay.essayNotes.splice(i, 1);
       }
     }
+  }
+
+  getApiEssayTypes(): Observable<any> {
+    this.essayTypes = [];
+
+    return this.http.get<any>(environment.apiUrl + '/essay_types?page[size]=0', {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+    });
   }
 
   getApiEssays(path): Observable<EssayResponse> {
@@ -178,5 +189,13 @@ export class EssayService {
 
   getEssays() {
     return this.essays;
+  }
+
+  setEssayType(essayType: EssayType) {
+    this.essayTypes.push(essayType);
+  }
+
+  getEssayTypes() {
+    return this.essayTypes;
   }
 }

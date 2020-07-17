@@ -33,6 +33,7 @@ import {EssayService} from '../../services/essay.service';
 import {SourceService} from '../../services/source.service';
 import {TimelineService} from '../../services/timeline.service';
 import {PersonService} from '../../services/person.service';
+import {EssayType} from '../../models/essay-type';
 
 @Component({
   selector: 'app-essay',
@@ -46,11 +47,14 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
   public essay: Essay;
 
+  public essayTypes: EssayType[];
+
   public selectedEssayReference: EssayReference;
   public selectedEssayEvent: EssayEvent;
   public selectedEssayPerson: EssayPerson;
   public selectedEssayTimeline: EssayTimeline;
 
+  public isEssayTitleEditMode: boolean;
   public isAbstractEditMode: boolean;
   public isEssayEditMode: boolean;
 
@@ -120,8 +124,11 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     const essayId = this.route.snapshot.paramMap.get('id');
 
+    this.essayTypes = [];
+
     this.sourceId = 22;
 
+    this.isEssayTitleEditMode = false;
     this.isAbstractEditMode = false;
     this.isEssayEditMode = false;
 
@@ -146,6 +153,19 @@ export class EssayComponent implements OnInit, AfterViewInit {
       this.tokenizeEvents();
       this.tokenizePeople();
       this.tokenizeTimelines();
+    });
+
+    this.essayService.getApiEssayTypes().subscribe((response) => {
+      for (const type of response.data) {
+        const newType = new EssayType();
+        newType.initializeNewEssayType();
+
+        newType.mapEssayType(type);
+
+        this.essayService.setEssayType(newType);
+      }
+
+      this.essayTypes = this.essayService.getEssayTypes();
     });
 
     this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(response => {
@@ -744,6 +764,14 @@ export class EssayComponent implements OnInit, AfterViewInit {
     }
   }
 
+  selectEssayType(option, value) {
+    if (value && option) {
+      return option.id === value.id;
+    } else {
+      return null;
+    }
+  }
+
   setAbstractEditMode() {
     this.isAbstractEditMode = true;
   }
@@ -760,6 +788,19 @@ export class EssayComponent implements OnInit, AfterViewInit {
     this.isEssayEditMode = false;
 
     this.addClickEvents().then();
+  }
+
+  setEssayTitleEditMode() {
+    this.isEssayTitleEditMode = true;
+  }
+  setEssayTitleViewMode() {
+    this.isEssayTitleEditMode = false;
+  }
+
+  editEssayTitle() {
+    this.essayService.patchApiEssay(this.essay).subscribe();
+
+    this.setEssayTitleViewMode();
   }
 
   saveAbstractContent() {
@@ -889,7 +930,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
   }
 
   async addClickEvents() {
-    await this.sleep(1000);
+    await this.sleep(3000);
 
     this.elementRef.nativeElement.querySelectorAll('.essay-reference').forEach(item => {
       this.renderer.listen(

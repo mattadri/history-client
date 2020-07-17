@@ -13,6 +13,15 @@ export class EssayPost {
       }
     };
 
+    if (essay.type && essay.type.id) {
+      this.data.attributes.type_rel = {
+        data: {
+          type: 'essay_type',
+          id: essay.type.id
+        }
+      };
+    }
+
     if (isPatch) {
       this.data.id = essay.id;
     }

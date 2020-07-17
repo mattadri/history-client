@@ -16,7 +16,7 @@
   </div>
 </div>
 
-<div *ngIf="persons.length && !category.label" class="timeline-group">
+<div *ngIf="persons && persons.length && !category.label" class="timeline-group">
   <div class="timeline-box person" *ngFor="let person of persons">
     <app-timeline-person [person]="person"></app-timeline-person>
   </div>

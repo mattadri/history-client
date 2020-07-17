@@ -10,6 +10,9 @@ import { Person } from '../models/person';
 import { PersonNote } from '../models/person-note';
 import { PersonNotePost } from '../models/posts/person-note-post';
 import {PersonResponse} from '../models/responses/person-response';
+import {PersonBiography} from '../models/person-biography';
+import {PersonBiographyPost} from '../models/posts/person-biography-post';
+import {Essay} from '../models/essay';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +21,8 @@ import {PersonResponse} from '../models/responses/person-response';
 export class PersonService {
   private personPost: PersonPost;
   private personNotePost: PersonNotePost;
+  private personBiographyPost: PersonBiographyPost;
+
   private persons: Person[];
 
   private filterObject: Array<any>;
@@ -69,6 +74,12 @@ export class PersonService {
 
   removeApiPerson(person: Person): Observable<any> {
     return this.http.delete(environment.apiUrl + '/persons/' + person.id, {
+      headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
+    });
+  }
+
+  removeApiPersonBiography(biography: PersonBiography): Observable<any> {
+    return this.http.delete(environment.apiUrl + '/person_biographies/' + biography.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
     });
   }
@@ -162,6 +173,17 @@ export class PersonService {
     this.personNotePost.mapToNotePost(note, person, false);
 
     return this.http.post(environment.apiUrl + '/person_notes', this.personNotePost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  createPersonBiography(person: Person, biography: Essay): Observable<any> {
+    this.personBiographyPost = new PersonBiographyPost();
+    this.personBiographyPost.mapToPersonBiographyPost(person, biography);
+
+    return this.http.post(environment.apiUrl + '/person_biographies', this.personBiographyPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
