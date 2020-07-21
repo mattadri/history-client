@@ -105,24 +105,26 @@ export class TimelineDisplayComponent implements OnInit {
 
     let endYear = year.getFullYear();
 
-    for ( const event of this.timeline.events) {
-      if (event.startEra.label === 'BC') {
-        event.startYear = event.startYear * -1;
-      }
+    if (this.timeline.events && this.timeline.events.length) {
+      for ( const event of this.timeline.events) {
+        if (event.startEra.label === 'BC') {
+          event.startYear = event.startYear * -1;
+        }
 
-      if (event.endEra && event.endEra.label === 'BC') {
-        event.endYear = event.endYear * -1;
-      }
+        if (event.endEra && event.endEra.label === 'BC') {
+          event.endYear = event.endYear * -1;
+        }
 
-      if (event.endYear) {
-        endYear = event.endYear;
-      } else {
-        const dateObj = new Date();
-        endYear = dateObj.getFullYear();
-      }
+        if (event.endYear) {
+          endYear = event.endYear;
+        } else {
+          const dateObj = new Date();
+          endYear = dateObj.getFullYear();
+        }
 
-      years.push(event.startYear);
-      years.push(endYear);
+        years.push(event.startYear);
+        years.push(endYear);
+      }
     }
 
     if (this.timeline.persons && this.timeline.persons.length) {
