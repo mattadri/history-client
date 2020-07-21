@@ -16,6 +16,10 @@ export class CategoryComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log('Sorting persons');
+    this.persons.sort((a, b) => {
+      return a.birthYear - b.birthYear;
+    });
   }
 
 }
