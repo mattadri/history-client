@@ -276,57 +276,65 @@ export class TimelineDisplayComponent implements OnInit {
     this.eventColorClasses.reverse();
 
     // assign the events to each respective category
-    for (const category of this.timeline.categories) {
-      if (category.events.length) {
-        const newCategory = new Category();
+    if (this.timeline.categories && this.timeline.categories.length) {
+      for (const category of this.timeline.categories) {
+        if (category.events.length) {
+          const newCategory = new Category();
 
-        newCategory.id = category.id;
-        newCategory.label = category.label;
+          newCategory.id = category.id;
+          newCategory.label = category.label;
 
-        for (const categoryEvent of category.events) {
-          const eventId = categoryEvent[1];
+          if (category.events && category.events.length) {
+            for (const categoryEvent of category.events) {
+              const eventId = categoryEvent[1];
 
-          for (const event of this.timeline.events) {
-            if (event.id === eventId) {
-              if (event.formattedStartDate === event.formattedEndDate) {
-                newCategory.singlePointEvents.push(event);
+              if (this.timeline.events && this.timeline.events.length) {
+                for (const event of this.timeline.events) {
+                  if (event.id === eventId) {
+                    if (event.formattedStartDate === event.formattedEndDate) {
+                      newCategory.singlePointEvents.push(event);
 
-                eventIdsUsed.push(eventId);
+                      eventIdsUsed.push(eventId);
 
-              } else {
-                if (this.eventColorClasses.length) {
-                  const color = this.eventColorClasses.pop();
+                    } else {
+                      if (this.eventColorClasses.length) {
+                        const color = this.eventColorClasses.pop();
 
-                  event.colorClass = color;
-                  backupColorArray.push(color);
+                        event.colorClass = color;
+                        backupColorArray.push(color);
 
-                  if (!this.eventColorClasses.length) {
-                    for (const backupColor of backupColorArray) {
-                      this.eventColorClasses.push(backupColor);
+                        if (!this.eventColorClasses.length) {
+                          for (const backupColor of backupColorArray) {
+                            this.eventColorClasses.push(backupColor);
+                          }
+
+                          this.eventColorClasses.reverse();
+
+                          backupColorArray = [];
+                        }
+                      }
+
+                      newCategory.multiPointEvents.push(event);
+
+                      eventIdsUsed.push(eventId);
                     }
-
-                    this.eventColorClasses.reverse();
-
-                    backupColorArray = [];
                   }
                 }
-
-                newCategory.multiPointEvents.push(event);
-
-                eventIdsUsed.push(eventId);
               }
+
             }
           }
-        }
 
-        // sort the events in a category oldest to newest
-        if (newCategory.multiPointEvents.length) {
-          newCategory.multiPointEvents.sort((a, b) => {
-            return a.startYear - b.startYear;
-          });
-        }
 
-        this.categoryEvents.push(newCategory);
+          // sort the events in a category oldest to newest
+          if (newCategory.multiPointEvents.length) {
+            newCategory.multiPointEvents.sort((a, b) => {
+              return a.startYear - b.startYear;
+            });
+          }
+
+          this.categoryEvents.push(newCategory);
+        }
       }
     }
 
@@ -336,33 +344,36 @@ export class TimelineDisplayComponent implements OnInit {
     genericCategory.id = null;
     genericCategory.label = '';
 
-    for (const event of this.timeline.events) {
-      if (!eventIdsUsed.includes(event.id)) {
-        if (event.formattedStartDate === event.formattedEndDate) {
-          genericCategory.singlePointEvents.push(event);
+    if (this.timeline.events && this.timeline.events.length) {
+      for (const event of this.timeline.events) {
+        if (!eventIdsUsed.includes(event.id)) {
+          if (event.formattedStartDate === event.formattedEndDate) {
+            genericCategory.singlePointEvents.push(event);
 
-        } else {
-          if (this.eventColorClasses.length) {
-            const color = this.eventColorClasses.pop();
+          } else {
+            if (this.eventColorClasses.length) {
+              const color = this.eventColorClasses.pop();
 
-            event.colorClass = color;
-            backupColorArray.push(color);
+              event.colorClass = color;
+              backupColorArray.push(color);
 
-            if (!this.eventColorClasses.length) {
-              for (const backupColor of backupColorArray) {
-                this.eventColorClasses.push(backupColor);
+              if (!this.eventColorClasses.length) {
+                for (const backupColor of backupColorArray) {
+                  this.eventColorClasses.push(backupColor);
+                }
+
+                this.eventColorClasses.reverse();
+
+                backupColorArray = [];
               }
-
-              this.eventColorClasses.reverse();
-
-              backupColorArray = [];
             }
-          }
 
-          genericCategory.multiPointEvents.push(event);
+            genericCategory.multiPointEvents.push(event);
+          }
         }
       }
     }
+
 
     this.categoryEvents.push(genericCategory);
 
@@ -374,51 +385,55 @@ export class TimelineDisplayComponent implements OnInit {
     if (this.timelineLength <= this.minYearToMonths) {
       const timelineLengthInMonths = this.timelineLength * 12;
 
-      for (const event of this.timeline.events) {
-        let startMonthInTimeline = ((event.startYear - this.timelineStart) * 12);
+      if (this.timeline.events && this.timeline.events.length) {
+        for (const event of this.timeline.events) {
+          let startMonthInTimeline = ((event.startYear - this.timelineStart) * 12);
 
-        if (event.startMonth) {
-          startMonthInTimeline = startMonthInTimeline + Number(event.startMonth.id);
+          if (event.startMonth) {
+            startMonthInTimeline = startMonthInTimeline + Number(event.startMonth.id);
+          }
+
+          event.timelineStartLocation = (startMonthInTimeline / timelineLengthInMonths) * 100;
+
+          let endMonthInTimeline = ((event.endYear - this.timelineStart) * 12);
+
+          if (event.endMonth) {
+            endMonthInTimeline = endMonthInTimeline + Number(event.endMonth.id);
+          }
+
+          let endPercentage = (endMonthInTimeline / timelineLengthInMonths) * 100 - event.timelineStartLocation;
+
+          // if the range is 0% change to 1% so it shows up on the timeline
+          if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
+            endPercentage = 1;
+          }
+
+          event.timelineEndLocation = endPercentage;
         }
-
-        event.timelineStartLocation = (startMonthInTimeline / timelineLengthInMonths) * 100;
-
-        let endMonthInTimeline = ((event.endYear - this.timelineStart) * 12);
-
-        if (event.endMonth) {
-          endMonthInTimeline = endMonthInTimeline + Number(event.endMonth.id);
-        }
-
-        let endPercentage = (endMonthInTimeline / timelineLengthInMonths) * 100 - event.timelineStartLocation;
-
-        // if the range is 0% change to 1% so it shows up on the timeline
-        if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
-          endPercentage = 1;
-        }
-
-        event.timelineEndLocation = endPercentage;
       }
 
     } else {
-      for (const event of this.timeline.events) {
-        // set the percentage location from oldest event.
-        event.timelineStartLocation = ((event.startYear - this.timelineStart) / this.timelineLength) * 100;
+      if (this.timeline.events && this.timeline.events.length) {
+        for (const event of this.timeline.events) {
+          // set the percentage location from oldest event.
+          event.timelineStartLocation = ((event.startYear - this.timelineStart) / this.timelineLength) * 100;
 
-        let endYear = event.endYear;
+          let endYear = event.endYear;
 
-        if (!endYear) {
-          const year = new Date();
-          endYear = year.getFullYear();
+          if (!endYear) {
+            const year = new Date();
+            endYear = year.getFullYear();
+          }
+
+          let endPercentage = (((endYear - this.timelineStart) / this.timelineLength) * 100) - event.timelineStartLocation;
+
+          // if the range is 0% change to 1% so it shows up on the timeline
+          if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
+            endPercentage = 1;
+          }
+
+          event.timelineEndLocation = endPercentage;
         }
-
-        let endPercentage = (((endYear - this.timelineStart) / this.timelineLength) * 100) - event.timelineStartLocation;
-
-        // if the range is 0% change to 1% so it shows up on the timeline
-        if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
-          endPercentage = 1;
-        }
-
-        event.timelineEndLocation = endPercentage;
       }
     }
   }
