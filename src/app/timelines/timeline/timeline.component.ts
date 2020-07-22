@@ -189,25 +189,28 @@ export class TimelineComponent implements OnInit {
 
     let endYear = year.getFullYear();
 
-    for ( const event of this.timeline.events) {
-      if (event.startEra.label === 'BC') {
-        event.startYear = event.startYear * -1;
-      }
+    if (this.timeline.events && this.timeline.events.length) {
+      for ( const event of this.timeline.events) {
+        if (event.startEra.label === 'BC') {
+          event.startYear = event.startYear * -1;
+        }
 
-      if (event.endEra && event.endEra.label === 'BC') {
-        event.endYear = event.endYear * -1;
-      }
+        if (event.endEra && event.endEra.label === 'BC') {
+          event.endYear = event.endYear * -1;
+        }
 
-      if (event.endYear) {
-        endYear = event.endYear;
-      } else {
-        const dateObj = new Date();
-        endYear = dateObj.getFullYear();
-      }
+        if (event.endYear) {
+          endYear = event.endYear;
+        } else {
+          const dateObj = new Date();
+          endYear = dateObj.getFullYear();
+        }
 
-      years.push(event.startYear);
-      years.push(endYear);
+        years.push(event.startYear);
+        years.push(endYear);
+      }
     }
+
 
     if (this.timeline.persons && this.timeline.persons.length) {
       for (const person of this.timeline.persons) {
@@ -418,30 +421,32 @@ export class TimelineComponent implements OnInit {
     genericCategory.id = null;
     genericCategory.label = '';
 
-    for (const event of this.timeline.events) {
-      if (!eventIdsUsed.includes(event.id)) {
-        if (event.formattedStartDate === event.formattedEndDate) {
-          genericCategory.singlePointEvents.push(event);
+    if (this.timeline.events && this.timeline.events.length) {
+      for (const event of this.timeline.events) {
+        if (!eventIdsUsed.includes(event.id)) {
+          if (event.formattedStartDate === event.formattedEndDate) {
+            genericCategory.singlePointEvents.push(event);
 
-        } else {
-          if (this.eventColorClasses.length) {
-            const color = this.eventColorClasses.pop();
+          } else {
+            if (this.eventColorClasses.length) {
+              const color = this.eventColorClasses.pop();
 
-            event.colorClass = color;
-            backupColorArray.push(color);
+              event.colorClass = color;
+              backupColorArray.push(color);
 
-            if (!this.eventColorClasses.length) {
-              for (const backupColor of backupColorArray) {
-                this.eventColorClasses.push(backupColor);
+              if (!this.eventColorClasses.length) {
+                for (const backupColor of backupColorArray) {
+                  this.eventColorClasses.push(backupColor);
+                }
+
+                this.eventColorClasses.reverse();
+
+                backupColorArray = [];
               }
-
-              this.eventColorClasses.reverse();
-
-              backupColorArray = [];
             }
-          }
 
-          genericCategory.multiPointEvents.push(event);
+            genericCategory.multiPointEvents.push(event);
+          }
         }
       }
     }
@@ -502,25 +507,27 @@ export class TimelineComponent implements OnInit {
       }
 
     } else {
-      for (const event of this.timeline.events) {
-        // set the percentage location from oldest event.
-        event.timelineStartLocation = ((event.startYear - this.timelineStart) / this.timelineLength) * 100;
+      if (this.timeline.events && this.timeline.events.length) {
+        for (const event of this.timeline.events) {
+          // set the percentage location from oldest event.
+          event.timelineStartLocation = ((event.startYear - this.timelineStart) / this.timelineLength) * 100;
 
-        let endYear = event.endYear;
+          let endYear = event.endYear;
 
-        if (!endYear) {
-          const year = new Date();
-          endYear = year.getFullYear();
+          if (!endYear) {
+            const year = new Date();
+            endYear = year.getFullYear();
+          }
+
+          let endPercentage = (((endYear - this.timelineStart) / this.timelineLength) * 100) - event.timelineStartLocation;
+
+          // if the range is 0% change to 1% so it shows up on the timeline
+          if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
+            endPercentage = 1;
+          }
+
+          event.timelineEndLocation = endPercentage;
         }
-
-        let endPercentage = (((endYear - this.timelineStart) / this.timelineLength) * 100) - event.timelineStartLocation;
-
-        // if the range is 0% change to 1% so it shows up on the timeline
-        if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
-          endPercentage = 1;
-        }
-
-        event.timelineEndLocation = endPercentage;
       }
     }
   }
@@ -552,11 +559,13 @@ export class TimelineComponent implements OnInit {
       this.relatedEventsPreviousPage = response.links.previous;
       this.relatedEventsNextPage = response.links.next;
 
-      this.relatedEvents = this.relatedEvents.filter((el) => {
-        if (!this.timeline.events.find((ev) => ev.id === el.id)) {
-          return el;
-        }
-      });
+      if (this.timeline.events && this.timeline.events.length) {
+        this.relatedEvents = this.relatedEvents.filter((el) => {
+          if (!this.timeline.events.find((ev) => ev.id === el.id)) {
+            return el;
+          }
+        });
+      }
     });
   }
 

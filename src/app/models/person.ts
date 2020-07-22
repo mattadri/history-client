@@ -157,11 +157,7 @@ export class Person {
     if (person.attributes.person_biography && person.attributes.person_biography.data.length) {
       self.biographies = [];
 
-      console.log(person.attributes.person_biography.data);
-
       for (const returnedBiography of person.attributes.person_biography.data) {
-        console.log('bio: ', returnedBiography);
-
         const biography: PersonBiography = new PersonBiography();
         biography.initializeBiography();
 

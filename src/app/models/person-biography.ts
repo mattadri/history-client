@@ -17,9 +17,7 @@ export class PersonBiography {
     essay.initializeNewEssay();
 
     this.biography = essay.mapEssay(biography.attributes.essay.data);
-
-    console.log('this', this);
-
+    
     return this;
   }
 }
