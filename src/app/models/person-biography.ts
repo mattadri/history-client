@@ -9,7 +9,6 @@ export class PersonBiography {
     this.biography.initializeNewEssay();
   }
 
-
   mapBiography(biography) {
     this.id = biography.id;
 
@@ -17,7 +16,7 @@ export class PersonBiography {
     essay.initializeNewEssay();
 
     this.biography = essay.mapEssay(biography.attributes.essay.data);
-    
+
     return this;
   }
 }

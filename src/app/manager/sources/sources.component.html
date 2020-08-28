@@ -40,6 +40,16 @@
 
       <div class="app-drawer-content">
         <section class="app-section">
+          <label>Author<span *ngIf="source.authors.length > 1">s</span></label>
+
+          <span *ngFor="let author of source.authors; let i = index">
+            <span *ngIf="author.firstName">{{author.firstName}} </span>
+            <span *ngIf="author.lastName">{{author.lastName}}</span>
+            <span *ngIf="source.authors.length > 1 && i <= source.authors.length - 1">, <span *ngIf="i === source.authors.length - 2">and </span></span>
+          </span>
+        </section>
+
+        <section class="app-section">
           <label>Published Date</label>
           <span *ngIf="source.publishedMonth">{{source.publishedMonth.label}} </span>
           <span *ngIf="source.publishedDay">{{source.publishedDay}}, </span>

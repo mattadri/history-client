@@ -107,14 +107,6 @@ export class TimelineDisplayComponent implements OnInit {
 
     if (this.timeline.events && this.timeline.events.length) {
       for ( const event of this.timeline.events) {
-        if (event.startEra.label === 'BC') {
-          event.startYear = event.startYear * -1;
-        }
-
-        if (event.endEra && event.endEra.label === 'BC') {
-          event.endYear = event.endYear * -1;
-        }
-
         if (event.endYear) {
           endYear = event.endYear;
         } else {

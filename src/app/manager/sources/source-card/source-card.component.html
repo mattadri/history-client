@@ -4,6 +4,10 @@
     <span *ngIf="source.subTitle">
       <h2>{{source.subTitle}}</h2>
     </span>
+
+    <span *ngIf="source.authors.length">
+      <h3 *ngFor="let author of source.authors">{{author.firstName}} {{author.lastName}}</h3>
+    </span>
   </mat-card-title>
   <mat-card-content>
     <div class="mat-card-subtitle">
