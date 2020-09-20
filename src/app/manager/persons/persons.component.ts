@@ -115,6 +115,8 @@ export class PersonsComponent implements OnInit {
   }
 
   openPersonDetails(person, sideNav) {
+    this.initializeNewPerson();
+
     this.person = person;
 
     this.personLink = this.person.id.toString();

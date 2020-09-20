@@ -56,6 +56,10 @@ export class EventDetailsComponent implements OnInit {
     this.eventService.getApiEvent(eventId).subscribe(event => {
       this.event = event;
 
+      if (!this.event.description.length) {
+        this.event.description = 'Needs a description.';
+      }
+
       this.eventService.setEvent(this.event);
 
       this.sourcesAutocompleteControl.setValue(this.event.source);

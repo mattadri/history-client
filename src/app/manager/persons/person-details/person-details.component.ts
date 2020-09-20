@@ -73,7 +73,9 @@ export class PersonDetailsComponent implements OnInit {
     this.personService.getApiPerson(personId).subscribe(person => {
       this.person = person;
 
-      console.log('Person: ', this.person);
+      if (!this.person.description.length) {
+        this.person.description = 'This person needs a description.';
+      }
 
       this.personService.setPerson(this.person);
 
