@@ -34,8 +34,10 @@ export class ChartDataset {
       this.backgroundColor = dataset.attributes.background_color;
     }
 
-    if (dataset.attributes.borderColor) {
-      this.borderColor = dataset.attributes.borderColor;
+    console.log('Dataset: ', dataset);
+
+    if (dataset.attributes.border_color) {
+      this.borderColor = dataset.attributes.border_color;
     }
 
     this.fill = dataset.attributes.fill;
