@@ -250,6 +250,12 @@ export class ChartService {
     });
   }
 
+  deleteApiChart(chartId: number): Observable<any> {
+    return this.http.delete(environment.apiUrl + '/charts/' + chartId, {
+      headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
+    });
+  }
+
   setChart(chart: Chart) {
     this.charts.push(chart);
     this.chart = chart;

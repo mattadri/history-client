@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
+
+import {MatDialog} from '@angular/material';
 
 import {Subject} from 'rxjs';
 
@@ -9,6 +11,8 @@ import {ChartService} from '../../../services/chart.service';
 import {ChartLabel} from '../../../models/chart-label';
 import {ChartDatasetData} from '../../../models/chart-dataset-data';
 import {ChartDataset} from '../../../models/chart-dataset';
+
+import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
   selector: 'app-chart',
@@ -28,7 +32,10 @@ export class ChartComponent implements OnInit {
     ORDER TO RENDER THE CHART ITSELF. ALL BINDING IS DONE WITH THE ANGULAR CHART OBJECT AND MAPPED TO THE
     CHARTJS OBJECT.
   *** */
-  constructor(private route: ActivatedRoute, private chartService: ChartService) {
+  constructor(private route: ActivatedRoute,
+              private navigation: Router,
+              private chartService: ChartService,
+              public dialog: MatDialog) {
     const chartId = this.route.snapshot.paramMap.get('id');
 
     this.chartService.getApiChart(chartId).subscribe(chart => {
@@ -41,6 +48,23 @@ export class ChartComponent implements OnInit {
   }
 
   ngOnInit() { }
+
+  removeChart() {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the chart '
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.chartService.deleteApiChart(this.chart.id).subscribe(() => {
+          this.navigation.navigateByUrl('/manager/charts').then();
+        });
+      }
+    });
+  }
 
   updateChartType() {
     this.chartService.patchApiChart(this.chart).subscribe(() => {

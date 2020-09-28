@@ -451,15 +451,23 @@ export class TimelineDisplayComponent implements OnInit {
 
   showCursorLine($event) {
     const timelineContainerElement = document.getElementById('timeline-container');
+    const timelineDescriptionElement = document.getElementById('timeline-description');
 
     this.cursorLineActive = true;
     const xPosition = $event.clientX;
 
+    // const height = timelineContainerElement.offsetHeight;
     const height = timelineContainerElement.offsetHeight;
+    let top = 210;
+
+    if (this.timeline.description) {
+      top = timelineContainerElement.offsetHeight + timelineDescriptionElement.offsetHeight;
+    }
 
     this.cursorLineStyles = {
       left: xPosition + 'px',
-      height: height + 'px'
+      height: height + 'px',
+      top: top + 'px'
     };
 
     const timelineWidth = timelineContainerElement.offsetWidth;

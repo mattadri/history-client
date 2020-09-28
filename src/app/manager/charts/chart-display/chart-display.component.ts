@@ -144,6 +144,8 @@ export class ChartDisplayComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.makeChartConfig();
 
+    console.log(this.chartConfig);
+
     this.renderedChart = new RenderedChart(context, this.chartConfig);
   }
 
@@ -211,7 +213,7 @@ export class ChartDisplayComponent implements OnInit, OnDestroy, AfterViewInit {
       this.chartConfig.options.tooltips.callbacks = {};
       this.chartConfig.options.tooltips.callbacks.label = (tooltipItem, data) => {
         const dataValue = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-        const labelValue = data.labels[tooltipItem.index].label
+        const labelValue = data.labels[tooltipItem.index].label;
 
         return labelValue + ': ' + dataValue;
       };

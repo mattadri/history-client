@@ -42,14 +42,16 @@
     (saveContent)="saveDescription($event)">
   </app-editor>
 
-  <app-editor
-    *ngIf="!isAddDescriptionMode"
-    [content]="timeline.description"
-    [autoEdit]="false"
-    [isNote]="false"
-    [isEditable]="true"
-    (saveContent)="saveDescription($event)">
-  </app-editor>
+  <div id="timeline-description">
+    <app-editor
+      *ngIf="!isAddDescriptionMode"
+      [content]="timeline.description"
+      [autoEdit]="false"
+      [isNote]="false"
+      [isEditable]="true"
+      (saveContent)="saveDescription($event)">
+    </app-editor>
+  </div>
 
   <app-timeline-display
     *ngIf="timeline"
