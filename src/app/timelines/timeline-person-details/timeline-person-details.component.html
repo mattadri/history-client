@@ -14,16 +14,17 @@
     </div>
 
     <div class="app-drawer-content">
-      <div class="app-drawer-description" *ngIf="data.person.description">
-        {{data.person.description}}
-      </div>
+      <app-editor *ngIf="data.person.description" class="app-drawer-description" [content]="data.person.description"></app-editor>
+      <!--<div class="app-drawer-description" *ngIf="data.person.description">-->
+        <!--{{data.person.description}}-->
+      <!--</div>-->
 
-      <div class="app-drawer-notes" *ngIf="data.person.notes">
-        <div class="app-drawer-subheading">Notes</div>
-        <ul>
-          <app-timeline-event-detail-note *ngFor="let note of data.person.notes" [note]="note"></app-timeline-event-detail-note>
-        </ul>
-      </div>
+      <!--<div class="app-drawer-notes" *ngIf="data.person.notes">-->
+        <!--<div class="app-drawer-subheading">Notes</div>-->
+        <!--<ul>-->
+          <!--<app-timeline-event-detail-note *ngFor="let note of data.person.notes" [note]="note"></app-timeline-event-detail-note>-->
+        <!--</ul>-->
+      <!--</div>-->
     </div>
   </div>
 </div>

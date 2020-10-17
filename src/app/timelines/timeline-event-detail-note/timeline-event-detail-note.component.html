@@ -1,1 +1,4 @@
-<li><span *ngIf="note.note" [innerHtml]="note.note | safeHtml"></span></li>
+<li>
+  <!--<span *ngIf="note.note" [innerHtml]="note.note | safeHtml"></span>-->
+  <app-editor *ngIf="note.note" [content]="note.note"></app-editor>
+</li>
