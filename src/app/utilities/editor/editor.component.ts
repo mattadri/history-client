@@ -107,8 +107,6 @@ export class EditorComponent implements OnInit {
 
       this.addClickEvents().then();
     }
-
-    console.log(this.displayContent);
   }
 
   public initializeEditor(initControls) {

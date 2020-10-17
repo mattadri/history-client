@@ -15,9 +15,10 @@
     </div>
 
     <div class="app-drawer-content">
-      <div *ngIf="data.person.description" class="app-drawer-description">
-        {{data.person.description}}
-      </div>
+      <app-editor class="app-drawer-description" [content]="data.person.description"></app-editor>
+      <!--<div *ngIf="data.person.description" class="app-drawer-description">-->
+        <!--{{data.person.description}}-->
+      <!--</div>-->
     </div>
   </div>
 </div>
