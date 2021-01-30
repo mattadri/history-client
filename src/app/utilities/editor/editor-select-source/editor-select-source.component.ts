@@ -34,6 +34,8 @@ export class EditorSelectSourceComponent implements OnInit {
       endPage: 0
     };
 
+    this.responseObject.chapter = localStorage.getItem('last_chapter') || '';
+
     this.loadAutoComplete = false;
 
     this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {

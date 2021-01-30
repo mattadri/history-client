@@ -15,6 +15,10 @@ import {SourceNote} from '../../../models/source-note';
 import {Era} from '../../../models/era';
 import {Month} from '../../../models/month';
 import {Author} from '../../../models/author';
+import {SourceNoteExportComponent} from '../source-note-export/source-note-export.component';
+import {MatDialog} from '@angular/material';
+import {BrainstormService} from '../../../services/brainstorm.service';
+import {BrainstormThought} from '../../../models/brainstorm-thought';
 
 @Component({
   selector: 'app-source-details',
@@ -45,7 +49,9 @@ export class SourceDetailsComponent implements OnInit {
               private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
-              private authorService: AuthorService) {
+              private authorService: AuthorService,
+              private brainstormService: BrainstormService,
+              public dialog: MatDialog) {
 
     const sourceId = this.route.snapshot.paramMap.get('id');
 
@@ -207,6 +213,29 @@ export class SourceDetailsComponent implements OnInit {
   removeAuthor(author: Author) {
     this.sourceService.removeApiSourceAuthor(author).subscribe(() => {
       this.sourceService.removeAuthor(this.source, author);
+    });
+  }
+
+  exportNotes() {
+    const dialogRef = this.dialog.open(SourceNoteExportComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(brainstorm => {
+      if (brainstorm) {
+        for(let i = 0; i < this.source.notes.length; i++) {
+          let thought: BrainstormThought = new BrainstormThought();
+
+          thought.initializeNewThought();
+          thought.thought = this.source.notes[i].note;
+          thought.position = i;
+          thought.brainstormId = brainstorm.id;
+
+          console.log(thought);
+
+          this.brainstormService.createApiBrainstormThought(thought).subscribe(() => {});
+        }
+      }
     });
   }
 

@@ -1,0 +1,21 @@
+<div *ngIf="brainstorms">
+  <div class="app-drawer-header">
+    <div class="app-drawer-tools">
+      <button mat-icon-button type="button" class="material-icons" [mat-dialog-close]="brainstorm">save</button>
+      <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
+    </div>
+  </div>
+
+  <section class="app-section inline">
+    <label>Export to Brainstorm</label>
+
+    <div class="app-field-group">
+      <mat-form-field class="app-field-era">
+        <mat-label>Brainstorms</mat-label>
+        <mat-select [(ngModel)]="brainstorm" name="export_brainstorm" required>
+          <mat-option *ngFor="let brainstorm of brainstorms" [value]="brainstorm">{{brainstorm.title}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </section>
+</div>

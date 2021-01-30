@@ -485,13 +485,15 @@ export class EditorComponent implements OnInit {
 
               if (response.chapter) {
                 this.chapter = response.chapter;
+
+                localStorage.setItem('last_chapter', response.chapter);
               }
 
               if (response.startPage) {
                 this.pages = response.startPage.toString();
               }
 
-              if (response.endPage) {
+              if (response.endPage && response.endPage > response.startPage) {
                 this.pages += ' - ' + response.endPage.toString();
               }
             }

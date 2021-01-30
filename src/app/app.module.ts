@@ -97,8 +97,8 @@ import { BrainstormsComponent } from './brainstorms/brainstorms.component';
 import { BrainstormComponent } from './brainstorms/brainstorm/brainstorm.component';
 import { TopicComponent } from './brainstorms/brainstorm/topic/topic.component';
 import { ThoughtComponent } from './brainstorms/brainstorm/thought/thought.component';
-import {EssayService} from './services/essay.service';
-import {BrainstormService} from './services/brainstorm.service';
+import { EssayService } from './services/essay.service';
+import { BrainstormService } from './services/brainstorm.service';
 import { BrainstormCardComponent } from './brainstorms/brainstorm-card/brainstorm-card.component';
 import { ChartsComponent } from './manager/charts/charts.component';
 import { ChartComponent } from './manager/charts/chart/chart.component';
@@ -122,6 +122,7 @@ import { EditorSelectChartComponent } from './utilities/editor/editor-select-cha
 import { EssayChartDetailsComponent } from './essays/essay-chart-details/essay-chart-details.component';
 import { TimelineDisplayComponent } from './timelines/timeline/timeline-display/timeline-display.component';
 import { QuickSourceComponent } from './manager/sources/quick-source/quick-source.component';
+import { SourceNoteExportComponent } from './manager/sources/source-note-export/source-note-export.component';
 
 @NgModule({
   declarations: [
@@ -200,7 +201,8 @@ import { QuickSourceComponent } from './manager/sources/quick-source/quick-sourc
     EditorSelectChartComponent,
     EssayChartDetailsComponent,
     TimelineDisplayComponent,
-    QuickSourceComponent
+    QuickSourceComponent,
+    SourceNoteExportComponent
   ],
   entryComponents: [
     TimelineEventDetailsComponent,
@@ -217,6 +219,7 @@ import { QuickSourceComponent } from './manager/sources/quick-source/quick-sourc
     QuickBrainstormTopicComponent,
     QuickAuthorComponent,
     QuickSourceComponent,
+    SourceNoteExportComponent,
     EditorSelectSourceComponent,
     EditorSelectEventComponent,
     EditorSelectPersonComponent,
