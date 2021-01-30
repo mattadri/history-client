@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {BrainstormService} from '../../../services/brainstorm.service';
 import {Brainstorm} from '../../../models/brainstorm';
+import {MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'app-source-note-export',
@@ -11,7 +12,7 @@ export class SourceNoteExportComponent implements OnInit {
   public brainstorm: Brainstorm;
   public brainstorms: Brainstorm[];
 
-  constructor(private brainstormService: BrainstormService) {
+  constructor(private brainstormService: BrainstormService, public dialogRef: MatDialogRef<SourceNoteExportComponent>) {
     this.brainstormService.getApiBrainstorms('/brainstorms?page[size]=0&fields[brainstorm]=title').subscribe((response) => {
       this.brainstorms = response.brainstorms;
     });
@@ -20,4 +21,7 @@ export class SourceNoteExportComponent implements OnInit {
   ngOnInit() {
   }
 
+  onNoClick():void {
+    this.dialogRef.close();
+  }
 }
