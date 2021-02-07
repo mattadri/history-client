@@ -9,7 +9,16 @@
 
         <div>
           <p>
-            <span *ngIf="data.ref.sourceChapter">{{data.ref.sourceChapter}}</span>
+            <span *ngIf="data.ref.sourceChapter">
+              <a *ngIf="data.ref.sourceChapter.startsWith('http'); else justLink" target="_blank" href="{{data.ref.sourceChapter}}">
+                {{data.ref.sourceChapter}}
+              </a>
+
+              <ng-template #justLink>
+                {{data.ref.sourceChapter}}
+              </ng-template>
+            </span>
+
             <span *ngIf="data.ref.sourcePage">, page {{data.ref.sourcePage}}</span>
           </p>
         </div>
@@ -23,7 +32,15 @@
 
         <div>
           <p>
-            <span *ngIf="data.chapter">{{data.chapter}}</span>
+            <span *ngIf="data.chapter">
+              <a *ngIf="data.chapter.startsWith('http'); else justLink" target="_blank" href="{{data.chapter}}">
+                {{data.chapter}}
+              </a>
+
+              <ng-template #justLink>
+                {{data.chapter}}
+              </ng-template>
+            </span>
             <span *ngIf="data.page">, pages {{data.page}}</span>
           </p>
         </div>
