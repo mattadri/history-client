@@ -92,11 +92,6 @@ export class TimelineEventDetailsComponent {
     }
 
     this.eventLink = '/manager/events/' + this.data.event.id.toString();
-
-    console.log('Event Link: ', this.eventLink);
-
-    console.log('Total Notes: ', this.data.event.notes);
-    console.log('Display Notes: ', this.displayNotes);
   }
 
   onNoClick(): void {

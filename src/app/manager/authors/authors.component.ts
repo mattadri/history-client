@@ -55,7 +55,6 @@ export class AuthorsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(author => {
-      console.log('Author: ', author);
       if (author) {
         this.authorService.createApiAuthor(author).subscribe(response => {
           author.id = response.data.id;

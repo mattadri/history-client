@@ -1,13 +1,23 @@
 <div *ngIf="isNote" class="app-body-content">
   <div class="app-card-content">
-    <div class="app-essay-section essay-content" *ngIf="!isEditMode" >
+    <div *ngIf="!isEditMode && sourceNote">
+      <button mat-flat-button color="secondary" (click)="doExportNote()">-> Export</button>
+
+      <div style="float: right" *ngIf="sourceNote.exportBrainstorms.length">
+        <mat-icon
+          aria-hidden="false"
+          aria-label="Exported to Brainstorms"
+          matTooltip="{{exportTooltip}}">check_circle</mat-icon>
+      </div>
+    </div>
+
+    <div class="app-essay-section essay-content" *ngIf="!isEditMode"   >
         <h2>
           <button *ngIf="canDelete" mat-flat-button class="material-icons" (click)="doDeleteNote()">delete</button>
         </h2>
 
       <div (dblclick)="setEditMode()" [innerHtml]="displayContent | safeHtml"></div>
     </div>
-
 
     <div *ngIf="isEditMode" class="app-essay-edit-mode">
       <div class="app-content-toolbar">

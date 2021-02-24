@@ -23,7 +23,5 @@ export class ChartOptionsPost {
     if (isPatch) {
       this.data.id = chartOptions.id;
     }
-
-    console.log('Data: ', this.data);
   }
 }

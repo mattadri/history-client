@@ -64,6 +64,7 @@ export class Source {
     if (source.attributes.reference_note && source.attributes.reference_note.data.length) {
       for (const sourceNote of source.attributes.reference_note.data) {
         const note = new SourceNote();
+        note.initializeNote();
 
         note.mapNote(sourceNote);
 

@@ -41,6 +41,12 @@ export class ChartComponent implements OnInit {
     this.chartService.getApiChart(chartId).subscribe(chart => {
       this.chart = chart;
 
+      this.chart.labels.sort(this.sortById);
+
+      for (const dataset of this.chart.datasets) {
+        dataset.data.sort(this.sortById);
+      }
+
       this.chartService.setChart(chart);
     });
 
@@ -48,6 +54,14 @@ export class ChartComponent implements OnInit {
   }
 
   ngOnInit() { }
+
+  private sortById(a, b) {
+    if (a.id > b.id) {
+      return 1;
+    } else {
+      return -1
+    }
+  }
 
   removeChart() {
     const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
@@ -78,7 +92,7 @@ export class ChartComponent implements OnInit {
     newChartLabel.initializeNewChartLabel();
 
     this.chartService.createApiChartLabel(this.chart, newChartLabel).subscribe((newLabelResponse) => {
-      newChartLabel.id = newLabelResponse.id;
+      newChartLabel.id = newLabelResponse.data.id;
 
       this.chart.labels.push(newChartLabel);
 

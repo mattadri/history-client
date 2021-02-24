@@ -35,6 +35,7 @@ import {EditorSelectTimelineComponent} from './editor-select-timeline/editor-sel
 import {EditorSelectChartComponent} from './editor-select-chart/editor-select-chart.component';
 import {EssayTimelineDetailsComponent} from '../../essays/essay-timeline-details/essay-timeline-details.component';
 import {EssayChartDetailsComponent} from '../../essays/essay-chart-details/essay-chart-details.component';
+import {SourceNote} from '../../models/source-note';
 
 @Component({
   selector: 'app-editor',
@@ -48,9 +49,11 @@ export class EditorComponent implements OnInit {
   @Input() public isNote: boolean;
   @Input() public canDelete: boolean;
   @Input() public isEditable: boolean;
+  @Input() public sourceNote: SourceNote;
 
   @Output() private saveContent: EventEmitter<string>;
   @Output() private deleteNote: EventEmitter<boolean>;
+  @Output() private exportNote: EventEmitter<boolean>;
 
   public displayContent: string;
 
@@ -67,6 +70,8 @@ export class EditorComponent implements OnInit {
   public event: Event;
   public person: Person;
   public timeline: Timeline;
+
+  public exportTooltip: string;
 
   public chart: Chart;
 
@@ -91,6 +96,7 @@ export class EditorComponent implements OnInit {
 
     this.saveContent = new EventEmitter<string>();
     this.deleteNote = new EventEmitter<boolean>();
+    this.exportNote = new EventEmitter<boolean>();
   }
 
   ngOnInit() {
@@ -106,6 +112,18 @@ export class EditorComponent implements OnInit {
       this.tokenizeCharts();
 
       this.addClickEvents().then();
+    }
+
+    if (this.isNote && this.sourceNote.exportBrainstorms.length) {
+      this.exportTooltip = '';
+
+      for (const brainstorm of this.sourceNote.exportBrainstorms) {
+        if (!this.exportTooltip.length) {
+          this.exportTooltip = brainstorm.title + ', ';
+        } else {
+          this.exportTooltip = this.exportTooltip + brainstorm.title + ', ';
+        }
+      }
     }
   }
 
@@ -682,6 +700,10 @@ export class EditorComponent implements OnInit {
 
   doDeleteNote() {
     this.deleteNote.emit(true);
+  }
+
+  doExportNote() {
+    this.exportNote.emit(true);
   }
 
   async addClickEvents() {

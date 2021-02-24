@@ -231,10 +231,37 @@ export class SourceDetailsComponent implements OnInit {
           thought.position = i;
           thought.brainstormId = brainstorm.id;
 
-          console.log(thought);
-
           this.brainstormService.createApiBrainstormThought(thought).subscribe(() => {});
+
+          this.sourceService.createApiSourceNoteBrainstorm(this.source.notes[i], brainstorm).subscribe(() => {
+            note.exportBrainstorms.push(brainstorm);
+          });
         }
+      }
+    });
+  }
+
+  loadExportNote(note) {
+    const dialogRef = this.dialog.open(SourceNoteExportComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(brainstorm => {
+      if (brainstorm) {
+        let thought: BrainstormThought = new BrainstormThought();
+
+        thought.initializeNewThought();
+        thought.thought = note.note;
+        thought.position = brainstorm.thoughts.length + 1;
+        thought.brainstormId = brainstorm.id;
+
+        this.brainstormService.createApiBrainstormThought(thought).subscribe(() => {});
+
+        note.exportBrainstorms.push(brainstorm);
+
+        this.sourceService.createApiSourceNoteBrainstorm(note, brainstorm).subscribe(() => {
+          note.exportBrainstorms.push(brainstorm);
+        });
       }
     });
   }

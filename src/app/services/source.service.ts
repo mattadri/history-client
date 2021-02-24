@@ -12,6 +12,8 @@ import { SourceAuthorPost } from '../models/posts/source-author-post';
 import {SourceNote} from '../models/source-note';
 import {SourceNotePost} from '../models/posts/source-note-post';
 import {SourceResponse} from '../models/responses/source-response';
+import {SourceNoteBrainstormPost} from '../models/posts/source-note-brainstorm-post';
+import {Brainstorm} from '../models/brainstorm';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +22,7 @@ export class SourceService {
   private sourcePost: SourcePost;
   private sourceAuthorPost: SourceAuthorPost;
   private notePost: SourceNotePost;
+  private noteBrainstormPost: SourceNoteBrainstormPost;
 
   private sources: Source[];
   private source: Source;
@@ -152,6 +155,18 @@ export class SourceService {
         .set('Content-Type', 'application/vnd.api+json')
     });
   }
+
+  createApiSourceNoteBrainstorm(note: SourceNote, brainstorm: Brainstorm): Observable<any> {
+    this.noteBrainstormPost = new SourceNoteBrainstormPost();
+    this.noteBrainstormPost.mapToPost(note, brainstorm, false);
+
+    return this.http.post(environment.apiUrl + '/reference_note_export_brainstorm_destinations', this.noteBrainstormPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
 
   removeApiNote(note: SourceNote): Observable<any> {
     return this.http.delete(environment.apiUrl + '/reference_notes/' + note.id, {

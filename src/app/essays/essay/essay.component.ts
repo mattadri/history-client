@@ -703,8 +703,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
   handleTimelineClick(timeline): void {
     let timelineId = null;
 
-    console.log('working');
-
     if (timeline.toElement.localName === 'sup') {
       timelineId = timeline.toElement.parentNode.dataset.timelineid;
     } else {

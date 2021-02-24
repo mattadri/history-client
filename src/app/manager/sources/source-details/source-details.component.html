@@ -128,7 +128,7 @@
       <!-- Add a note CTA-->
       <div class="app-content-toolbar margin-bottom">
           <h2>Notes</h2>
-          <button mat-flat-button color="secondary" (click)="exportNotes()">-> Export</button>
+          <button mat-flat-button color="secondary" (click)="exportNotes()">-> Export All</button>
           <button mat-flat-button color="secondary" (click)="activateAddNoteMode()">+ Add a Note</button>
       </div>
 
@@ -151,9 +151,9 @@
         [note]="note"
         [source]="source"
         [showToolbar]="true"
-        (removeNote)="deleteNote($event)">
+        (removeNote)="deleteNote($event)"
+        (exportNote)="loadExportNote(note)">
       </app-source-details-note>
-
     </div>
   </div>
 </div>

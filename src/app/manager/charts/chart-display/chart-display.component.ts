@@ -144,8 +144,6 @@ export class ChartDisplayComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.makeChartConfig();
 
-    console.log(this.chartConfig);
-
     this.renderedChart = new RenderedChart(context, this.chartConfig);
   }
 

@@ -23,6 +23,7 @@ export class SourceDetailsNoteComponent implements OnInit {
 
   @Output() private removeNote: EventEmitter<SourceNote>;
   @Output() private createNote: EventEmitter<SourceNote>;
+  @Output() private exportNote: EventEmitter<SourceNote>;
 
   public isEditNoteMode: boolean;
 
@@ -31,6 +32,7 @@ export class SourceDetailsNoteComponent implements OnInit {
 
     this.removeNote = new EventEmitter<SourceNote>();
     this.createNote = new EventEmitter<SourceNote>();
+    this.exportNote = new EventEmitter<SourceNote>();
   }
 
   ngOnInit() { }
@@ -81,5 +83,9 @@ export class SourceDetailsNoteComponent implements OnInit {
         this.removeNote.emit(this.note);
       }
     });
+  }
+
+  doExportNote() {
+    this.exportNote.emit(this.note);
   }
 }

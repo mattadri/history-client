@@ -39,7 +39,6 @@ export class AuthorDetailsComponent implements OnInit {
 
   editAuthor() {
     return this.authorService.patchApiAuthor(this.author).subscribe(() => {
-      console.log(this.author);
       this.isEditAuthorMode = false;
     });
   }

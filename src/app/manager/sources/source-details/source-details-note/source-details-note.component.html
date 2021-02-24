@@ -3,6 +3,7 @@
   [isEditable]="true"
   [autoEdit]="autoEdit"
   [isNote]="true"
+  [sourceNote]="note"
   (saveContent)="saveNote($event)"
-  (deleteNote)="doDeleteNote()">
+  (deleteNote)="doDeleteNote()" (exportNote)="doExportNote()">
 </app-editor>
