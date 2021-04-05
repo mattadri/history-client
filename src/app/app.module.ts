@@ -21,6 +21,8 @@ import { MatTooltipModule } from '@angular/material';
 import { MatExpansionModule } from '@angular/material';
 import { MatAutocompleteModule } from '@angular/material';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatListModule } from '@angular/material/list';
 
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
@@ -249,6 +251,8 @@ import { SourceNoteExportComponent } from './manager/sources/source-note-export/
     MatExpansionModule,
     MatAutocompleteModule,
     MatIconModule,
+    MatButtonToggleModule,
+    MatListModule,
     DragDropModule,
     Ng5SliderModule,
     FroalaViewModule.forRoot(),

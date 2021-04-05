@@ -74,20 +74,64 @@ export class EventService {
 
       if (dateFilter) {
         if (dateFilter.length === 2) {
+          let addEraFilter = true;
+
+          let startDateOperator = 'gt';
+
+          if (dateFilter[0][1].toUpperCase() === 'BC') {
+            startDateOperator = 'lt';
+          }
+
+          let endDateOperator = 'lt';
+
+          if (dateFilter[1][1].toUpperCase() === 'BC') {
+            endDateOperator = 'gt';
+          }
+
+          // In the case that the search is between BC and AD
+          if (dateFilter[0][1].toUpperCase() === 'BC' && dateFilter[1][1].toUpperCase() === 'AD') {
+            addEraFilter = false;
+          }
+
           const startDateFilter = {
             name: 'event_start_year',
-            op: 'gt',
-            val: dateFilter[0]
+            op: startDateOperator,
+            val: dateFilter[0][0]
           };
 
           const endDateFilter = {
             name: 'event_end_year',
-            op: 'lt',
-            val: dateFilter[1]
+            op: endDateOperator,
+            val: dateFilter[1][0]
+          };
+
+          const startDateEraFilter = {
+            name: 'event_start_era_rel',
+            op: 'has',
+            val: {
+              name: 'label',
+              op: 'eq',
+              val: dateFilter[0][1]
+            }
+          };
+
+          const endDateEraFilter = {
+            name: 'event_end_era_rel',
+            op: 'has',
+            val: {
+              name: 'label',
+              op: 'eq',
+              val: dateFilter[1][1]
+            }
           };
 
           this.filterObject.push(startDateFilter);
           this.filterObject.push(endDateFilter);
+
+          if (addEraFilter) {
+            this.filterObject.push(startDateEraFilter);
+            this.filterObject.push(endDateEraFilter);
+          }
         }
       }
 

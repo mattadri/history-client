@@ -234,7 +234,7 @@ export class SourceDetailsComponent implements OnInit {
           this.brainstormService.createApiBrainstormThought(thought).subscribe(() => {});
 
           this.sourceService.createApiSourceNoteBrainstorm(this.source.notes[i], brainstorm).subscribe(() => {
-            note.exportBrainstorms.push(brainstorm);
+            this.source.notes[i].exportBrainstorms.push(brainstorm);
           });
         }
       }

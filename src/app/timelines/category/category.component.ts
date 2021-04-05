@@ -13,12 +13,14 @@ export class CategoryComponent implements OnInit {
   @Input() public timeline: Timeline;
   @Input() public categoryEvents: Array<Category>;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
-    this.persons.sort((a, b) => {
-      return a.birthYear - b.birthYear;
-    });
+    if (this.persons) {
+      this.persons.sort((a, b) => {
+        return a.birthYear - b.birthYear;
+      });
+    }
   }
 
 }

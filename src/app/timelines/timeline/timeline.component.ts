@@ -552,7 +552,18 @@ export class TimelineComponent implements OnInit {
   }
 
   getRelatedEvents(path, isPageLink) {
-    this.eventService.getApiEvents(path, null, [this.timelineStart, this.timelineEnd], isPageLink).subscribe(response => {
+    let timelineStartEra = 'AD';
+    let timelineEndEra = 'AD';
+
+    if (this.timelineStart < 0) {
+      timelineStartEra = 'BC';
+    }
+    
+    if (this.timelineEnd < 0) {
+      timelineEndEra = 'BC';
+    }
+
+    this.eventService.getApiEvents(path, null, [[this.timelineStart, timelineStartEra], [this.timelineEnd, timelineEndEra]], isPageLink).subscribe(response => {
       this.relatedEvents = response.events;
 
       this.relatedEventsTotalResults = response.total;

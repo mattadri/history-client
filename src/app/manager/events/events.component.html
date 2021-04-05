@@ -3,6 +3,13 @@
     <div class="app-content-toolbar">
       <h1>Events</h1>
 
+      <div>
+        <mat-button-toggle-group [(ngModel)]="eventLayout" appearance="legacy" name="eventLayoutStyle" aria-label="Event Layout Style">
+          <mat-button-toggle value="card">Card</mat-button-toggle>
+          <mat-button-toggle value="list">List</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+
       <div class="app-search-box">
         <mat-form-field>
           <input matInput
@@ -17,11 +24,31 @@
       <button mat-flat-button class="material-icons" color="primary" (click)="createEvent()">add</button>
     </div>
 
-    <div class="app-cards-container">
+    <div *ngIf="eventLayout === 'card'" class="app-cards-container">
       <app-event-card
         *ngFor="let event of events" [event]="event" (loadEvent)="openEventDetails($event, eventDetails)"
         class="app-card">
       </app-event-card>
+    </div>
+
+    <div *ngIf="eventLayout === 'list'">
+      <button mat-flat-button class="material-icons" color="primary" (click)="addToTimeline()">add</button>
+
+      <mat-form-field class="app-field-month">
+        <mat-label>Timelines</mat-label>
+        <mat-select [(ngModel)]="selectedTimeline" name="selected_timeline">
+          <mat-option [value]="null"></mat-option>
+          <mat-option *ngFor="let timeline of timelines" [value]="timeline">{{timeline.label}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-selection-list [(ngModel)]="selectedEvents" [compareWith]="selectEvent">
+        <mat-list-option *ngFor="let event of events" [value]="event">
+          <div>
+            <b>{{event.label}}</b> ({{event.formattedStartYear}}<span *ngIf="event.formattedStartYear !== event.formattedEndYear"> - {{event.formattedEndYear}}</span>)
+          </div>
+        </mat-list-option>
+      </mat-selection-list>
     </div>
 
     <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
