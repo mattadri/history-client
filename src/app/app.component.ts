@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {AuthService} from './services/auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +18,8 @@ export class AppComponent implements OnInit {
   public chartsLinkActive: boolean;
   public essaysLinkActive: boolean;
   public brainstormsLinkActive: boolean;
+
+  constructor(private router: Router) { }
 
   ngOnInit() {
     this.timelinesLinkActive = true;
@@ -115,5 +119,11 @@ export class AppComponent implements OnInit {
       this.brainstormsLinkActive = true;
       this.chartsLinkActive = false;
     }
+  }
+
+  logout() {
+    AuthService.logOut();
+
+    this.router.navigate(['login/']).then();
   }
 }

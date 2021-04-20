@@ -8,6 +8,7 @@
           <button mat-flat-button class="material-icons" (click)="toggleContentPanel(essayManager)">{{essayScreenSize}}</button>
         </div>
 
+        <!-- IF THE ESSAY TITLE IS IN EDIT MODE -->
         <div *ngIf="isEssayTitleEditMode">
           <mat-form-field style="width: 100%">
             <input
@@ -303,6 +304,7 @@
         </div>
       </mat-expansion-panel>
 
+      <!-- PEOPLE PANEL -->
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>

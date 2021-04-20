@@ -558,7 +558,7 @@ export class TimelineComponent implements OnInit {
     if (this.timelineStart < 0) {
       timelineStartEra = 'BC';
     }
-    
+
     if (this.timelineEnd < 0) {
       timelineEndEra = 'BC';
     }

@@ -1,0 +1,9 @@
+<div *ngIf="user">
+  Current User: {{user.firstName}} {{user.lastName}}
+</div>
+
+<div *ngIf="users">
+  <div *ngFor="let user of users" class="user-select" (click)="selectUser(user, $event)">
+    {{user.firstName}} {{user.lastName}}
+  </div>
+</div>

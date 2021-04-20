@@ -1,0 +1,41 @@
+<form #loginForm="ngForm">
+  <div class="app-drawer-header">
+    <div class="app-drawer-title">
+      <div class="app-drawer-subheading">Login</div>
+    </div>
+  </div>
+
+  <div class="app-drawer-content">
+    <section class="app-section">
+      <mat-form-field>
+        <input
+          type="text"
+          [(ngModel)]="username"
+          placeholder="Username"
+          matInput
+          #userNameField
+          name="user_name"
+          id="user_name">
+      </mat-form-field>
+    </section>
+
+    <section class="app-section">
+      <mat-form-field>
+        <input
+          type="password"
+          [(ngModel)]="password"
+          placeholder="Password"
+          matInput
+          #passwordField
+          name="user_password"
+          id="user_password">
+      </mat-form-field>
+    </section>
+
+    <section class="app-section">
+      <button mat-flat-button type="button" (click)="attemptLogin()">
+        Login
+      </button>
+    </section>
+  </div>
+</form>

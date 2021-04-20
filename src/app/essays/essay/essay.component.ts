@@ -80,7 +80,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
   public source: Source;
   public sources: Source[] = [];
-  public sourceId: number;
 
   public event: Event;
   public events: Event[];
@@ -125,8 +124,6 @@ export class EssayComponent implements OnInit, AfterViewInit {
     const essayId = this.route.snapshot.paramMap.get('id');
 
     this.essayTypes = [];
-
-    this.sourceId = 22;
 
     this.isEssayTitleEditMode = false;
     this.isAbstractEditMode = false;

@@ -23,6 +23,7 @@ import { MatAutocompleteModule } from '@angular/material';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
 
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
@@ -126,6 +127,11 @@ import { EssayChartDetailsComponent } from './essays/essay-chart-details/essay-c
 import { TimelineDisplayComponent } from './timelines/timeline/timeline-display/timeline-display.component';
 import { QuickSourceComponent } from './manager/sources/quick-source/quick-source.component';
 import { SourceNoteExportComponent } from './manager/sources/source-note-export/source-note-export.component';
+import { LoginComponent } from './auth/login/login.component';
+import { UserComponent } from './auth/user/user.component';
+import {UserInterceptor} from './services/interceptors/user.interceptor';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ProjectsComponent } from './projects/projects.component';
 
 @NgModule({
   declarations: [
@@ -205,7 +211,11 @@ import { SourceNoteExportComponent } from './manager/sources/source-note-export/
     EssayChartDetailsComponent,
     TimelineDisplayComponent,
     QuickSourceComponent,
-    SourceNoteExportComponent
+    SourceNoteExportComponent,
+    LoginComponent,
+    UserComponent,
+    DashboardComponent,
+    ProjectsComponent
   ],
   entryComponents: [
     TimelineEventDetailsComponent,
@@ -253,6 +263,7 @@ import { SourceNoteExportComponent } from './manager/sources/source-note-export/
     MatIconModule,
     MatButtonToggleModule,
     MatListModule,
+    MatMenuModule,
     DragDropModule,
     Ng5SliderModule,
     FroalaViewModule.forRoot(),
@@ -305,6 +316,11 @@ import { SourceNoteExportComponent } from './manager/sources/source-note-export/
     {
       provide: HTTP_INTERCEPTORS,
       useClass: ChartInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: UserInterceptor,
       multi: true
     }
   ],

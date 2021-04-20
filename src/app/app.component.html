@@ -1,14 +1,68 @@
 <header class="app-main-nav">
   <nav>
     <a class="app-name" routerLink="/timelines" (click)="addActiveClass($event)">HDM</a>
-    <li><a routerLink="/timelines" [ngClass]="timelinesLinkActive ? 'active' : ''" (click)="addActiveClass($event)">Timelines</a></li>
-    <li><a routerLink="/manager/events" [ngClass]="eventsLinkActive ? 'active' : ''" (click)="addActiveClass($event)">Events</a></li>
-    <li><a routerLink="/manager/persons" [ngClass]="personsLinkActive ? 'active' : ''" (click)="addActiveClass($event)">People</a></li>
-    <li><a routerLink="/manager/sources" [ngClass]="sourcesLinkActive ? 'active' : ''" (click)="addActiveClass($event)">Sources</a></li>
-    <li><a routerLink="/manager/authors" [ngClass]="authorsLinkActive ? 'active' : ''" (click)="addActiveClass($event)">Authors</a></li>
-    <li><a routerLink="/manager/charts" [ngClass]="chartsLinkActive ? 'active' : ''" (click)="addActiveClass($event)">Charts</a></li>
-    <li><a routerLink="/essays" [ngClass]="essaysLinkActive ? 'active' : ''" (click)="addActiveClass($event)">Essays</a></li>
-    <li><a routerLink="/brainstorming" [ngClass]="brainstormsLinkActive ? 'active' : ''" (click)="addActiveClass($event)">Brainstorming</a></li>
+
+    <button mat-icon-button aria-label="Dashboard" routerLink="/dashboard">
+      <mat-icon>dashboard</mat-icon>
+    </button>
+
+    <button mat-icon-button aria-label="Projects" routerLink="/projects">
+      <mat-icon>collections_bookmark</mat-icon>
+    </button>
+
+    <button mat-icon-button aria-label="Timelines" routerLink="/timelines">
+      <mat-icon>timeline</mat-icon>
+    </button>
+
+    <button mat-icon-button aria-label="Essays" routerLink="/essays">
+      <mat-icon>assignment</mat-icon>
+    </button>
+
+    <button mat-icon-button aria-label="Brainstorms" routerLink="/brainstorming">
+      <mat-icon>bubble_chart</mat-icon>
+    </button>
+
+    <button mat-icon-button [matMenuTriggerFor]="dataMenu" aria-label="Data">
+      <mat-icon>folder_open</mat-icon>
+    </button>
+
+    <mat-menu #dataMenu="matMenu">
+      <button mat-menu-item routerLink="manager/events">
+        <mat-icon>event</mat-icon>
+        <span>Events</span>
+      </button>
+
+      <button mat-menu-item routerLink="manager/persons">
+        <mat-icon>person</mat-icon>
+        <span>People</span>
+      </button>
+
+      <button mat-menu-item routerLink="manager/charts">
+        <mat-icon>pie_chart</mat-icon>
+        <span>Charts</span>
+      </button>
+
+      <button mat-menu-item routerLink="manager/sources">
+        <mat-icon>book</mat-icon>
+        <span>Sources</span>
+      </button>
+
+      <button mat-menu-item routerLink="manager/authors">
+        <mat-icon>local_library</mat-icon>
+        <span>Authors</span>
+      </button>
+    </mat-menu>
+
+    <button mat-icon-button [matMenuTriggerFor]="settingsMenu" aria-label="Logout">
+      <mat-icon>settings</mat-icon>
+    </button>
+
+    <mat-menu #settingsMenu="matMenu">
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>eject</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
   </nav>
 </header>
 
