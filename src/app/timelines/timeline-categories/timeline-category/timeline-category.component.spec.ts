@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TimelineCategoryComponent } from './timeline-category.component';
 
@@ -6,7 +6,7 @@ describe('TimelineCategoryComponent', () => {
   let component: TimelineCategoryComponent;
   let fixture: ComponentFixture<TimelineCategoryComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TimelineCategoryComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { EditorSelectChartComponent } from './editor-select-chart.component';
 
@@ -6,7 +6,7 @@ describe('EditorSelectChartComponent', () => {
   let component: EditorSelectChartComponent;
   let fixture: ComponentFixture<EditorSelectChartComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ EditorSelectChartComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { BrainstormCardComponent } from './brainstorm-card.component';
 
@@ -6,7 +6,7 @@ describe('BrainstormCardComponent', () => {
   let component: BrainstormCardComponent;
   let fixture: ComponentFixture<BrainstormCardComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BrainstormCardComponent ]
     })

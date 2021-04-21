@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { EditorSelectEventComponent } from './editor-select-event.component';
 
@@ -6,7 +6,7 @@ describe('EditorSelectEventComponent', () => {
   let component: EditorSelectEventComponent;
   let fixture: ComponentFixture<EditorSelectEventComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ EditorSelectEventComponent ]
     })

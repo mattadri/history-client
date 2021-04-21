@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { EditorSelectTimelineComponent } from './editor-select-timeline.component';
 
@@ -6,7 +6,7 @@ describe('EditorSelectTimelineComponent', () => {
   let component: EditorSelectTimelineComponent;
   let fixture: ComponentFixture<EditorSelectTimelineComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ EditorSelectTimelineComponent ]
     })

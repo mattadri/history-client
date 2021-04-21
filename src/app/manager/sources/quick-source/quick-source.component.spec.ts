@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { QuickSourceComponent } from './quick-source.component';
 
@@ -6,7 +6,7 @@ describe('QuickSourceComponent', () => {
   let component: QuickSourceComponent;
   let fixture: ComponentFixture<QuickSourceComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ QuickSourceComponent ]
     })

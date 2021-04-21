@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { QuickBrainstormTopicComponent } from './quick-brainstorm-topic.component';
 
@@ -6,7 +6,7 @@ describe('QuickBrainstormTopicComponent', () => {
   let component: QuickBrainstormTopicComponent;
   let fixture: ComponentFixture<QuickBrainstormTopicComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ QuickBrainstormTopicComponent ]
     })
