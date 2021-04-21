@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 
-import { MatBottomSheet } from '@angular/material';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 import {Person} from '../../models/person';
 import {Timeline} from '../../models/timeline';

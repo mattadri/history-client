@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {Timeline} from '../../models/timeline';
-import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from '@angular/material';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 
 export interface DialogData {
   timeline: Timeline;

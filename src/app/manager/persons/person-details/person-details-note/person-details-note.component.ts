@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {PersonNote} from '../../../../models/person-note';
 import {PersonService} from '../../../../services/person.service';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {ConfirmRemovalComponent} from '../../../../utilities/confirm-removal/confirm-removal.component';
 import {Person} from '../../../../models/person';
 

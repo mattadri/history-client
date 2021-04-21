@@ -7,7 +7,8 @@ import {
   Output
 } from '@angular/core';
 
-import {MatBottomSheet, MatDialog} from '@angular/material';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { MatDialog } from '@angular/material/dialog';
 
 import FroalaEditor from 'froala-editor/js/froala_editor.min.js';
 

@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 
 import {Chart} from '../../models/chart';
-import {MAT_BOTTOM_SHEET_DATA} from '@angular/material';
+import { MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
 export interface DialogData {
   chart: Chart;

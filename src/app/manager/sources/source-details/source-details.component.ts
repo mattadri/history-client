@@ -16,7 +16,7 @@ import {Era} from '../../../models/era';
 import {Month} from '../../../models/month';
 import {Author} from '../../../models/author';
 import {SourceNoteExportComponent} from '../source-note-export/source-note-export.component';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import {BrainstormService} from '../../../services/brainstorm.service';
 import {BrainstormThought} from '../../../models/brainstorm-thought';
 

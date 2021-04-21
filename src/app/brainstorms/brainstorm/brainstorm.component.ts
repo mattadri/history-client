@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import {BrainstormService} from '../../services/brainstorm.service';
 

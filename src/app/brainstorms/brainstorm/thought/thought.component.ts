@@ -6,7 +6,7 @@ import {BrainstormService} from '../../../services/brainstorm.service';
 import {BrainstormTopic} from '../../../models/brainstorm-topic';
 
 import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confirm-removal.component';
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface ReturnRemoveData {
   topic: BrainstormTopic;

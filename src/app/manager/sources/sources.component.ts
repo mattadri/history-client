@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { SourceService } from '../../services/source.service';
 import { MonthService } from '../../services/month.service';

@@ -3,7 +3,7 @@ import {AuthorService} from '../../../services/author.service';
 import {Author} from '../../../models/author';
 import {Observable} from 'rxjs';
 import {FormControl} from '@angular/forms';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import {map, startWith} from 'rxjs/operators';
 
 import {Sleep} from '../../../utilities/sleep';

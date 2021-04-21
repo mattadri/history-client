@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import {Subject} from 'rxjs';
 

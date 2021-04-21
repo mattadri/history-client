@@ -7,7 +7,7 @@ import {map, startWith} from 'rxjs/operators';
 import {Source} from '../../../models/source';
 
 import {SourceService} from '../../../services/source.service';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-editor-select-source',

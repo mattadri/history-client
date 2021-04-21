@@ -10,7 +10,7 @@ import {ActivatedRoute} from '@angular/router';
 
 import FroalaEditor from 'froala-editor/js/froala_editor.min.js';
 
-import { MatBottomSheet } from '@angular/material';
+import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
 import {EssayReferenceDetailsComponent} from '../essay-reference-details/essay-reference-details.component';
 import {EssayEventDetailsComponent} from '../essay-event-details/essay-event-details.component';

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {BrainstormService} from '../../../services/brainstorm.service';
 import {Brainstorm} from '../../../models/brainstorm';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-source-note-export',

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import {MatDialog} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 import { Author } from '../../models/author';
 
