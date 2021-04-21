@@ -218,27 +218,6 @@ import { ProjectsComponent } from './projects/projects.component';
     ProjectsComponent
   ],
   entryComponents: [
-    TimelineEventDetailsComponent,
-    TimelinePersonDetailsComponent,
-    EssayReferenceDetailsComponent,
-    EssayEventDetailsComponent,
-    EssayPersonDetailsComponent,
-    EssayTimelineDetailsComponent,
-    EssayChartDetailsComponent,
-    ConfirmRemovalComponent,
-    QuickEventComponent,
-    QuickPersonComponent,
-    QuickBrainstormComponent,
-    QuickBrainstormTopicComponent,
-    QuickAuthorComponent,
-    QuickSourceComponent,
-    SourceNoteExportComponent,
-    EditorSelectSourceComponent,
-    EditorSelectEventComponent,
-    EditorSelectPersonComponent,
-    EditorSelectTimelineComponent,
-    EditorSelectChartComponent,
-    MessageDialogComponent
   ],
   imports: [
     BrowserModule,

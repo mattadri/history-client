@@ -3,7 +3,7 @@
 </div>
 
 <div *ngIf="users">
-  <div *ngFor="let user of users" class="user-select" (click)="selectUser(user, $event)">
+  <div *ngFor="let user of users" class="user-select" (click)="selectUser(user)">
     {{user.firstName}} {{user.lastName}}
   </div>
 </div>
