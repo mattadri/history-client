@@ -14,29 +14,124 @@ import {BrainstormThoughtPost} from '../models/posts/brainstorm-thought-post';
 import {BrainstormPost} from '../models/posts/brainstorm-post';
 import {BrainstormTopic} from '../models/brainstorm-topic';
 import {Brainstorm} from '../models/brainstorm';
+import {BrainstormUserPost} from '../models/brainstorms/posts/brainstorm-user-post';
+import {UserResponse} from '../models/users/responses/user-response';
+import {User} from '../models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BrainstormService {
   public brainstorms: Brainstorm[];
+  public users: User[];
 
   private brainstormPost: BrainstormPost;
   private topicPost: BrainstormTopicPost;
   private topicThoughtPost: BrainstormTopicThoughtPost;
   private brainstormThoughtPost: BrainstormThoughtPost;
+  private brainstormUserPost: BrainstormUserPost;
 
   constructor(private http: HttpClient) {
     this.brainstorms = [];
   }
 
-  getApiBrainstorms(path: string): Observable<BrainstormResponse> {
+  getApiBrainstorms(path: string, userId, pageSize: string, pageNumber: string, fields: Array<string>, sort: Array<string>,
+                    sortDescending: boolean, additionalFilters: Array<Object>, isAnotherPage: boolean): Observable<BrainstormResponse> {
     this.brainstorms = [];
+
+    let type = 'brainstorms';
+
+    // if a next of previous page is being retrieved just all the path as is
+    if (!isAnotherPage) {
+      if (!path) {
+        path = '/brainstorms';
+      }
+
+      // default page size is 20 records per page
+      if (!pageSize) {
+        pageSize = '20';
+      }
+
+      // default page number to 1
+      if (!pageNumber) {
+        pageNumber = '1';
+      }
+
+      let filter = [];
+
+      if (userId) {
+        let userFilter = {
+          name: 'user_rel',
+          op: 'has',
+          val: {
+            name: 'id',
+            op: 'eq',
+            val: userId
+          }
+        };
+
+        filter.push(userFilter);
+
+        path = '/brainstorm_users';
+
+        type = 'user_brainstorms';
+      }
+
+      path = path + '?page[size]=' + pageSize;
+
+      path = path + '&page[number]=' + pageNumber;
+
+      // add any fields filter to the path
+      if (fields && fields.length) {
+        path = path + '&fields[brainstorm]=';
+
+        for (let i = 0; i < fields.length; i++) {
+          path = path + fields[i];
+
+          if (i < fields.length -1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // add any sorting if requested
+      if (sort && sort.length) {
+        path = path + '&sort=';
+
+        if (sortDescending) {
+          path = path + '-';
+        }
+
+        for (let i = 0; i < sort.length; i++) {
+          path = path + sort[i];
+
+          if (i < sort.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // lastly tack on any additional filters passed
+      if (additionalFilters && additionalFilters.length) {
+        for (const additionalFilter of additionalFilters) {
+          filter.push(additionalFilter);
+        }
+      }
+
+      if (filter.length) {
+        path = path + '&filter=' + JSON.stringify(filter);
+      }
+    } else {
+      // set the type to user if the next page are user timelines
+      if (path.includes('/brainstorm_users')) {
+        type = 'user_brainstorms';
+      }
+    }
 
     return this.http.get<BrainstormResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
-        .set('Type', 'brainstorms')
+        .set('Type', type)
     });
   }
 
@@ -45,6 +140,36 @@ export class BrainstormService {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'brainstorm')
+    });
+  }
+
+  getApiBrainstormUsers(path: string, brainstorm: Brainstorm): Observable<UserResponse> {
+    this.users = [];
+
+    if (!path) {
+      path = '/brainstorm_users';
+    }
+
+    let filter = [];
+
+    let brainstormFilter = {
+      name: 'brainstorm_rel',
+      op: 'has',
+      val: {
+        name: 'id',
+        op: 'eq',
+        val: brainstorm.id
+      }
+    };
+
+    filter.push(brainstormFilter);
+
+    path = path + '?filter=' + JSON.stringify(filter);
+
+    return this.http.get<UserResponse>(environment.apiUrl + path, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'item_user')
     });
   }
 
@@ -86,6 +211,17 @@ export class BrainstormService {
     this.brainstormThoughtPost.mapToPost(thought, false);
 
     return this.http.post(environment.apiUrl + '/brainstorm_thoughts', this.brainstormThoughtPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  addUserToBrainstorm(brainstorm: Brainstorm, userId: string): Observable<any> {
+    this.brainstormUserPost = new BrainstormUserPost();
+    this.brainstormUserPost.mapToPost(brainstorm, userId);
+
+    return this.http.post(environment.apiUrl + '/brainstorm_users', this.brainstormUserPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')

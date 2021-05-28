@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2} from '@angular/core';
-import {EssayEvent} from '../../models/essay-event';
+import {EssayEvent} from '../../models/essays/essay-event';
 
 @Component({
   selector: 'app-essay-event',

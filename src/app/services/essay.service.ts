@@ -5,20 +5,24 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 
-import {Essay} from '../models/essay';
-import {EssayPost} from '../models/posts/essay-post';
-import {EssayNote} from '../models/essay-note';
-import {EssayNotePost} from '../models/posts/essay-note-post';
-import {EssayReference} from '../models/essay-reference';
-import {EssayReferencePost} from '../models/posts/essay-reference-post';
-import {EssayEvent} from '../models/essay-event';
-import {EssayEventPost} from '../models/posts/essay-event-post';
-import {EssayPerson} from '../models/essay-person';
-import {EssayPersonPost} from '../models/posts/essay-person-post';
-import {EssayTimelinePost} from '../models/posts/essay-timeline-post';
-import {EssayTimeline} from '../models/essay-timeline';
-import {EssayResponse} from '../models/responses/essay-response';
-import {EssayType} from '../models/essay-type';
+import {Essay} from '../models/essays/essay';
+import {EssayPost} from '../models/essays/posts/essay-post';
+import {EssayNote} from '../models/essays/essay-note';
+import {EssayNotePost} from '../models/essays/posts/essay-note-post';
+import {EssayReference} from '../models/essays/essay-reference';
+import {EssayReferencePost} from '../models/essays/posts/essay-reference-post';
+import {EssayEvent} from '../models/essays/essay-event';
+import {EssayEventPost} from '../models/essays/posts/essay-event-post';
+import {EssayPerson} from '../models/essays/essay-person';
+import {EssayPersonPost} from '../models/essays/posts/essay-person-post';
+import {EssayTimelinePost} from '../models/essays/posts/essay-timeline-post';
+import {EssayTimeline} from '../models/essays/essay-timeline';
+import {EssayResponse} from '../models/essays/responses/essay-response';
+import {EssayType} from '../models/essays/essay-type';
+import {EssayUser} from '../models/essays/essay-user';
+import {EssayUserPost} from '../models/essays/posts/essay-user-post';
+import {UserResponse} from '../models/users/responses/user-response';
+import {User} from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -27,21 +31,53 @@ export class EssayService {
   public essays: Essay[];
   public essayTypes: EssayType[];
 
+  public users: User[];
+
   public essayPost: EssayPost;
   public essayNotePost: EssayNotePost;
   public essayReferencePost: EssayReferencePost;
   public essayEventPost: EssayEventPost;
   public essayPersonPost: EssayPersonPost;
   public essayTimelinePost: EssayTimelinePost;
+  public essayUserPost: EssayUserPost;
 
   constructor(private http: HttpClient) {
     this.essays = [];
+    this.users = [];
   }
 
   static removeNote(essay: Essay, essayNote: EssayNote) {
     for (let i = 0; i < essay.essayNotes.length; i++) {
       if (essay.essayNotes[i].id === essayNote.id) {
         essay.essayNotes.splice(i, 1);
+      }
+    }
+  }
+
+  static getBiographyFilter() {
+    return {
+      name: 'type_rel',
+      op: 'has',
+      val: {
+        name: 'label',
+        op: 'eq',
+        val: 'Biography'
+      }
+    }
+  }
+
+  static getBiographyByUserFilter() {
+    return {
+      name: 'essay_rel',
+      op: 'has',
+      val: {
+        name: 'type_rel',
+        op: 'has',
+        val: {
+          name: 'label',
+          op: 'eq',
+          val: 'Biography'
+        }
       }
     }
   }
@@ -55,13 +91,102 @@ export class EssayService {
     });
   }
 
-  getApiEssays(path): Observable<EssayResponse> {
-    this.essays = [];
+  getApiEssays(path: string,
+               userId: string,
+               pageSize: string,
+               fields: Array<string>,
+               sort: Array<string>,
+               sortDescending: boolean,
+               additionalFilters: Array<Object>,
+               isAnotherPage: boolean): Observable<EssayResponse> {
+    let type = 'essays';
+
+    // only add params if it's not a link to another page
+    if (!isAnotherPage) {
+      // default page size is 20 records per page
+      if (!pageSize) {
+        pageSize = '20';
+      }
+
+      this.essays = [];
+
+      if (!path) {
+        path = '/essays';
+      }
+
+      let filter = [];
+
+      if (userId) {
+        let userFilter = {
+          name: 'user_rel',
+          op: 'has',
+          val: {
+            name: 'id',
+            op: 'eq',
+            val: userId
+          }
+        };
+
+        filter.push(userFilter);
+
+        path = '/essay_users';
+
+        type = 'user_essays';
+      }
+
+      path = path + '?page[size]=' + pageSize;
+
+      // add any fields filter to the path
+      if (fields && fields.length) {
+        path = path + '&fields[essay]=';
+
+        for (let i = 0; i < fields.length; i++) {
+          path = path + fields[i];
+
+          if (i < fields.length -1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // add any sorting if requested
+      if (sort && sort.length) {
+        path = path + '&sort=';
+
+        if (sortDescending) {
+          path = path + '-';
+        }
+
+        for (let i = 0; i < sort.length; i++) {
+          path = path + sort[i];
+
+          if (i < sort.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // lastly tack on any additional filters passed
+      if (additionalFilters && additionalFilters.length) {
+        for (const additionalFilter of additionalFilters) {
+          filter.push(additionalFilter);
+        }
+      }
+
+      if (filter.length) {
+        path = path + '&filter=' + JSON.stringify(filter);
+      }
+
+    } else {
+      if (path.includes('/essay_users')) {
+        type = 'user_essays';
+      }
+    }
 
     return this.http.get<EssayResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
-        .set('Type', 'essays')
+        .set('Type', type)
     });
   }
 
@@ -73,11 +198,56 @@ export class EssayService {
     });
   }
 
+  getApiEssayUsers(path: string, essay: Essay): Observable<UserResponse> {
+    this.users = [];
+
+    if (!path) {
+      path = '/essay_users';
+    }
+
+    let filter = [];
+
+    let essayFilter = {
+      name: 'essay_rel',
+      op: 'has',
+      val: {
+        name: 'id',
+        op: 'eq',
+        val: essay.id
+      }
+    };
+
+    filter.push(essayFilter);
+
+    path = path + '?filter=' + JSON.stringify(filter);
+
+    return this.http.get<UserResponse>(environment.apiUrl + path, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'item_user')
+    });
+  }
+
   createApiEssay(essay: Essay): Observable<any> {
     this.essayPost = new EssayPost();
     this.essayPost.mapToPost(essay, true);
 
     return this.http.post(environment.apiUrl + '/essays', this.essayPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  createApiEssayBanner(imageForm: FormData): Observable<any> {
+    return this.http.post(environment.apiUrl + '/upload_essay_banner', imageForm, {responseType: 'text'});
+  }
+
+  addApiUserToEssay(essayUser: EssayUser): Observable<any> {
+    this.essayUserPost = new EssayUserPost();
+    this.essayUserPost.mapToPost(essayUser, false);
+
+    return this.http.post(environment.apiUrl + '/essay_users', this.essayUserPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')

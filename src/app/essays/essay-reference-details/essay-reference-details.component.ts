@@ -1,7 +1,7 @@
 import {Component, Inject, OnInit} from '@angular/core';
 
 import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import {EssayReference} from '../../models/essay-reference';
+import {EssayReference} from '../../models/essays/essay-reference';
 import {Source} from '../../models/source';
 
 export interface DialogData {

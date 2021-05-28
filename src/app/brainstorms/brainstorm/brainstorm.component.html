@@ -4,6 +4,12 @@
       <h1>{{brainstorm.title}}</h1>
     </div>
 
+    <div *ngFor="let user of brainstormUsers">
+      <span>{{user.firstName}}</span> <span> {{user.lastName}}</span>
+    </div>
+
+    <button mat-flat-button class="material-icons" color="secondary" (click)="addUser()">+</button>
+
     <div *ngIf="brainstorm.description">{{brainstorm.description}}</div>
 
     <div cdkDropListGroup class="app-brainstorm-content">

@@ -17,13 +17,19 @@
         save
       </button>
 
-      <button mat-icon-button class="material-icons" (click)="closeTimelineEditoMode()">close</button>
+      <button mat-icon-button class="material-icons" (click)="closeTimelineEditorMode()">close</button>
     </span>
 
     <button *ngIf="!isTimelineEditMode" mat-icon-button class="material-icons" (click)="activateTimelineEditMode()">
       edit
     </button>
   </div>
+
+  <div *ngFor="let user of timelineUsers">
+    <span>{{user.firstName}}</span> <span> {{user.lastName}}</span>
+  </div>
+
+  <button mat-flat-button class="material-icons" color="secondary" (click)="addUser()">+</button>
 
   <div id="timeline_timespan">
     <h3 *ngIf="timeline && !isTimelineEditMode">Spans {{this.timelineSpanInYears}} years</h3>
@@ -44,7 +50,7 @@
 
   <div id="timeline-description">
     <app-editor
-      *ngIf="!isAddDescriptionMode"
+      *ngIf="!isAddDescriptionMode && timeline.description"
       [content]="timeline.description"
       [autoEdit]="false"
       [isNote]="false"
@@ -54,19 +60,21 @@
   </div>
 
   <app-timeline-display
-    *ngIf="timeline"
     [timeline]="timeline"
-    [categoryEvents]="categoryEvents">
+    [categoryEvents]="categoryEvents"
+    (returnTimelineSpan)="setTimelineSpan($event)"
+    (returnTimelineStartEndYears)="setRelatedEvents($event)">
   </app-timeline-display>
 
   <mat-tab-group>
     <mat-tab label="Events">
-      <div class="grid-list" *ngIf="timeline">
+      <div class="grid-list">
         <button mat-flat-button class="material-icons" color="primary" (click)="createEvent()">add</button>
 
         <app-timeline-event-list
-          *ngFor="let event of timeline.events"
-          [event]="event"
+          *ngFor="let timelineEvent of timeline.events"
+          [timelineEvent]="timelineEvent"
+          [event]="timelineEvent.event"
           [timeline]="timeline"
           [categoryEvents]="categoryEvents">
         </app-timeline-event-list>
@@ -74,22 +82,30 @@
     </mat-tab>
 
     <mat-tab label="People">
-      <div class="grid-list" *ngIf="timeline">
+      <div class="grid-list">
         <app-timeline-person-list
-          *ngFor="let person of timeline.persons" [person]="person" [timeline]="timeline">
+          *ngFor="let timelinePerson of timeline.persons"
+          [person]="timelinePerson.person"
+          [timeline]="timeline">
         </app-timeline-person-list>
       </div>
     </mat-tab>
 
     <mat-tab label="Categories">
-      <div class="grid-list" *ngIf="timeline">
+      <div class="grid-list">
         <app-timeline-categories [timeline]="timeline" [categoryEvents]="categoryEvents"></app-timeline-categories>
       </div>
     </mat-tab>
 
     <mat-tab label="What Else?">
-      <div class="grid-list" *ngIf="timeline">
-        <app-timeline-event-list *ngFor="let event of relatedEvents" [event]="event" [timeline]="timeline"></app-timeline-event-list>
+      <div class="grid-list">
+        <app-timeline-event-list
+          *ngFor="let event of relatedEvents"
+          [timelineEvent]="null"
+          [event]="event"
+          [timeline]="timeline">
+        </app-timeline-event-list>
+
         <mat-paginator length="{{relatedEventsTotalResults}}" pageSize="20" (page)="turnRelatedEventsPage($event)"></mat-paginator>
       </div>
     </mat-tab>

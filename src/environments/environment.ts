@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://127.0.0.1:5000'
+  apiUrl: 'http://127.0.0.1:5000',
+  s3Bucket: 'dev.history'
 };
 
 /*

@@ -24,6 +24,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
@@ -112,7 +114,6 @@ import { QuickEventComponent } from './manager/events/quick-event/quick-event.co
 import { QuickPersonComponent } from './manager/persons/quick-person/quick-person.component';
 import { PersonDetailsComponent } from './manager/persons/person-details/person-details.component';
 import { PersonDetailsNoteComponent } from './manager/persons/person-details/person-details-note/person-details-note.component';
-import { QuickBrainstormComponent } from './brainstorms/quick-brainstorm/quick-brainstorm.component';
 import { QuickBrainstormTopicComponent } from './brainstorms/brainstorm/quick-brainstorm-topic/quick-brainstorm-topic.component';
 import { QuickAuthorComponent } from './manager/authors/quick-author/quick-author.component';
 import { AuthorDetailsComponent } from './manager/authors/author-details/author-details.component';
@@ -132,6 +133,18 @@ import { UserComponent } from './auth/user/user.component';
 import {UserInterceptor} from './services/interceptors/user.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProjectsComponent } from './projects/projects.component';
+import {ProjectInterceptor} from './services/interceptors/project.interceptor';
+import { ProjectCardComponent } from './projects/project-card/project-card.component';
+import { ProjectDetailsComponent } from './projects/project-details/project-details.component';
+import { QuickEssayComponent } from './essays/quick-essay/quick-essay.component';
+import { PersonDetailsAddTimelineComponent } from './manager/persons/person-details/person-details-add-timeline/person-details-add-timeline.component';
+import { PersonDetailsAddBiographyComponent } from './manager/persons/person-details/person-details-add-biography/person-details-add-biography.component';
+import { EventDetailsAddTimelineComponent } from './manager/events/event-details/event-details-add-timeline/event-details-add-timeline.component';
+import { AddTimelineDialogComponent } from './utilities/add-timeline-dialog/add-timeline-dialog.component';
+import { AddChartDialogComponent } from './utilities/add-chart-dialog/add-chart-dialog.component';
+import { AddBrainstormDialogComponent } from './utilities/add-brainstorm-dialog/add-brainstorm-dialog.component';
+import { AddProjectDialogComponent } from './utilities/add-project-dialog/add-project-dialog.component';
+import { AddUserDialogComponent } from './utilities/add-user-dialog/add-user-dialog.component';
 
 @NgModule({
   declarations: [
@@ -197,7 +210,6 @@ import { ProjectsComponent } from './projects/projects.component';
     QuickPersonComponent,
     PersonDetailsComponent,
     PersonDetailsNoteComponent,
-    QuickBrainstormComponent,
     QuickBrainstormTopicComponent,
     QuickAuthorComponent,
     AuthorDetailsComponent,
@@ -215,7 +227,18 @@ import { ProjectsComponent } from './projects/projects.component';
     LoginComponent,
     UserComponent,
     DashboardComponent,
-    ProjectsComponent
+    ProjectsComponent,
+    ProjectCardComponent,
+    ProjectDetailsComponent,
+    QuickEssayComponent,
+    PersonDetailsAddTimelineComponent,
+    PersonDetailsAddBiographyComponent,
+    EventDetailsAddTimelineComponent,
+    AddTimelineDialogComponent,
+    AddChartDialogComponent,
+    AddBrainstormDialogComponent,
+    AddProjectDialogComponent,
+    AddUserDialogComponent
   ],
   entryComponents: [
   ],
@@ -243,6 +266,8 @@ import { ProjectsComponent } from './projects/projects.component';
     MatButtonToggleModule,
     MatListModule,
     MatMenuModule,
+    MatProgressSpinnerModule,
+    MatSlideToggleModule,
     DragDropModule,
     Ng5SliderModule,
     FroalaViewModule.forRoot(),
@@ -300,6 +325,11 @@ import { ProjectsComponent } from './projects/projects.component';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: UserInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ProjectInterceptor,
       multi: true
     }
   ],

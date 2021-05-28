@@ -2,8 +2,8 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import { MatDialog } from '@angular/material/dialog';
 
-import {EventNote} from '../../../../models/event-note';
-import {Event} from '../../../../models/event';
+import {EventNote} from '../../../../models/events/event-note';
+import {Event} from '../../../../models/events/event';
 
 import {EventService} from '../../../../services/event.service';
 

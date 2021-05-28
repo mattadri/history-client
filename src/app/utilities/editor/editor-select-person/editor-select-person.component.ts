@@ -8,7 +8,7 @@ import {map, startWith} from 'rxjs/operators';
 
 import {PersonService} from '../../../services/person.service';
 
-import {Person} from '../../../models/person';
+import {Person} from '../../../models/persons/person';
 
 @Component({
   selector: 'app-editor-select-person',

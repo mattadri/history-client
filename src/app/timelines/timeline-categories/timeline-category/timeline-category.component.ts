@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
-import {TimelineCategory} from '../../../models/timeline-category';
+import {TimelineCategory} from '../../../models/timelines/timeline-category';
 
 @Component({
   selector: 'app-timeline-category',

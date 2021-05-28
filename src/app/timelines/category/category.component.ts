@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Timeline} from '../../models/timeline';
+import {Timeline} from '../../models/timelines/timeline';
 import {Category} from '../../models/category';
 
 @Component({

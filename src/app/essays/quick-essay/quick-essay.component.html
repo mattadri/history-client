@@ -1,0 +1,70 @@
+<form #essayForm="ngForm">
+  <div *ngIf="data.showExisting">
+    <div class="app-drawer-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">Existing Essay</div>
+      </div>
+    </div>
+
+    <div class="app-add-object-overlay">
+      <section class="app-section">
+        <mat-form-field style="width: 100%">
+          <input
+            type="text"
+            placeholder="Essay Title"
+            matInput
+            #essayTitleField
+            name="existing_essay_label"
+            id="existing_essay_label"
+            [formControl]="essayTitleAutocompleteControl"
+            [matAutocomplete]="essayTitleAutoComplete">
+
+          <mat-autocomplete autoActiveFirstOption #essayTitleAutoComplete="matAutocomplete" [displayWith]="displayEssayName" (optionSelected)="saveExistingEssay($event.option.value)">
+            <mat-option *ngFor="let essayOption of essayTitleFilteredOptions | async" [value]="essayOption">
+              <span *ngIf="essayOption.title">{{essayOption.title}} </span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </section>
+    </div>
+  </div>
+
+  <div *ngIf="data.showNew && data.showExisting" class="app-add-object-overlay">
+    <div>OR</div>
+  </div>
+
+  <div *ngIf="data.showNew">
+    <div class="app-drawer-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">New Essay</div>
+      </div>
+      <div class="app-drawer-tools">
+        <button mat-icon-button type="button" class="material-icons" (click)="saveNewEssay()">save</button>
+        <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
+      </div>
+    </div>
+
+    <div class="app-add-object-overlay">
+      <section class="app-section">
+        <mat-form-field style="width: 100%">
+          <input
+            type="text"
+            placeholder="Title"
+            matInput
+            #essayLabelField
+            name="essay_label"
+            id="essay_label"
+            [(ngModel)]="essay.title" />
+        </mat-form-field>
+
+        <mat-form-field class="app-field-era">
+          <mat-label>Essay Type</mat-label>
+          <mat-select [(ngModel)]="essay.type" name="essay_type" [compareWith]="selectEssayType">
+            <mat-option [value]="null"></mat-option>
+            <mat-option *ngFor="let type of essayTypes" [value]="type">{{type.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+    </div>
+  </div>
+</form>

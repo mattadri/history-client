@@ -33,15 +33,8 @@ export class LoginComponent implements OnInit {
 
       this.authService.setToken(response.token);
 
-      let returnPath = localStorage.getItem('returnPath');
+      this.router.navigate(['/user']).then();
 
-      localStorage.setItem('returnPath', '');
-
-      if (returnPath && returnPath.length) {
-        this.router.navigate([returnPath]).then();
-      } else {
-        this.router.navigate(['/timelines']).then();
-      }
     }, error => {
       this.dialog.open(MessageDialogComponent, {
         width: '250px',

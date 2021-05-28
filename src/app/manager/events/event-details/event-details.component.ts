@@ -5,10 +5,9 @@ import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 
-import {Event} from '../../../models/event';
-import {EventNote} from '../../../models/event-note';
-import {Timeline} from '../../../models/timeline';
-import {TimelineEvent} from '../../../models/timeline-event';
+import {Event} from '../../../models/events/event';
+import {EventNote} from '../../../models/events/event-note';
+import {Timeline} from '../../../models/timelines/timeline';
 import {Source} from '../../../models/source';
 import {Era} from '../../../models/era';
 import {Month} from '../../../models/month';
@@ -18,6 +17,11 @@ import {TimelineService} from '../../../services/timeline.service';
 import {SourceService} from '../../../services/source.service';
 import {EraService} from '../../../services/era.service';
 import {MonthService} from '../../../services/month.service';
+import {EventDetailsAddTimelineComponent} from './event-details-add-timeline/event-details-add-timeline.component';
+import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confirm-removal.component';
+import {MatDialog} from '@angular/material/dialog';
+import {EventTimeline} from '../../../models/events/event-timeline';
+import {AddTimelineDialogComponent} from '../../../utilities/add-timeline-dialog/add-timeline-dialog.component';
 
 @Component({
   selector: 'app-event-details',
@@ -27,11 +31,9 @@ import {MonthService} from '../../../services/month.service';
 export class EventDetailsComponent implements OnInit {
   public event: Event;
   public note: EventNote;
-  public timeline: Timeline;
-  public timelineEvent: TimelineEvent;
+  public eventTimelines: EventTimeline[];
 
   public sources: Source[] = [];
-  public timelines: Timeline[] = [];
 
   public eras: Era[] = [];
   public months: Month[] = [];
@@ -44,14 +46,21 @@ export class EventDetailsComponent implements OnInit {
   public sourcesFilteredOptions: Observable<Source[]>;
   public sourceFieldDisplayValue: string;
 
+  public isSavingImage: boolean;
+
   constructor(private route: ActivatedRoute,
               private eventService: EventService,
               private timelineService: TimelineService,
               private sourceService: SourceService,
               private eraService: EraService,
-              private monthService: MonthService) {
+              private monthService: MonthService,
+              public dialog: MatDialog,) {
 
     const eventId = this.route.snapshot.paramMap.get('id');
+
+    this.eventTimelines = [];
+
+    this.isSavingImage = false;
 
     this.eventService.getApiEvent(eventId).subscribe(event => {
       this.event = event;
@@ -77,6 +86,11 @@ export class EventDetailsComponent implements OnInit {
         }
       });
 
+      // GET THE TIMELINES THE EVENT IS ATTACHED TO
+      this.eventService.getApiEventTimelines(this.event).subscribe((response) => {
+        this.eventTimelines = response.eventTimelines;
+      });
+
       this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
         for (const source of sources.sources) {
           this.sourceService.setSource(source);
@@ -88,14 +102,6 @@ export class EventDetailsComponent implements OnInit {
           startWith(''),
           map(source => this._filterSources(source))
         );
-      });
-
-      this.timelineService.getApiTimelines('/timelines?sort=modified&fields[timeline]=label').subscribe(response => {
-        for (const timeline of response.timelines) {
-          this.timelineService.setTimeline(timeline);
-        }
-
-        this.timelines = this.timelineService.getTimelines();
       });
     });
 
@@ -109,11 +115,6 @@ export class EventDetailsComponent implements OnInit {
   initializeNewNote() {
     this.note = new EventNote();
     this.note.initializeNote();
-  }
-
-  initializeNewTimeline() {
-    this.timeline = new Timeline();
-    this.timeline.initializeNewTimeline();
   }
 
   selectEra(option, value) {
@@ -142,20 +143,12 @@ export class EventDetailsComponent implements OnInit {
     this.initializeNewNote();
   }
 
-  activateAddTimelineMode() {
-    this.isAddTimelineMode = true;
-  }
-
   deactivateEditEventMode() {
     this.isEditEventMode = false;
   }
 
   deactivateAddNoteMode() {
     this.isAddNoteMode = false;
-  }
-
-  deactivateAddTimelineMode() {
-    this.isAddTimelineMode = false;
   }
 
   saveSource() {
@@ -174,21 +167,28 @@ export class EventDetailsComponent implements OnInit {
     });
   }
 
-  saveTimelineEvent() {
-    this.timelineEvent = new TimelineEvent();
-    this.timelineEvent.event = this.event;
-    this.timelineEvent.timeline = this.timeline;
+  addEventTimeline() {
+    const dialogRef = this.dialog.open(AddTimelineDialogComponent, {
+      width: '750px'
+    });
 
-    // call service
-    this.timelineService.createEventApiTimeline(this.timelineEvent).subscribe(response => {
-      this.timelineEvent.id = response.data.id;
-      this.timeline.eventId = this.timelineEvent.id;
+    dialogRef.afterClosed().subscribe(timeline => {
+      let eventTimeline = new EventTimeline();
+      eventTimeline.initializeNewEventTimeline();
 
-      this.event.timelines.push(this.timeline);
+      eventTimeline.timeline = timeline;
 
-      this.initializeNewTimeline();
+      this.eventService.createTimelineApiEvent(eventTimeline, this.event).subscribe(response => {
+        eventTimeline.id = response.data.id;
 
-      this.isAddTimelineMode = false;
+        // get the full timeline now that we have it to show on the card. The previous timeline was a
+        // truncated version for selection purposes only.
+        this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
+          eventTimeline.timeline = timeline;
+
+          this.eventTimelines.unshift(eventTimeline);
+        });
+      });
     });
   }
 
@@ -203,17 +203,57 @@ export class EventDetailsComponent implements OnInit {
     });
   }
 
+  saveImage(e: File[]) {
+    if (e.length) {
+      this.isSavingImage = true;
+
+      const file = e[0];
+      const imageForm = new FormData();
+      imageForm.append('image', file);
+
+      this.eventService.createApiEventImage(imageForm).subscribe((eventImageResponse) => {
+        this.event.image = eventImageResponse;
+
+        this.eventService.patchApiEvent(this.event).subscribe(() => {
+          this.isSavingImage = false;
+        });
+      });
+    }
+  }
+
   deleteNote(note: EventNote) {
     this.eventService.removeApiNote(note).subscribe(() => {
       EventService.removeEventNote(this.event, note);
     });
   }
 
-  deleteTimeline(timeline) {
-    this.timelineService.removeEventApiTimeline(timeline.eventId).subscribe(() => {
-      for (let i = 0; i < this.event.timelines.length; i++) {
-        if (this.event.timelines[i].id === timeline.id) {
-          this.event.timelines.splice(i, 1);
+  deleteTimeline(timeline: Timeline) {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the timeline ' + timeline.label
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        let eventTimelineToDelete: EventTimeline = null;
+
+        for (const eventTimeline of this.eventTimelines) {
+          if (eventTimeline.timeline.id === timeline.id) {
+            eventTimelineToDelete = eventTimeline;
+            break;
+          }
+        }
+
+        if (eventTimelineToDelete) {
+          this.eventService.removeTimelineApiEvent(eventTimelineToDelete).subscribe(() => {
+            for (let i = 0; i < this.eventTimelines.length; i++) {
+              if (this.eventTimelines[i].id === eventTimelineToDelete.id) {
+                this.eventTimelines.splice(i, 1);
+              }
+            }
+          });
         }
       }
     });

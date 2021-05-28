@@ -9,15 +9,17 @@ import FroalaEditor from 'froala-editor/js/froala_editor.min.js';
 
 import { TimelineService } from '../../services/timeline.service';
 
-import { Timeline } from '../../models/timeline';
-import { Event } from '../../models/event';
-import {Era} from '../../models/era';
+import { Timeline } from '../../models/timelines/timeline';
+import { Event } from '../../models/events/event';
 import {Category} from '../../models/category';
 
 import {EventService} from '../../services/event.service';
 
 import {QuickEventComponent} from '../../manager/events/quick-event/quick-event.component';
-import {TimelineEvent} from '../../models/timeline-event';
+import {TimelineEvent} from '../../models/timelines/timeline-event';
+import {User} from '../../models/user';
+import {MessageDialogComponent} from '../../utilities/message-dialog/message-dialog.component';
+import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-dialog.component';
 
 @Component({
   selector: 'app-timeline',
@@ -27,6 +29,8 @@ import {TimelineEvent} from '../../models/timeline-event';
 
 export class TimelineComponent implements OnInit {
   public timeline: Timeline;
+
+  public timelineUsers: User[];
 
   public isTimelineEditMode: boolean;
   public isAddDescriptionMode: boolean;
@@ -56,13 +60,6 @@ export class TimelineComponent implements OnInit {
   public initControls;
 
   public persons = [];
-
-  private timelineLength: number;
-
-  private timelineEvents: Event[] = [];
-
-  // declares the number of years in timeline length where if less than it will be measured in months instead of years
-  private  minYearToMonths = 11;
 
   private eventColorClasses = [
     '#39ab28',
@@ -99,6 +96,8 @@ export class TimelineComponent implements OnInit {
     this.cursorLineActive = false;
     this.cursorLineDatePosition = 'above';
 
+    this.timelineUsers = [];
+
     const timelineId = this.route.snapshot.paramMap.get('id');
 
     this.timelineService.getApiTimeline(timelineId).subscribe(timeline => {
@@ -108,17 +107,13 @@ export class TimelineComponent implements OnInit {
         this.timeline.categories = [];
       }
 
-      this.setTimelineStartAndEnd();
-      this.setTimeframe();
-
-      this.setTimelineEventLocations();
-      this.setTimelinePersonLocations();
+      this.timelineService.getApiTimelineUsers(null, this.timeline).subscribe((response) => {
+        this.timelineUsers = response.users;
+      });
 
       this.mapEventsToCategories();
 
       this.setPersons();
-
-      this.getRelatedEvents(null, false);
     });
   }
 
@@ -131,31 +126,38 @@ export class TimelineComponent implements OnInit {
     return value;
   }
 
-  private static padTimelineDate(yearToPad: number, timelineLength: number, increase: boolean) {
-    const minPadding = 1;
-    const maxPadding = 100;
-
-    // get 10 percent of the total length and see if it falls within the min/max range.
-    let padding = timelineLength * .02;
-
-    if (padding < minPadding) {
-      padding = minPadding;
-    }
-
-    if (padding > maxPadding) {
-      padding = maxPadding;
-    }
-
-    if (increase) {
-      yearToPad = yearToPad + padding;
-    } else {
-      yearToPad = yearToPad - padding;
-    }
-
-    return yearToPad;
-  }
-
   ngOnInit() { }
+
+  addUser() {
+    const dialogRef = this.dialog.open(AddUserDialogComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(user => {
+      let userExists = false;
+
+      for (const currentUser of this.timelineUsers) {
+        if (user.id === currentUser.id) {
+          userExists = true;
+          break;
+        }
+      }
+
+      if (userExists) {
+        this.dialog.open(MessageDialogComponent, {
+          width: '250px',
+          data: {
+            title: 'Could Not Add User',
+            message: 'User is already part of the timeline.'
+          }
+        });
+      } else {
+        this.timelineService.addUserToTimeline(this.timeline, user.id).subscribe(() => {
+          this.timelineUsers.push(user);
+        });
+      }
+    });
+  }
 
   public initializeTimelineDescriptionEditor(initControls) {
     this.initControls = initControls;
@@ -165,193 +167,8 @@ export class TimelineComponent implements OnInit {
     this.timelineEditor.opts.width = 1000;
   }
 
-  // this will get called if the timeline start/end points change
-  calculateTimeline() {
-    this.resetEvents();
-
-    this.setTimelineStartAndEnd();
-    this.setTimeframe();
-    this.setTimelineEventLocations();
-    this.mapEventsToCategories();
-  }
-
-  resetEvents() {
-    this.timeline.events = [];
-
-    for (const event of this.timelineEvents) {
-      this.timeline.events.push(event);
-    }
-  }
-
-  setTimelineStartAndEnd() {
-    const years = [];
-    const year = new Date();
-
-    let endYear = year.getFullYear();
-
-    if (this.timeline.events && this.timeline.events.length) {
-      for ( const event of this.timeline.events) {
-        if (event.startEra.label === 'BC') {
-          event.startYear = event.startYear * -1;
-        }
-
-        if (event.endEra && event.endEra.label === 'BC') {
-          event.endYear = event.endYear * -1;
-        }
-
-        if (event.endYear) {
-          endYear = event.endYear;
-        } else {
-          const dateObj = new Date();
-          endYear = dateObj.getFullYear();
-        }
-
-        years.push(event.startYear);
-        years.push(endYear);
-      }
-    }
-
-
-    if (this.timeline.persons && this.timeline.persons.length) {
-      for (const person of this.timeline.persons) {
-        if (person.birthEra.label === 'BC') {
-          person.birthYear = person.birthYear * -1;
-        }
-
-        if (person.deathEra && person.deathEra.label === 'BC') {
-          person.deathYear = person.deathYear * -1;
-        }
-
-        years.push(person.birthYear);
-
-        if (person.deathYear) {
-          years.push(person.deathYear);
-        } else {
-          const dateObj = new Date();
-          years.push(dateObj.getFullYear());
-        }
-      }
-    }
-
-    // sort ascending
-    years.sort((a, b) => {
-      return a - b;
-    });
-
-    const earliestEvent = years[0];
-    const oldestEvent = years[years.length - 1];
-    const distance = oldestEvent - earliestEvent;
-
-    this.timelineSpanInYears = distance;
-
-    this.timelineStart = Math.floor(TimelineComponent.padTimelineDate(earliestEvent, distance, false));
-    this.timelineEnd = Math.ceil(TimelineComponent.padTimelineDate(oldestEvent, distance, true));
-
-    this.timelineLength = this.timelineEnd - this.timelineStart;
-  }
-
-  setTimeframe() {
-    const tmpEvent = new Event();
-
-    this.timeframe = [];
-
-    let numberOfDivisions = 11;
-
-    let lengthOfSection = 0;
-
-    // if less than the minYearToMonths value then the time span should be by single year.
-    if (this.timelineLength < this.minYearToMonths) {
-      numberOfDivisions = this.timelineLength;
-      lengthOfSection = Math.round(this.timelineLength / numberOfDivisions);
-    } else {
-      lengthOfSection = Math.round(this.timelineLength / (numberOfDivisions - 1));
-    }
-
-    let loopedDivisions = numberOfDivisions;
-
-    if (this.timelineLength < this.minYearToMonths) {
-      loopedDivisions = numberOfDivisions + 1;
-    }
-
-    let divisionYear = 0;
-    let percentage = 0;
-
-    for (let i = 0; i < loopedDivisions; i++) {
-      const segment = {
-        leftPercentage: '',
-        year: ''
-      };
-
-      // The first division should be equal to the timeline start date
-      if (i === 0) {
-        tmpEvent.startYear = this.timelineStart;
-        tmpEvent.startEra = new Era();
-
-        if (this.timelineStart < 0) {
-          tmpEvent.startEra.label = 'BC';
-
-        } else {
-          tmpEvent.startEra.label = 'AD';
-        }
-
-        tmpEvent.formatYears();
-
-        divisionYear = this.timelineStart;
-        segment.leftPercentage = '-1px';
-        segment.year = tmpEvent.formattedStartYear;
-
-        this.timeframe.push(segment);
-
-        continue;
-      }
-
-      // last segment in timeline should be equal to end year of timeline
-      if (i === numberOfDivisions - 1) {
-        tmpEvent.endYear = this.timelineEnd;
-        tmpEvent.endEra = new Era();
-
-        segment.leftPercentage = '100%';
-
-        if (this.timelineEnd < 0) {
-          tmpEvent.endEra.label = 'BC';
-
-        } else  {
-          tmpEvent.endEra.label = 'AD';
-        }
-
-        tmpEvent.formatYears();
-
-        segment.year = tmpEvent.formattedEndYear;
-
-        this.timeframe.push(segment);
-
-        continue;
-      }
-
-      // calculate years on segments in the middle
-      divisionYear = divisionYear + lengthOfSection;
-
-      tmpEvent.startYear = divisionYear;
-
-      if (divisionYear < 0) {
-        tmpEvent.startEra.label = 'BC';
-      } else {
-        tmpEvent.startEra.label = 'AD';
-      }
-
-      tmpEvent.formatYears();
-
-      if (numberOfDivisions < this.minYearToMonths) {
-        percentage = percentage + (100 / numberOfDivisions);
-      } else {
-        percentage = percentage + 10;
-      }
-
-      segment.year = tmpEvent.formattedStartYear;
-      segment.leftPercentage = percentage.toString() + '%';
-
-      this.timeframe.push(segment);
-    }
+  setTimelineSpan(span) {
+    this.timelineSpanInYears = span;
   }
 
   mapEventsToCategories() {
@@ -371,10 +188,10 @@ export class TimelineComponent implements OnInit {
         for (const categoryEvent of category.events) {
           const eventId = categoryEvent[1];
 
-          for (const event of this.timeline.events) {
-            if (event.id === eventId) {
-              if (event.formattedStartDate === event.formattedEndDate) {
-                newCategory.singlePointEvents.push(event);
+          for (const timelineEvent of this.timeline.events) {
+            if (timelineEvent.event.id === eventId) {
+              if (timelineEvent.event.formattedStartDate === timelineEvent.event.formattedEndDate) {
+                newCategory.singlePointEvents.push(timelineEvent.event);
 
                 eventIdsUsed.push(eventId);
 
@@ -382,7 +199,7 @@ export class TimelineComponent implements OnInit {
                 if (this.eventColorClasses.length) {
                   const color = this.eventColorClasses.pop();
 
-                  event.colorClass = color;
+                  timelineEvent.event.colorClass = color;
                   backupColorArray.push(color);
 
                   if (!this.eventColorClasses.length) {
@@ -396,7 +213,7 @@ export class TimelineComponent implements OnInit {
                   }
                 }
 
-                newCategory.multiPointEvents.push(event);
+                newCategory.multiPointEvents.push(timelineEvent.event);
 
                 eventIdsUsed.push(eventId);
               }
@@ -422,16 +239,16 @@ export class TimelineComponent implements OnInit {
     genericCategory.label = '';
 
     if (this.timeline.events && this.timeline.events.length) {
-      for (const event of this.timeline.events) {
-        if (!eventIdsUsed.includes(event.id)) {
-          if (event.formattedStartDate === event.formattedEndDate) {
-            genericCategory.singlePointEvents.push(event);
+      for (const timelineEvent of this.timeline.events) {
+        if (!eventIdsUsed.includes(timelineEvent.event.id)) {
+          if (timelineEvent.event.formattedStartDate === timelineEvent.event.formattedEndDate) {
+            genericCategory.singlePointEvents.push(timelineEvent.event);
 
           } else {
             if (this.eventColorClasses.length) {
               const color = this.eventColorClasses.pop();
 
-              event.colorClass = color;
+              timelineEvent.event.colorClass = color;
               backupColorArray.push(color);
 
               if (!this.eventColorClasses.length) {
@@ -445,7 +262,7 @@ export class TimelineComponent implements OnInit {
               }
             }
 
-            genericCategory.multiPointEvents.push(event);
+            genericCategory.multiPointEvents.push(timelineEvent.event);
           }
         }
       }
@@ -465,10 +282,10 @@ export class TimelineComponent implements OnInit {
   }
 
   filterEvents() {
-    this.timeline.events = this.timeline.events.filter(event => {
-      if (TimelineComponent.convertPolarity(event.startYear, event) < this.timelineStart) {
+    this.timeline.events = this.timeline.events.filter(timelineEvent => {
+      if (TimelineComponent.convertPolarity(timelineEvent.event.startYear, timelineEvent.event) < this.timelineStart) {
         return false;
-      } else if (TimelineComponent.convertPolarity(event.endYear, event) > this.timelineEnd) {
+      } else if (TimelineComponent.convertPolarity(timelineEvent.event.endYear, timelineEvent.event) > this.timelineEnd) {
         return false;
       }
 
@@ -476,79 +293,11 @@ export class TimelineComponent implements OnInit {
     });
   }
 
-  setTimelineEventLocations() {
-    // if the timeline is less than some minimum length create percentages based on month instead of year
-    if (this.timelineLength <= this.minYearToMonths) {
-      const timelineLengthInMonths = this.timelineLength * 12;
+  setRelatedEvents(startEndYears: Array<number>) {
+    this.timelineStart = startEndYears[0];
+    this.timelineEnd = startEndYears[1];
 
-      for (const event of this.timeline.events) {
-        let startMonthInTimeline = ((event.startYear - this.timelineStart) * 12);
-
-        if (event.startMonth) {
-          startMonthInTimeline = startMonthInTimeline + Number(event.startMonth.id);
-        }
-
-        event.timelineStartLocation = (startMonthInTimeline / timelineLengthInMonths) * 100;
-
-        let endMonthInTimeline = ((event.endYear - this.timelineStart) * 12);
-
-        if (event.endMonth) {
-          endMonthInTimeline = endMonthInTimeline + Number(event.endMonth.id);
-        }
-
-        let endPercentage = (endMonthInTimeline / timelineLengthInMonths) * 100 - event.timelineStartLocation;
-
-        // if the range is 0% change to 1% so it shows up on the timeline
-        if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
-          endPercentage = 1;
-        }
-
-        event.timelineEndLocation = endPercentage;
-      }
-
-    } else {
-      if (this.timeline.events && this.timeline.events.length) {
-        for (const event of this.timeline.events) {
-          // set the percentage location from oldest event.
-          event.timelineStartLocation = ((event.startYear - this.timelineStart) / this.timelineLength) * 100;
-
-          let endYear = event.endYear;
-
-          if (!endYear) {
-            const year = new Date();
-            endYear = year.getFullYear();
-          }
-
-          let endPercentage = (((endYear - this.timelineStart) / this.timelineLength) * 100) - event.timelineStartLocation;
-
-          // if the range is 0% change to 1% so it shows up on the timeline
-          if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
-            endPercentage = 1;
-          }
-
-          event.timelineEndLocation = endPercentage;
-        }
-      }
-    }
-  }
-
-  setTimelinePersonLocations() {
-    if (this.timeline.persons && this.timeline.persons.length) {
-      for (const person of this.timeline.persons) {
-        // set the percentage location from oldest event.
-        person.timelineStartLocation = ((person.birthYear - this.timelineStart) / this.timelineLength) * 100;
-
-        let deathYear = person.deathYear;
-
-        // in the case that the person is still alive
-        if (!deathYear) {
-          const dateObj = new Date();
-          deathYear = dateObj.getFullYear();
-        }
-
-        person.timelineEndLocation = (((deathYear - this.timelineStart) / this.timelineLength) * 100) - person.timelineStartLocation;
-      }
-    }
+    this.getRelatedEvents(null, false);
   }
 
   getRelatedEvents(path, isPageLink) {
@@ -572,7 +321,7 @@ export class TimelineComponent implements OnInit {
 
       if (this.timeline.events && this.timeline.events.length) {
         this.relatedEvents = this.relatedEvents.filter((el) => {
-          if (!this.timeline.events.find((ev) => ev.id === el.id)) {
+          if (!this.timeline.events.find((ev) => ev.event.id === el.id)) {
             return el;
           }
         });
@@ -580,54 +329,12 @@ export class TimelineComponent implements OnInit {
     });
   }
 
-  showCursorLine($event) {
-    const timelineContainerElement = document.getElementById('timeline-container');
-
-    this.cursorLineActive = true;
-    const xPosition = $event.clientX;
-
-    const height = timelineContainerElement.offsetHeight;
-
-    this.cursorLineStyles = {
-      left: xPosition + 'px',
-      height: height + 'px'
-    };
-
-    const timelineWidth = timelineContainerElement.offsetWidth;
-    const timelineLeftOffset = timelineContainerElement.offsetLeft;
-
-    const cursorXInDiv = xPosition - timelineLeftOffset;
-
-    const pixelsByYear = timelineWidth / this.timelineLength;
-    const numberOfYearsOffset = cursorXInDiv / pixelsByYear;
-
-    const lineDate: number = Math.floor(this.timelineStart + numberOfYearsOffset);
-
-    const tmpEvent = new Event();
-    tmpEvent.startYear = lineDate;
-    tmpEvent.startEra = new Era();
-
-    if (lineDate < 0) {
-      tmpEvent.startEra.label = 'BC';
-    } else {
-      tmpEvent.startEra.label = 'AD';
-    }
-
-    tmpEvent.formatYears();
-
-    this.cursorLineDate = tmpEvent.formattedStartYear;
-  }
-
-  removeTimeline() {
-    console.log('Removing Timeline: ', this.timeline);
-  }
-
   activateTimelineEditMode() {
     this.cursorLineActive = false;
     this.isTimelineEditMode = true;
   }
 
-  closeTimelineEditoMode() {
+  closeTimelineEditorMode() {
     this.isTimelineEditMode = false;
   }
 
@@ -635,6 +342,8 @@ export class TimelineComponent implements OnInit {
     this.timeline.description = content;
 
     this.editTimeline();
+
+    this.isAddDescriptionMode = false;
   }
 
   editTimeline() {
@@ -645,7 +354,11 @@ export class TimelineComponent implements OnInit {
 
   createEvent() {
     const dialogRef = this.dialog.open(QuickEventComponent, {
-      width: '750px'
+      width: '750px',
+      data: {
+        showExisting: false,
+        showNew: true
+      }
     });
 
     dialogRef.afterClosed().subscribe(event => {
@@ -660,12 +373,11 @@ export class TimelineComponent implements OnInit {
           timelineEvent.initializeNewTimelineEvent();
 
           timelineEvent.event = event;
-          timelineEvent.timeline = this.timeline;
 
-          this.timelineService.createEventApiTimeline(timelineEvent).subscribe(timelineEventResponse => {
+          this.timelineService.createEventApiTimeline(timelineEvent, this.timeline).subscribe(timelineEventResponse => {
             timelineEvent.id = timelineEventResponse.data.id;
 
-            this.timeline.events.push(event);
+            this.timeline.events.push(timelineEvent);
 
             for (const categoryEvent of this.categoryEvents) {
               if (categoryEvent.id === null) {
@@ -678,8 +390,6 @@ export class TimelineComponent implements OnInit {
                 break;
               }
             }
-
-            this.setTimelineEventLocations();
           });
         });
       }
@@ -699,84 +409,6 @@ export class TimelineComponent implements OnInit {
 
     tooltip.show();
   }
-
-  // calculateTimeline() {
-  //   // reset the timeline to the original full list
-  //   this.timeline.events = [];
-  //
-  //   for (const event of this.timelineEvents) {
-  //     this.timeline.events.push(event);
-  //   }
-  //
-  //   this.timeline.events = this.timeline.events.filter(event => {
-  //     if (this.convertPolarity(event.startYear, event) < this.pointerStart) {
-  //       return false;
-  //     } else if (this.convertPolarity(event.startYear, event) > this.pointerEnd) {
-  //       return false;
-  //     }
-  //
-  //     return true;
-  //   });
-  //
-  //   this.oldestEvent = this.timeline.events[0];
-  //   this.newestEvent = this.timeline.events[this.timeline.events.length - 1];
-  //
-  //   let distanceBetweenEvents = this.timelineStart - this.timelineEnd;
-  //
-  //   if (distanceBetweenEvents < 0) {
-  //     distanceBetweenEvents = distanceBetweenEvents * -1;
-  //   }
-  //
-  //   this.timelineLengthInYears = this.padTimelineDate(this.timelineStart, distanceBetweenEvents, false) -
-  //     this.padTimelineDate(this.timelineEnd, distanceBetweenEvents, true);
-  //
-  //   this.staticLengthInYears = this.timelineStart - this.timelineEnd;
-  //
-  //   // length in years should always be a positive number
-  //   if (this.timelineLengthInYears < 0) {
-  //     this.timelineLengthInYears = this.timelineLengthInYears * -1;
-  //     this.staticLengthInYears = this.staticLengthInYears * -1;
-  //   }
-  //
-  //   for (const event of this.timeline.events) {
-  //     // set the percentage location from oldest event.
-  //     console.log('Start Year: ', event.startYear);
-  //     console.log('Length: ', this.timelineLengthInYears);
-  //     const percentage = 100 - ((event.startYear / this.timelineLengthInYears) * 100).toPrecision(2);
-  //     event.timelineStartLocation = percentage.toLocaleString();
-  //     console.log('Event: ', event.label, ' Location: ', event.timelineStartLocation);
-  //   }
-  //
-  //   this.options = {
-  //     floor: this.padTimelineDate(this.timelineStart, this.timelineLengthInYears, false),
-  //     ceil: this.padTimelineDate(this.timelineEnd, this.timelineLengthInYears, true),
-  //     tickStep: this.staticLengthInYears / 10,
-  //     showTicks: true,
-  //     showTicksValues: true,
-  //     translate: (value: number): string => {
-  //       const event = new Event();
-  //       const era = new Era();
-  //
-  //       era.initializeNewEra();
-  //       event.initializeNewEvent();
-  //
-  //       era.label = 'AD';
-  //
-  //       if (value < 0) {
-  //         value = value * -1;
-  //         era.label = 'BC';
-  //       }
-  //
-  //       event.formatYears(true, null, value, era);
-  //
-  //       let newValue = event.formattedStartYear;
-  //
-  //       newValue = newValue.toLocaleString('en').toString();
-  //
-  //       return newValue;
-  //     }
-  //   };
-  // }
 
   private sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));

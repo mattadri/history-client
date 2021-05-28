@@ -6,7 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 
-import {Timeline} from '../../../models/timeline';
+import {Timeline} from '../../../models/timelines/timeline';
 
 import {TimelineService} from '../../../services/timeline.service';
 
@@ -33,7 +33,7 @@ export class EditorSelectTimelineComponent implements OnInit {
 
     this.loadAutoComplete = false;
 
-    this.timelineService.getApiTimelines('/timelines?page[size]=0&fields[timeline]=label').subscribe(timelines => {
+    this.timelineService.getApiTimelines('/timelines', null, '0', null, ['label'], null, null, null, false).subscribe(timelines => {
       for (const timeline of timelines.timelines) {
         this.timelineService.setTimeline(timeline);
       }

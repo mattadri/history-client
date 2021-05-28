@@ -1,7 +1,7 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import {Component, OnInit, AfterViewInit, Inject} from '@angular/core';
 import {FormControl} from '@angular/forms';
 
-import { MatDialogRef } from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
@@ -11,12 +11,21 @@ import {Sleep} from '../../../utilities/sleep';
 import {Source} from '../../../models/source';
 import {Era} from '../../../models/era';
 import {Month} from '../../../models/month';
-import {Person} from '../../../models/person';
+import {Person} from '../../../models/persons/person';
 
 import {PersonService} from '../../../services/person.service';
-// import {SourceService} from '../../../services/source.service';
 import {EraService} from '../../../services/era.service';
 import {MonthService} from '../../../services/month.service';
+
+export interface DialogData {
+  showExisting: boolean;
+  showNew: boolean;
+}
+
+class QuickPersonReturnData {
+  person: Person;
+  isExisting: boolean;
+}
 
 @Component({
   selector: 'app-quick-person',
@@ -24,11 +33,11 @@ import {MonthService} from '../../../services/month.service';
   styleUrls: ['./quick-person.component.scss']
 })
 export class QuickPersonComponent implements OnInit, AfterViewInit {
-  // public sourcesAutocompleteControl = new FormControl();
-  // public sourcesFilteredOptions: Observable<Source[]>;
-  // public sourceFieldDisplayValue: string;
-
   public searchPersons: Person[] = [];
+
+  public personNameAutocompleteControl = new FormControl();
+  public personNameFilteredOptions: Observable<Person[]>;
+  public personNameFieldDisplayValue: string;
 
   public personFirstNameAutocompleteControl = new FormControl();
   public personFirstNameFilteredOptions: Observable<Person[]>;
@@ -44,11 +53,15 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
 
   public person: Person;
 
+  private returnData: QuickPersonReturnData;
+
   constructor(private personService: PersonService,
-              // private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
-              public dialogRef: MatDialogRef<QuickPersonComponent>) {
+              public dialogRef: MatDialogRef<QuickPersonComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+
+    this.returnData = new QuickPersonReturnData();
 
     this.person = new Person();
     this.person.initializeNewPerson();
@@ -73,23 +86,17 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
       }
     });
 
-    // this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
-    //   for (const source of sources.sources) {
-    //     this.sourceService.setSource(source);
-    //   }
-    //
-    //   this.sources = this.sourceService.getSources();
-    //
-    //   this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
-    //     startWith(''),
-    //     map(source => this._filterSources(source))
-    //   );
-    // });
-
-    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,last_name&sort=last_name', null, null, false)
+    this.personService.getApiPersons(
+      '/persons?page[size]=0&fields[person]=first_name,last_name,birth_year,birth_era,death_year,death_era&sort=last_name',
+      null, null, false)
       .subscribe(response => {
 
       this.searchPersons = response.persons;
+
+      this.personNameFilteredOptions = this.personNameAutocompleteControl.valueChanges.pipe(
+        startWith(''),
+        map(person => this._filterPersonsName(person))
+      );
 
       this.personFirstNameFilteredOptions = this.personFirstNameAutocompleteControl.valueChanges.pipe(
         startWith(''),
@@ -113,37 +120,47 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
     this.dialogRef.close();
   }
 
-  // saveSource() {
-  //   this.person.source = this.sourcesAutocompleteControl.value;
-  // }
+  saveExistingPerson(person) {
+    this.returnData.person = person;
+    this.returnData.isExisting = true;
+
+    this.dialogRef.close(this.returnData);
+  }
+
+  saveNewPerson() {
+    this.returnData.person = this.person;
+    this.returnData.isExisting = false;
+
+    this.dialogRef.close(this.returnData);
+  }
 
   savePersonFirstName(value) {
     if (value) {
       this.person.firstName = value;
-    } else {
-      this.person.firstName = this.personFirstNameAutocompleteControl.value;
     }
   }
 
   savePersonLastName(value) {
     if (value) {
       this.person.lastName = value;
-    } else {
-      this.person.lastName = this.personFirstNameAutocompleteControl.value;
     }
   }
 
-  // displaySource(source: Source) {
-  //   if (source) {
-  //     this.sourceFieldDisplayValue = source.title;
-  //
-  //     if (source.subTitle) {
-  //       this.sourceFieldDisplayValue = this.sourceFieldDisplayValue + ': ' + source.subTitle;
-  //     }
-  //   }
-  //
-  //   return this.sourceFieldDisplayValue;
-  // }
+  displayPersonName(person: Person) {
+    if (person) {
+      this.personNameFieldDisplayValue = '';
+
+      if (person.firstName) {
+        this.personNameFieldDisplayValue = person.firstName;
+      }
+
+      if (person.lastName) {
+        this.personNameFieldDisplayValue = this.personNameFieldDisplayValue + ' ' + person.lastName;
+      }
+    }
+
+    return this.personFirstNameFieldDisplayValue;
+  }
 
   displayPersonFirstName(person: Person) {
     if (person) {
@@ -169,16 +186,19 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
     return this.personLastNameFieldDisplayValue;
   }
 
-  // private _filterSources(filterValue: any): Source[] {
-  //   // when a source is actually selected the value is changed to the source itself. Do not filter if that is the case.
-  //   if (!filterValue.id) {
-  //     filterValue = filterValue.toLowerCase();
-  //
-  //     return this.sources.filter(source => {
-  //       return source.title.toLowerCase().includes(filterValue);
-  //     });
-  //   }
-  // }
+  private _filterPersonsName(filterValue: any): Person[] {
+    if (filterValue && typeof filterValue === 'string') {
+      filterValue = filterValue.toLowerCase();
+
+      return this.searchPersons.filter(person => {
+        if (person.firstName || person.lastName) {
+          return person.firstName.toLowerCase().includes(filterValue) || person.lastName.toLowerCase().includes(filterValue);
+        } else {
+          return '';
+        }
+      });
+    }
+  }
 
   private _filterPersonsFirstName(filterValue: any): Person[] {
     if (filterValue && typeof filterValue === 'string') {
@@ -211,6 +231,10 @@ export class QuickPersonComponent implements OnInit, AfterViewInit {
   async activateCreateForm() {
     await Sleep.wait(500);
 
-    document.getElementById('person_first_name').focus();
+    try {
+      document.getElementById('person_name').focus();
+    } catch(e) {
+      document.getElementById('person_first_name').focus();
+    }
   }
 }

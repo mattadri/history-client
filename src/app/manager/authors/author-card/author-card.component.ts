@@ -9,28 +9,22 @@ import { Author } from '../../../models/author';
 })
 export class AuthorCardComponent implements OnInit {
   @Input() public author: Author;
+  @Input() public canDelete: boolean;
   @Input() public isSourceAttachment: boolean;
 
-  @Output() private loadAuthor: EventEmitter<Author>;
-  @Output() private removeAuthorFromSource: EventEmitter<Author>;
+  @Output() private removeAuthor: EventEmitter<Author>;
 
   constructor() {
-    this.loadAuthor = new EventEmitter<Author>();
-    this.removeAuthorFromSource = new EventEmitter<Author>();
+    this.removeAuthor = new EventEmitter<Author>();
 
     if (!this.isSourceAttachment) {
       this.isSourceAttachment = false;
     }
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
-  onLoadDetails() {
-    this.loadAuthor.emit(this.author);
-  }
-
-  doRemoveAuthorFromSource() {
-    this.removeAuthorFromSource.emit(this.author);
+  doRemoveAuthor() {
+    this.removeAuthor.emit(this.author);
   }
 }

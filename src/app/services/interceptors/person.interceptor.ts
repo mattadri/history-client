@@ -5,7 +5,9 @@ import { HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {tap} from 'rxjs/operators';
 
-import { Person } from '../../models/person';
+import { Person } from '../../models/persons/person';
+import {PersonTimeline} from '../../models/persons/person-timeline';
+import {PersonBiography} from '../../models/persons/person-biography';
 
 @Injectable()
 export class PersonInterceptor implements HttpInterceptor {
@@ -17,6 +19,12 @@ export class PersonInterceptor implements HttpInterceptor {
 
   private persons: Person[] = [];
   private person: Person;
+
+  private personTimelines: PersonTimeline[] = [];
+  private personTimeline: PersonTimeline;
+
+  private personBiographies: PersonBiography[] = [];
+  private personBiography: PersonBiography;
 
   constructor() { }
 
@@ -47,12 +55,56 @@ export class PersonInterceptor implements HttpInterceptor {
           this.body.links = event.body.links;
 
           event.body = this.body;
+
         } else if ((req.headers.get('type') === 'person')) {
           this.person = new Person();
           this.person.initializeNewPerson();
           this.person.mapPerson(event.body.data);
 
           event.body = this.person;
+
+        } else if ((req.headers.get('type') === 'person_timelines')) {
+          for (const data of event.body.data) {
+            this.personTimeline = new PersonTimeline();
+            this.personTimeline.initializeNewPersonTimeline();
+            this.personTimeline.mapPersonTimeline(data);
+
+            this.personTimelines.push(this.personTimeline);
+          }
+
+          let body = {
+            personTimelines: [],
+            total: 0,
+            links: {}
+          };
+
+          body.personTimelines = this.personTimelines;
+          body.total = event.body.meta.count;
+          body.links = event.body.links;
+
+          event.body = body;
+
+        } else if ((req.headers.get('type') === 'person_biographies')) {
+
+          for (const data of event.body.data) {
+            this.personBiography = new PersonBiography();
+            this.personBiography.initializeBiography();
+            this.personBiography.mapBiography(data);
+
+            this.personBiographies.push(this.personBiography);
+          }
+
+          let body = {
+            personBiographies: [],
+            total: 0,
+            links: {}
+          };
+
+          body.personBiographies = this.personBiographies;
+          body.total = event.body.meta.count;
+          body.links = event.body.links;
+
+          event.body = body;
         }
       }
     }

@@ -1,1 +1,20 @@
-<p>projects works!</p>
+<mat-sidenav-container>
+  <div class="app-body-content">
+    <div class="app-content-toolbar">
+      <h1>Projects</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="addProject()">add</button>
+    </div>
+
+    <div class="app-cards-container">
+      <app-project-card
+        *ngFor="let project of projects"
+        [project]="project"
+        [canDelete]="true"
+        (removeProject)="deleteProject(project)"
+        class="app-card">
+      </app-project-card>
+    </div>
+
+    <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+  </div>
+</mat-sidenav-container>

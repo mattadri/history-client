@@ -1,12 +1,12 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {Sleep} from '../../../utilities/sleep';
 
 import {Category} from '../../../models/category';
-import {Person} from '../../../models/person';
-import {Event} from '../../../models/event';
+import {Person} from '../../../models/persons/person';
+import {Event} from '../../../models/events/event';
 import {Era} from '../../../models/era';
-import {Timeline} from '../../../models/timeline';
+import {Timeline} from '../../../models/timelines/timeline';
 
 @Component({
   selector: 'app-timeline-display',
@@ -16,6 +16,9 @@ import {Timeline} from '../../../models/timeline';
 export class TimelineDisplayComponent implements OnInit {
   @Input() public categoryEvents: Category[];
   @Input() public timeline: Timeline;
+
+  @Output() private returnTimelineSpan: EventEmitter<string>;
+  @Output() private returnTimelineStartEndYears: EventEmitter<Array<number>>;
 
   public cursorLineActive: boolean;
   public cursorLineStyles: object;
@@ -56,8 +59,13 @@ export class TimelineDisplayComponent implements OnInit {
   ];
 
   constructor() {
+    this.returnTimelineSpan = new EventEmitter();
+    this.returnTimelineStartEndYears = new EventEmitter();
+
     this.cursorLineActive = false;
     this.cursorLineDatePosition = 'above';
+
+    this.persons = [];
   }
 
   private static padTimelineDate(yearToPad: number, timelineLength: number, increase: boolean) {
@@ -85,7 +93,9 @@ export class TimelineDisplayComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.persons = this.timeline.persons;
+    for (const timelinePerson of this.timeline.persons) {
+      this.persons.push(timelinePerson.person);
+    }
 
     this.setTimelineStartAndEnd();
     this.setTimeframe();
@@ -106,21 +116,31 @@ export class TimelineDisplayComponent implements OnInit {
     let endYear = year.getFullYear();
 
     if (this.timeline.events && this.timeline.events.length) {
-      for ( const event of this.timeline.events) {
-        if (event.endYear) {
-          endYear = event.endYear;
+      for ( const timelineEvent of this.timeline.events) {
+        if (timelineEvent.event.startEra.label === 'BC') {
+          timelineEvent.event.startYear = timelineEvent.event.startYear * -1;
+        }
+
+        if (timelineEvent.event.endEra && timelineEvent.event.endEra.label === 'BC') {
+          timelineEvent.event.endYear = timelineEvent.event.endYear * -1;
+        }
+
+        if (timelineEvent.event.endYear) {
+          endYear = timelineEvent.event.endYear;
         } else {
           const dateObj = new Date();
           endYear = dateObj.getFullYear();
         }
 
-        years.push(event.startYear);
+        years.push(timelineEvent.event.startYear);
         years.push(endYear);
       }
     }
 
     if (this.timeline.persons && this.timeline.persons.length) {
-      for (const person of this.timeline.persons) {
+      for (const timelinePerson of this.timeline.persons) {
+        let person = timelinePerson.person;
+
         if (person.birthEra.label === 'BC') {
           person.birthYear = person.birthYear * -1;
         }
@@ -155,6 +175,9 @@ export class TimelineDisplayComponent implements OnInit {
     this.timelineEnd = Math.ceil(TimelineDisplayComponent.padTimelineDate(oldestEvent, distance, true));
 
     this.timelineLength = this.timelineEnd - this.timelineStart;
+
+    this.returnTimelineSpan.emit(this.timelineSpanInYears.toString());
+    this.returnTimelineStartEndYears.emit([this.timelineStart, this.timelineEnd]);
   }
 
   setTimeframe() {
@@ -281,10 +304,10 @@ export class TimelineDisplayComponent implements OnInit {
               const eventId = categoryEvent[1];
 
               if (this.timeline.events && this.timeline.events.length) {
-                for (const event of this.timeline.events) {
-                  if (event.id === eventId) {
-                    if (event.formattedStartDate === event.formattedEndDate) {
-                      newCategory.singlePointEvents.push(event);
+                for (const timelineEvent of this.timeline.events) {
+                  if (timelineEvent.event.id === eventId) {
+                    if (timelineEvent.event.formattedStartDate === timelineEvent.event.formattedEndDate) {
+                      newCategory.singlePointEvents.push(timelineEvent.event);
 
                       eventIdsUsed.push(eventId);
 
@@ -292,7 +315,7 @@ export class TimelineDisplayComponent implements OnInit {
                       if (this.eventColorClasses.length) {
                         const color = this.eventColorClasses.pop();
 
-                        event.colorClass = color;
+                        timelineEvent.event.colorClass = color;
                         backupColorArray.push(color);
 
                         if (!this.eventColorClasses.length) {
@@ -306,7 +329,7 @@ export class TimelineDisplayComponent implements OnInit {
                         }
                       }
 
-                      newCategory.multiPointEvents.push(event);
+                      newCategory.multiPointEvents.push(timelineEvent.event);
 
                       eventIdsUsed.push(eventId);
                     }
@@ -337,16 +360,16 @@ export class TimelineDisplayComponent implements OnInit {
     genericCategory.label = '';
 
     if (this.timeline.events && this.timeline.events.length) {
-      for (const event of this.timeline.events) {
-        if (!eventIdsUsed.includes(event.id)) {
-          if (event.formattedStartDate === event.formattedEndDate) {
-            genericCategory.singlePointEvents.push(event);
+      for (const timelineEvent of this.timeline.events) {
+        if (!eventIdsUsed.includes(timelineEvent.event.id)) {
+          if (timelineEvent.event.formattedStartDate === timelineEvent.event.formattedEndDate) {
+            genericCategory.singlePointEvents.push(timelineEvent.event);
 
           } else {
             if (this.eventColorClasses.length) {
               const color = this.eventColorClasses.pop();
 
-              event.colorClass = color;
+              timelineEvent.event.colorClass = color;
               backupColorArray.push(color);
 
               if (!this.eventColorClasses.length) {
@@ -360,7 +383,7 @@ export class TimelineDisplayComponent implements OnInit {
               }
             }
 
-            genericCategory.multiPointEvents.push(event);
+            genericCategory.multiPointEvents.push(timelineEvent.event);
           }
         }
       }
@@ -378,53 +401,53 @@ export class TimelineDisplayComponent implements OnInit {
       const timelineLengthInMonths = this.timelineLength * 12;
 
       if (this.timeline.events && this.timeline.events.length) {
-        for (const event of this.timeline.events) {
-          let startMonthInTimeline = ((event.startYear - this.timelineStart) * 12);
+        for (const timelineEvent of this.timeline.events) {
+          let startMonthInTimeline = ((timelineEvent.event.startYear - this.timelineStart) * 12);
 
-          if (event.startMonth) {
-            startMonthInTimeline = startMonthInTimeline + Number(event.startMonth.id);
+          if (timelineEvent.event.startMonth) {
+            startMonthInTimeline = startMonthInTimeline + Number(timelineEvent.event.startMonth.id);
           }
 
-          event.timelineStartLocation = (startMonthInTimeline / timelineLengthInMonths) * 100;
+          timelineEvent.event.timelineStartLocation = (startMonthInTimeline / timelineLengthInMonths) * 100;
 
-          let endMonthInTimeline = ((event.endYear - this.timelineStart) * 12);
+          let endMonthInTimeline = ((timelineEvent.event.endYear - this.timelineStart) * 12);
 
-          if (event.endMonth) {
-            endMonthInTimeline = endMonthInTimeline + Number(event.endMonth.id);
+          if (timelineEvent.event.endMonth) {
+            endMonthInTimeline = endMonthInTimeline + Number(timelineEvent.event.endMonth.id);
           }
 
-          let endPercentage = (endMonthInTimeline / timelineLengthInMonths) * 100 - event.timelineStartLocation;
+          let endPercentage = (endMonthInTimeline / timelineLengthInMonths) * 100 - timelineEvent.event.timelineStartLocation;
 
           // if the range is 0% change to 1% so it shows up on the timeline
-          if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
+          if (endPercentage < 1 && timelineEvent.event.formattedStartDate !== timelineEvent.event.formattedEndDate) {
             endPercentage = 1;
           }
 
-          event.timelineEndLocation = endPercentage;
+          timelineEvent.event.timelineEndLocation = endPercentage;
         }
       }
 
     } else {
       if (this.timeline.events && this.timeline.events.length) {
-        for (const event of this.timeline.events) {
+        for (const timelineEvent of this.timeline.events) {
           // set the percentage location from oldest event.
-          event.timelineStartLocation = ((event.startYear - this.timelineStart) / this.timelineLength) * 100;
+          timelineEvent.event.timelineStartLocation = ((timelineEvent.event.startYear - this.timelineStart) / this.timelineLength) * 100;
 
-          let endYear = event.endYear;
+          let endYear = timelineEvent.event.endYear;
 
           if (!endYear) {
             const year = new Date();
             endYear = year.getFullYear();
           }
 
-          let endPercentage = (((endYear - this.timelineStart) / this.timelineLength) * 100) - event.timelineStartLocation;
+          let endPercentage = (((endYear - this.timelineStart) / this.timelineLength) * 100) - timelineEvent.event.timelineStartLocation;
 
           // if the range is 0% change to 1% so it shows up on the timeline
-          if (endPercentage < 1 && event.formattedStartDate !== event.formattedEndDate) {
+          if (endPercentage < 1 && timelineEvent.event.formattedStartDate !== timelineEvent.event.formattedEndDate) {
             endPercentage = 1;
           }
 
-          event.timelineEndLocation = endPercentage;
+          timelineEvent.event.timelineEndLocation = endPercentage;
         }
       }
     }
@@ -432,7 +455,9 @@ export class TimelineDisplayComponent implements OnInit {
 
   setTimelinePersonLocations() {
     if (this.timeline.persons && this.timeline.persons.length) {
-      for (const person of this.timeline.persons) {
+      for (const timelinePerson of this.timeline.persons) {
+        let person = timelinePerson.person;
+
         // set the percentage location from oldest event.
         person.timelineStartLocation = ((person.birthYear - this.timelineStart) / this.timelineLength) * 100;
 

@@ -3,8 +3,8 @@ import { MatDialog } from '@angular/material/dialog';
 
 import {EssayService} from '../../services/essay.service';
 
-import {EssayNote} from '../../models/essay-note';
-import {Essay} from '../../models/essay';
+import {EssayNote} from '../../models/essays/essay-note';
+import {Essay} from '../../models/essays/essay';
 
 import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 

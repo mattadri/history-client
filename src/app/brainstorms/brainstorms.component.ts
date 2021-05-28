@@ -5,7 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import {Brainstorm} from '../models/brainstorm';
 
 import {BrainstormService} from '../services/brainstorm.service';
-import {QuickBrainstormComponent} from './quick-brainstorm/quick-brainstorm.component';
+import {AddBrainstormDialogComponent} from '../utilities/add-brainstorm-dialog/add-brainstorm-dialog.component';
+import {ThemePalette} from '@angular/material/core';
 
 @Component({
   selector: 'app-brainstorms',
@@ -16,37 +17,94 @@ export class BrainstormsComponent implements OnInit {
   public brainstorms: Brainstorm[];
   public brainstorm: Brainstorm;
 
+  public userBrainstorms: Brainstorm[];
+  public allBrainstorms: Brainstorm[];
+
   public totalResults: number;
   public nextPage: string;
   public previousPage: string;
 
+  private userId: string;
+
+  public showAllToggleColor: ThemePalette;
+  public showAllToggleChecked: boolean;
+
   constructor(private brainstormService: BrainstormService, public dialog: MatDialog) {
-    this.getBrainstorms('/brainstorms?page%5Bnumber%5D=1&fields[brainstorm]=title,description');
+    this.showAllToggleChecked = false;
+    this.showAllToggleColor = 'primary';
+
+    this.userId = localStorage.getItem('user.id');
+
+    this.brainstorms = [];
+    this.userBrainstorms = [];
+    this.allBrainstorms = [];
+
+    this.getUserBrainstorms(null, false);
   }
 
   ngOnInit() {
   }
 
-  getBrainstorms(path) {
-    this.brainstormService.getApiBrainstorms(path).subscribe(response => {
-      for (const brainstorm of response.brainstorms) {
-        this.brainstormService.setBrainstorm(brainstorm);
-      }
+  getUserBrainstorms(path: string, isAnotherPage: boolean) {
+    if (!this.userBrainstorms.length || isAnotherPage) {
+      this.brainstormService.getApiBrainstorms(path, this.userId, null, '1', ['title', 'description'], null, null, null, isAnotherPage).subscribe(response => {
+        for (const brainstorm of response.brainstorms) {
+          this.brainstormService.setBrainstorm(brainstorm);
+        }
 
-      this.brainstorms = this.brainstormService.getBrainstorms();
+        this.brainstorms = this.brainstormService.getBrainstorms();
+        this.userBrainstorms = this.brainstormService.getBrainstorms();
 
-      this.totalResults = response.total;
-      this.nextPage = response.links.next;
-      this.previousPage = response.links.prev;
-    });
+        this.totalResults = response.total;
+        this.nextPage = response.links.next;
+        this.previousPage = response.links.prev;
+      });
+
+    } else {
+      this.brainstorms = this.userBrainstorms;
+    }
+  }
+
+  getAllBrainstorms(path: string, isAnotherPage: boolean) {
+    if (!this.allBrainstorms.length || isAnotherPage) {
+      this.brainstormService.getApiBrainstorms(path, null, null, '1', ['title', 'description'], null, null, null, isAnotherPage).subscribe(response => {
+        for (const brainstorm of response.brainstorms) {
+          this.brainstormService.setBrainstorm(brainstorm);
+        }
+
+        this.brainstorms = this.brainstormService.getBrainstorms();
+        this.allBrainstorms = this.brainstormService.getBrainstorms();
+
+        this.totalResults = response.total;
+        this.nextPage = response.links.next;
+        this.previousPage = response.links.prev;
+      });
+
+    } else {
+      this.brainstorms = this.allBrainstorms;
+    }
+  }
+
+  toggleBrainstorms() {
+    if (this.showAllToggleChecked) {
+      this.getAllBrainstorms(null, false);
+    } else {
+      this.getUserBrainstorms(null, false);
+    }
   }
 
   createBrainstorm() {
-    const dialogRef = this.dialog.open(QuickBrainstormComponent, {
-      width: '750px'
+    const dialogRef = this.dialog.open(AddBrainstormDialogComponent, {
+      width: '750px',
+      data: {
+        showExisting: false,
+        showNew: true
+      }
     });
 
-    dialogRef.afterClosed().subscribe(brainstorm => {
+    dialogRef.afterClosed().subscribe(responseData => {
+      let brainstorm = responseData.brainstorm;
+
       if (brainstorm) {
         this.brainstormService.createApiBrainstorm(brainstorm).subscribe(response => {
           brainstorm.id = response.data.id;
@@ -54,6 +112,8 @@ export class BrainstormsComponent implements OnInit {
           this.brainstormService.setBrainstorm(brainstorm);
 
           this.brainstorms.unshift(brainstorm);
+
+          this.brainstormService.addUserToBrainstorm(brainstorm, this.userId).subscribe(() => {});
         });
       }
     });
@@ -61,9 +121,17 @@ export class BrainstormsComponent implements OnInit {
 
   turnPage(brainstorm) {
     if (brainstorm.pageIndex < brainstorm.previousPageIndex) {
-      this.getBrainstorms(this.previousPage);
+      if (this.showAllToggleChecked) {
+        this.getAllBrainstorms(this.previousPage, true);
+      } else {
+        this.getUserBrainstorms(this.previousPage, true);
+      }
     } else if (brainstorm.pageIndex > brainstorm.previousPageIndex) {
-      this.getBrainstorms(this.nextPage);
+      if (this.showAllToggleChecked) {
+        this.getAllBrainstorms(this.nextPage, true);
+      } else {
+        this.getUserBrainstorms(this.nextPage, true);
+      }
     }
   }
 }

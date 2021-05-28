@@ -1,123 +1,143 @@
 <form #personForm="ngForm">
-  <div class="app-drawer-header">
-    <div class="app-drawer-title">
-      <div class="app-drawer-subheading">New Person</div>
+  <div *ngIf="data.showExisting">
+    <div class="app-drawer-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">Existing Person</div>
+      </div>
     </div>
-    <div class="app-drawer-tools">
-      <button mat-icon-button type="button" class="material-icons" [mat-dialog-close]="person">save</button>
-      <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
+
+    <div class="app-add-object-overlay">
+      <section class="app-section">
+        <mat-form-field style="width: 100%">
+          <input
+            type="text"
+            placeholder="Name"
+            matInput
+            #personNameField
+            name="person_name"
+            id="person_name"
+            [formControl]="personNameAutocompleteControl"
+            [matAutocomplete]="personNameAutoComplete">
+
+          <mat-autocomplete autoActiveFirstOption #personNameAutoComplete="matAutocomplete" [displayWith]="displayPersonName" (optionSelected)="saveExistingPerson($event.option.value)">
+            <mat-option *ngFor="let personOption of personNameFilteredOptions | async" [value]="personOption">
+              <span *ngIf="personOption.firstName">{{personOption.firstName}} </span><span *ngIf="personOption.lastName">{{personOption.lastName}}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </section>
     </div>
   </div>
 
-  <div class="app-drawer-content">
-    <section class="app-section">
-      <mat-form-field style="width: 33%">
-        <input
-          type="text"
-          placeholder="First Name"
-          matInput
-          #personFirstNameField
-          name="person_first_name"
-          id="person_first_name"
-          (focusout)="savePersonFirstName(personFirstNameField.value)"
-          [formControl]="personFirstNameAutocompleteControl"
-          [matAutocomplete]="personFirstNameAutoComplete">
+  <div *ngIf="data.showNew && data.showExisting" class="app-add-object-overlay">
+    <div>OR</div>
+  </div>
 
-        <mat-autocomplete #personFirstNameAutoComplete="matAutocomplete" [displayWith]="displayPersonFirstName" (optionSelected)="savePersonFirstName(null)">
-          <mat-option *ngFor="let person of personFirstNameFilteredOptions | async" [value]="person.firstName">
-            <span *ngIf="person.firstName">{{person.firstName}} </span><span *ngIf="person.lastName">{{person.lastName}}</span>
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+  <div *ngIf="data.showNew">
+    <div class="app-drawer-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">New Person</div>
+      </div>
 
-      <mat-form-field style="width: 33%">
-        <input
-          matInput
-          placeholder="Middle Name"
-          name="person_middle_name"
-          #personFirstName="ngModel"
-          [(ngModel)]="person.middleName" />
-      </mat-form-field>
+      <div class="app-drawer-tools">
+        <button mat-icon-button type="button" class="material-icons" (click)="saveNewPerson()">save</button>
+        <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
+      </div>
+    </div>
 
-      <mat-form-field>
-        <input
-          type="text"
-          placeholder="Last Name"
-          matInput
-          name="person_last_name"
-          #personLastNameField
-          (focusout)="savePersonLastName(personLastNameField.value)"
-          [formControl]="personLastNameAutocompleteControl"
-          [matAutocomplete]="personLastNameAutoComplete">
-
-        <mat-autocomplete #personLastNameAutoComplete="matAutocomplete" [displayWith]="displayPersonLastName" (optionSelected)="savePersonLastName(null)">
-          <mat-option *ngFor="let person of personLastNameFilteredOptions | async" [value]="person.lastName">
-            <span *ngIf="person.firstName">{{person.firstName}} </span><span *ngIf="person.lastName">{{person.lastName}}</span>
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </section>
-
-    <section class="app-section inline">
-      <label>Birth</label>
-
-      <div class="app-field-group">
-        <mat-form-field class="app-field-era">
-          <mat-label>Era</mat-label>
-          <mat-select [(ngModel)]="person.birthEra" name="person_birth_era" required>
-            <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field class="app-field-year">
+    <div class="app-add-object-overlay">
+      <section class="app-section">
+        <mat-form-field style="width: 33%">
           <input
+            type="text"
+            placeholder="First Name"
             matInput
-            placeholder="Year"
-            name="person_birth_year"
+            #personFirstNameField
+            name="person_first_name"
+            id="person_first_name"
             required
-            [(ngModel)]="person.birthYear" />
-        </mat-form-field>
-      </div>
+            (focusout)="savePersonFirstName(personFirstNameField.value)"
+            [formControl]="personFirstNameAutocompleteControl"
+            [matAutocomplete]="personFirstNameAutoComplete">
 
-    </section>
-
-    <section class="app-section inline">
-      <label>Death</label>
-      <div class="app-field-group">
-        <mat-form-field class="app-field-era">
-          <mat-label>Era</mat-label>
-          <mat-select [(ngModel)]="person.deathEra" name="person_death_era">
-            <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
-          </mat-select>
+          <mat-autocomplete #personFirstNameAutoComplete="matAutocomplete" [displayWith]="displayPersonFirstName" (optionSelected)="savePersonFirstName(null)">
+            <mat-option *ngFor="let personOption of personFirstNameFilteredOptions | async" [value]="person.firstName">
+              <span *ngIf="personOption.firstName">{{personOption.firstName}} </span><span *ngIf="personOption.lastName">{{personOption.lastName}}</span>
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
 
-        <mat-form-field class="app-field-year">
+        <mat-form-field style="width: 33%">
           <input
             matInput
-            placeholder="Year"
-            name="person_death_year"
-            [(ngModel)]="person.deathYear" />
+            placeholder="Middle Name"
+            name="person_middle_name"
+            #personFirstName="ngModel"
+            [(ngModel)]="person.middleName" />
         </mat-form-field>
-      </div>
-    </section>
 
-    <!--<section class="app-section inline">-->
-      <!--<label>Source</label>-->
-      <!--<mat-form-field class="app-field-reference">-->
-        <!--<input-->
-          <!--type="text"-->
-          <!--placeholder="Select Source"-->
-          <!--aria-label="Source"-->
-          <!--matInput-->
-          <!--[formControl]="sourcesAutocompleteControl"-->
-          <!--[matAutocomplete]="auto">-->
+        <mat-form-field>
+          <input
+            type="text"
+            placeholder="Last Name"
+            matInput
+            name="person_last_name"
+            #personLastNameField
+            (focusout)="savePersonLastName(personLastNameField.value)"
+            [formControl]="personLastNameAutocompleteControl"
+            [matAutocomplete]="personLastNameAutoComplete">
 
-        <!--<mat-autocomplete #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">-->
-          <!--<mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">-->
-            <!--{{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>-->
-          <!--</mat-option>-->
-        <!--</mat-autocomplete>-->
-      <!--</mat-form-field>-->
-    <!--</section>-->
+          <mat-autocomplete #personLastNameAutoComplete="matAutocomplete" [displayWith]="displayPersonLastName" (optionSelected)="savePersonLastName(null)">
+            <mat-option *ngFor="let person of personLastNameFilteredOptions | async" [value]="person.lastName">
+              <span *ngIf="person.firstName">{{person.firstName}} </span><span *ngIf="person.lastName">{{person.lastName}}</span>
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </section>
+
+      <section class="app-section inline">
+        <label>Birth</label>
+
+        <div class="app-field-group">
+          <mat-form-field class="app-field-era">
+            <mat-label>Era</mat-label>
+            <mat-select [(ngModel)]="person.birthEra" name="person_birth_era" required>
+              <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="app-field-year">
+            <input
+              matInput
+              placeholder="Year"
+              name="person_birth_year"
+              required
+              [(ngModel)]="person.birthYear" />
+          </mat-form-field>
+        </div>
+
+      </section>
+
+      <section class="app-section inline">
+        <label>Death</label>
+        <div class="app-field-group">
+          <mat-form-field class="app-field-era">
+            <mat-label>Era</mat-label>
+            <mat-select [(ngModel)]="person.deathEra" name="person_death_era">
+              <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="app-field-year">
+            <input
+              matInput
+              placeholder="Year"
+              name="person_death_year"
+              [(ngModel)]="person.deathYear" />
+          </mat-form-field>
+        </div>
+      </section>
+
+    </div>
   </div>
 </form>

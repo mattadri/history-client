@@ -5,7 +5,7 @@ import {tap} from 'rxjs/internal/operators';
 
 import { Observable } from 'rxjs';
 
-import { Essay } from '../../models/essay';
+import { Essay } from '../../models/essays/essay';
 
 @Injectable()
 export class EssayInterceptor implements HttpInterceptor {
@@ -49,6 +49,7 @@ export class EssayInterceptor implements HttpInterceptor {
           this.body.links = event.body.links;
 
           event.body = this.body;
+
         } else if ((req.headers.get('type') === 'essay')) {
           this.essay = new Essay();
           this.essay.initializeNewEssay();
@@ -56,6 +57,23 @@ export class EssayInterceptor implements HttpInterceptor {
           this.essay.mapEssay(event.body.data);
 
           event.body = this.essay;
+
+        } else if (req.headers.get('type') === 'user_essays') {
+          this.essays = [];
+
+          for (const data of event.body.data) {
+            this.essay = new Essay();
+            this.essay.initializeNewEssay();
+            this.essay.mapEssay(data.attributes.essay.data);
+
+            this.essays.push(this.essay);
+          }
+
+          this.body.essays = this.essays;
+          this.body.total = event.body.meta.count;
+          this.body.links = event.body.links;
+
+          event.body = this.body;
         }
       }
     }

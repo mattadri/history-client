@@ -1,23 +1,22 @@
-import {Essay} from '../essay';
-import {Person} from '../person';
+import {PersonBiography} from '../persons/person-biography';
 
 export class PersonBiographyPost {
   data;
 
-  mapToPersonBiographyPost(person: Person, biography: Essay) {
+  mapToPersonBiographyPost(personBiography: PersonBiography) {
     this.data = {
       type: 'person_biography',
       attributes: {
         essay_rel: {
           data: {
             type: 'essay',
-            id: biography.id
+            id: personBiography.biography.id
           }
         },
         person_rel: {
           data: {
             type: 'person',
-            id: person.id
+            id: personBiography.person.id
           }
         }
       }

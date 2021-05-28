@@ -1,6 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
-
-import { Chart as RenderedChart } from '../../../../../node_modules/chart.js/dist/Chart.js';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {Chart} from '../../../models/chart';
 
@@ -11,52 +9,17 @@ import {Chart} from '../../../models/chart';
 })
 export class ChartCardComponent implements OnInit {
   @Input() chart: Chart;
+  @Input() public canDelete: boolean;
 
-  // public chartData: any;
-  // public renderedChart: any;
+  @Output() private removeChart: EventEmitter<Chart>;
 
   constructor() {
-
+    this.removeChart = new EventEmitter<Chart>();
   }
 
-  ngOnInit() {
-    // this.chartData = {};
+  ngOnInit() { }
 
-    // this.makeChart();
+  doRemoveChart() {
+    this.removeChart.emit(this.chart);
   }
-
-  // makeChart() {
-  //   const context = document.getElementById('chart_preview');
-  //
-  //   this.chartData.type = this.chart.type;
-  //   this.chartData.data = {};
-  //
-  //   this.chartData.data.labels = this.chart.labels;
-  //
-  //   this.chartData.data.datasets = [];
-  //
-  //   this.chartData.options = this.chart.options;
-  //
-  //   for (const dataset of this.chart.datasets) {
-  //     this.chartData.data.datasets.push(this.mapToChartJSDataset(dataset));
-  //   }
-  //
-  //   this.renderedChart = new RenderedChart(context, this.chartData);
-  // }
-
-  // mapToChartJSDataset(dataset) {
-  //   let chartJSDataset: object;
-  //
-  //   chartJSDataset = {
-  //     label: dataset.label,
-  //     data: Object.keys(dataset.data).map(k => dataset.data[k].xData),
-  //     fill: dataset.fill,
-  //     backgroundColor: dataset.backgroundColor,
-  //     borderColor: dataset.borderColor,
-  //     pointRadius: dataset.pointRadius,
-  //     pointBackgroundColor: dataset.pointBackgroundColor
-  //   };
-  //
-  //   return chartJSDataset;
-  // }
 }

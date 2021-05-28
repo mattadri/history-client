@@ -2,6 +2,8 @@
   <div class="app-body-content">
     <div class="app-card-content">
       <div>
+        <img class="essay-image" src="{{essay.banner}}" />
+
         <div class="app-content-toolbar" *ngIf="!isEssayTitleEditMode">
           <h1 *ngIf="essay.title">{{essay.title}} <span *ngIf="essay.type && essay.type.label">({{essay.type.label}})</span></h1>
           <button mat-flat-button class="material-icons" (click)="setEssayTitleEditMode()">edit</button>
@@ -10,6 +12,16 @@
 
         <!-- IF THE ESSAY TITLE IS IN EDIT MODE -->
         <div *ngIf="isEssayTitleEditMode">
+          <section class="app-section">
+              <label>Banner</label>
+
+              <div>
+                <mat-spinner *ngIf="isSavingBanner" mode="indeterminate" diameter="20"></mat-spinner>
+
+                <input type="file" (change)="saveImage($event.target.files)" />
+              </div>
+            </section>
+
           <mat-form-field style="width: 100%">
             <input
               matInput
@@ -35,6 +47,12 @@
           <button mat-icon-button class="material-icons" (click)="setEssayTitleViewMode()">close</button>
         </div>
       </div>
+
+      <div *ngFor="let user of essayUsers">
+        <span>{{user.firstName}}</span> <span> {{user.lastName}}</span>
+      </div>
+
+      <button mat-flat-button class="material-icons" color="secondary" (click)="addUser()">+</button>
 
       <!-- ABSTRACT VIEW-->
       <div class="app-essay-section" *ngIf="!isAbstractEditMode">

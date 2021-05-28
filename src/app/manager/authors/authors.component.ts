@@ -65,42 +65,22 @@ export class AuthorsComponent implements OnInit {
     });
   }
 
-  removeAuthor(sideNav) {
+  removeAuthor(author) {
     const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
       width: '250px',
       data: {
-        label: 'the author ' + this.author.firstName + ' ' + this.author.lastName,
+        label: 'the author ' + author.firstName + ' ' + author.lastName,
         content: ''
       }
     });
 
     dialogRef.afterClosed().subscribe(doClose => {
       if (doClose) {
-        this.authorService.removeApiAuthor(this.author).subscribe(() => {
-          this.authorService.removeAuthor(this.author);
-
-          this.closeAuthorDetails(sideNav);
+        this.authorService.removeApiAuthor(author).subscribe(() => {
+          this.authorService.removeAuthor(author);
         });
       }
     });
-  }
-
-  openAuthorDetails(author, contentPanel) {
-    this.author = author;
-
-    this.authorLink = this.author.id.toString();
-
-    if (contentPanel.opened) {
-      contentPanel.close().then(() => {
-        contentPanel.open();
-      });
-    } else {
-      contentPanel.open();
-    }
-  }
-
-  closeAuthorDetails(sideNav) {
-    sideNav.close();
   }
 
   turnPage(author) {

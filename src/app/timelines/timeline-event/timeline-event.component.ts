@@ -1,10 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
-import { Event } from '../../models/event';
+import { Event } from '../../models/events/event';
 
 import { TimelineEventDetailsComponent } from '../timeline-event-details/timeline-event-details.component';
-import {Timeline} from '../../models/timeline';
+import {Timeline} from '../../models/timelines/timeline';
 import {Category} from '../../models/category';
 
 @Component({

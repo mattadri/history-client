@@ -5,7 +5,7 @@ import { HttpHandler, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {tap} from 'rxjs/operators';
 
-import { Timeline } from '../../models/timeline';
+import { Timeline } from '../../models/timelines/timeline';
 
 @Injectable()
 export class TimelineInterceptor implements HttpInterceptor {
@@ -36,7 +36,27 @@ export class TimelineInterceptor implements HttpInterceptor {
 
           for (const data of event.body.data) {
             this.timeline = new Timeline();
-            this.timeline.mapTimeline(data, false, false);
+            this.timeline.initializeNewTimeline();
+            this.timeline.mapTimeline(data);
+
+            this.timelines.push(this.timeline);
+          }
+
+          this.body.timelines = this.timelines;
+          this.body.total = event.body.meta.count;
+          this.body.links = event.body.links;
+
+          event.body = this.body;
+
+        } else if (req.headers.get('type') === 'user_timelines') {
+          this.timelines = [];
+
+          for (const data of event.body.data) {
+            this.timeline = new Timeline();
+            this.timeline.initializeNewTimeline();
+            this.timeline.mapTimeline(data.attributes.timeline.data);
+
+
 
             this.timelines.push(this.timeline);
           }
@@ -49,7 +69,8 @@ export class TimelineInterceptor implements HttpInterceptor {
 
         } else if (req.headers.get('type') === 'timeline') {
           this.timeline = new Timeline();
-          this.timeline.mapTimeline(event.body.data, false, false);
+          this.timeline.initializeNewTimeline();
+          this.timeline.mapTimeline(event.body.data);
 
           event.body = this.timeline;
         }

@@ -31,6 +31,16 @@
 
           <div class="app-drawer-content">
             <section class="app-section">
+              <label>Image</label>
+
+              <div>
+                <mat-spinner *ngIf="isSavingImage" mode="indeterminate" diameter="20"></mat-spinner>
+
+                <input type="file" (change)="saveImage($event.target.files)" />
+              </div>
+            </section>
+
+            <section class="app-section">
               <mat-form-field style="width: 100%">
                 <input
                   type="text"
@@ -142,33 +152,21 @@
   </div>
 
   <div class="app-body-content">
-    <div class="app-body-content-narrow">
+    <div>
       <!-- Add a timeline CTA-->
       <div class="app-content-toolbar margin-bottom">
           <h2>Timelines</h2>
-          <button mat-flat-button color="secondary" (click)="activateAddTimelineMode()">+ Add a Timeline</button>
+          <button mat-flat-button color="secondary" (click)="addEventTimeline()">+ Add a Timeline</button>
       </div>
 
 <!-- TIMELINES -->
-      <!-- Add New Timeline -->
-      <div *ngIf="isAddTimelineMode" class="app-card-note">
-        <form class="app-card-note-edit" (ngSubmit)="saveTimelineEvent()" #timelineForm="ngForm">
-          <div class=app-card-note-body-meta>
-            <mat-form-field style="width: 100%;">
-              <mat-label>Timelines</mat-label>
-              <mat-select [(ngModel)]="timeline" name="event_timelines">
-                <mat-option *ngFor="let timeline of timelines" [value]="timeline">{{timeline.label}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <button mat-flat-button color="primary">Save</button>
-          <button mat-flat-button color="secondary" (click)="deactivateAddTimelineMode()">Cancel</button>
-        </form>
-      </div>
-
-      <div *ngIf="event.timelines && event.timelines.length">
-        <app-event-timeline *ngFor="let timeline of event.timelines" [timeline]="timeline" (removeTimeline)="deleteTimeline(timeline)"></app-event-timeline>
+      <div class="app-cards-container cards-large" *ngIf="eventTimelines && eventTimelines.length">
+        <app-timeline-card
+          class="app-card"
+          *ngFor="let timelineEvent of eventTimelines"
+          [timeline]="timelineEvent.timeline"
+          [canDelete]="true"
+          (removeTimeline)="deleteTimeline(timelineEvent.timeline)"></app-timeline-card>
       </div>
 
 <!-- NOTES -->

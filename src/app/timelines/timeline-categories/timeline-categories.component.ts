@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 
-import {TimelineCategory} from '../../models/timeline-category';
+import {TimelineCategory} from '../../models/timelines/timeline-category';
 import {TimelineService} from '../../services/timeline.service';
-import {Timeline} from '../../models/timeline';
+import {Timeline} from '../../models/timelines/timeline';
 import {Category} from '../../models/category';
 
 @Component({

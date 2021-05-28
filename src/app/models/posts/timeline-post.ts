@@ -1,4 +1,4 @@
-import { Timeline } from '../timeline';
+import { Timeline } from '../timelines/timeline';
 
 export class TimelinePost {
   data;

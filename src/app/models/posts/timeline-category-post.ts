@@ -1,5 +1,5 @@
-import {TimelineCategory} from '../timeline-category';
-import {Timeline} from '../timeline';
+import {TimelineCategory} from '../timelines/timeline-category';
+import {Timeline} from '../timelines/timeline';
 
 export class TimelineCategoryPost {
   data;

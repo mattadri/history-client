@@ -6,7 +6,9 @@
 
   <div class="app-cards-container cards-large">
     <app-chart-card
-      *ngFor="let chart of charts" [chart]="chart"
+      *ngFor="let chart of charts"
+      [chart]="chart"
+      [canDelete]="false"
       class="app-card">
     </app-chart-card>
   </div>

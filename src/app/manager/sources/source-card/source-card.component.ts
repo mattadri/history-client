@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 
 import { Source } from '../../../models/source';
 
@@ -9,17 +9,18 @@ import { Source } from '../../../models/source';
 })
 export class SourceCardComponent implements OnInit {
   @Input() public source: Source;
+  @Input() public canDelete: boolean;
 
-  @Output() private loadSource: EventEmitter<Source>;
+  @Output() private removeSource: EventEmitter<Source>;
 
   constructor() {
-    this.loadSource = new EventEmitter<Source>();
+    this.removeSource = new EventEmitter<Source>();
   }
 
   ngOnInit() {
   }
 
-  onLoadDetails() {
-    this.loadSource.emit(this.source);
+  doRemoveSource() {
+    this.removeSource.emit(this.source);
   }
 }

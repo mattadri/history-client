@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment';
 import {User} from '../models/user';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {UserResponse} from '../models/responses/user-response';
+import {UserResponse} from '../models/users/responses/user-response';
 
 @Injectable({
   providedIn: 'root'
@@ -45,5 +45,16 @@ export class UserService {
 
   getUser() {
     return this.user;
+  }
+
+  getLoggedInUser() {
+    let loggedInUser = new User();
+    loggedInUser.initializeNewUser();
+
+    loggedInUser.id = localStorage.getItem('user.id');
+    loggedInUser.firstName = localStorage.getItem('user.firstName');
+    loggedInUser.lastName = localStorage.getItem('user.lastName');
+
+    return loggedInUser;
   }
 }

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router, Route} from '@angular/router';
-import { Observable } from 'rxjs';
 import {AuthService} from '../services/auth.service';
 import {UserService} from '../services/user.service';
 import {User} from '../models/user';
@@ -81,7 +80,7 @@ export class AuthGuard implements CanActivate {
         let user = new User();
         user.initializeNewUser();
 
-        user.id = parseInt(userId);
+        user.id = userId;
         user.firstName = userFirstName;
         user.lastName = userLastName;
 

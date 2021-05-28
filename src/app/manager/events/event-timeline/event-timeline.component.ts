@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
-import { Timeline } from '../../../models/timeline';
+import { Timeline } from '../../../models/timelines/timeline';
 
 @Component({
   selector: 'app-event-timeline',
@@ -16,8 +16,7 @@ export class EventTimelineComponent implements OnInit {
     this.removeTimeline = new EventEmitter<Timeline>();
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() { }
 
   doRemoveTimeline() {
     this.removeTimeline.emit(this.timeline);

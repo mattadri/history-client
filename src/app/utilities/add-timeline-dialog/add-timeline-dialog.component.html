@@ -1,0 +1,70 @@
+<form #addTimelineForm="ngForm">
+  <div *ngIf="data.showExisting">
+    <div class="app-drawer-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">Existing Timelines</div>
+      </div>
+    </div>
+
+    <div class="app-add-object-overlay">
+      <section class="app-section">
+        <mat-form-field style="width: 100%">
+          <input
+            type="text"
+            placeholder="Timeline"
+            matInput
+            #timelineLabelField
+            name="existing_timeline_title"
+            id="existing_timeline_title"
+            [formControl]="timelineNameAutocompleteControl"
+            [matAutocomplete]="timelineNameAutoComplete">
+
+          <mat-autocomplete autoActiveFirstOption #timelineNameAutoComplete="matAutocomplete" (optionSelected)="saveExistingTimeline($event.option.value)">
+            <mat-option *ngFor="let timeline of timelineNameFilteredOptions | async" [value]="timeline">
+              {{timeline.label}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </section>
+    </div>
+  </div>
+
+  <div *ngIf="data.showNew && data.showExisting" class="app-add-object-overlay">
+    <div>OR</div>
+  </div>
+
+  <div *ngIf="data.showNew">
+    <div class="app-drawer-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">New Timeline</div>
+      </div>
+      <div class="app-drawer-tools">
+        <button mat-icon-button type="button" class="material-icons" (click)="saveNewTimeline()">save</button>
+        <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
+      </div>
+    </div>
+
+    <div class="app-drawer-content">
+      <section class="app-section">
+        <mat-form-field style="width: 100%">
+          <input
+            type="text"
+            placeholder="New Timeline"
+            matInput
+            #newTimelineTitleField
+            name="new_timeline_title"
+            id="new_timeline_title"
+            (focusout)="saveTimelineTitle(newTimelineTitleField.value)"
+            [formControl]="timelineNameAutocompleteControl"
+            [matAutocomplete]="newTimelineNameAutoComplete">
+
+          <mat-autocomplete autoActiveFirstOption #newTimelineNameAutoComplete="matAutocomplete" (optionSelected)="saveTimelineTitle(null)">
+            <mat-option *ngFor="let timeline of timelineNameFilteredOptions | async" [value]="timeline">
+              {{timeline.label}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </section>
+    </div>
+  </div>
+</form>

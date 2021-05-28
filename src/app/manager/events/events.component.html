@@ -1,101 +1,57 @@
-<mat-sidenav-container>
-  <div class="app-body-content">
-    <div class="app-content-toolbar">
-      <h1>Events</h1>
+<div class="app-body-content">
+  <div class="app-content-toolbar">
+    <h1>Events</h1>
 
-      <div>
-        <mat-button-toggle-group [(ngModel)]="eventLayout" appearance="legacy" name="eventLayoutStyle" aria-label="Event Layout Style">
-          <mat-button-toggle value="card">Card</mat-button-toggle>
-          <mat-button-toggle value="list">List</mat-button-toggle>
-        </mat-button-toggle-group>
-      </div>
-
-      <div class="app-search-box">
-        <mat-form-field>
-          <input matInput
-                 placeholder="Search..."
-                 name="eventFilter"
-                 [(ngModel)]="filterQuery"
-                 (keyup.enter)="filterResults()" />
-        </mat-form-field>
-        <button mat-icon-button class="material-icons mat-icon-button mat-button-base" (click)="filterResults()">search</button>
-      </div>
-
-      <button mat-flat-button class="material-icons" color="primary" (click)="createEvent()">add</button>
+    <div>
+      <mat-button-toggle-group [(ngModel)]="eventLayout" appearance="legacy" name="eventLayoutStyle" aria-label="Event Layout Style">
+        <mat-button-toggle value="card">Card</mat-button-toggle>
+        <mat-button-toggle value="list">List</mat-button-toggle>
+      </mat-button-toggle-group>
     </div>
 
-    <div *ngIf="eventLayout === 'card'" class="app-cards-container">
-      <app-event-card
-        *ngFor="let event of events" [event]="event" (loadEvent)="openEventDetails($event, eventDetails)"
-        class="app-card">
-      </app-event-card>
-    </div>
-
-    <div *ngIf="eventLayout === 'list'">
-      <button mat-flat-button class="material-icons" color="primary" (click)="addToTimeline()">add</button>
-
-      <mat-form-field class="app-field-month">
-        <mat-label>Timelines</mat-label>
-        <mat-select [(ngModel)]="selectedTimeline" name="selected_timeline">
-          <mat-option [value]="null"></mat-option>
-          <mat-option *ngFor="let timeline of timelines" [value]="timeline">{{timeline.label}}</mat-option>
-        </mat-select>
+    <div class="app-search-box">
+      <mat-form-field>
+        <input matInput
+               placeholder="Search..."
+               name="eventFilter"
+               [(ngModel)]="filterQuery"
+               (keyup.enter)="filterResults()" />
       </mat-form-field>
 
-      <mat-selection-list [(ngModel)]="selectedEvents" [compareWith]="selectEvent">
-        <mat-list-option *ngFor="let event of events" [value]="event">
-          <div>
-            <b>{{event.label}}</b> ({{event.formattedStartYear}}<span *ngIf="event.formattedStartYear !== event.formattedEndYear"> - {{event.formattedEndYear}}</span>)
-          </div>
-        </mat-list-option>
-      </mat-selection-list>
+      <button mat-icon-button class="material-icons mat-icon-button mat-button-base" (click)="filterResults()">search</button>
     </div>
 
-    <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+    <button mat-flat-button class="material-icons" color="primary" (click)="createEvent()">add</button>
   </div>
 
-  <mat-sidenav #eventDetails mode="side" position="end" class="app-drawer">
-    <div *ngIf="event">
-      <div class="app-drawer-header">
-        <div class="app-drawer-title">
-          <div class="app-drawer-subheading">Event</div>
-          <div class="app-drawer-heading">{{event.label}}</div>
+  <div *ngIf="eventLayout === 'card'" class="app-cards-container">
+    <app-event-card
+      *ngFor="let event of events"
+      [event]="event"
+      [canDelete]="false"
+      class="app-card">
+    </app-event-card>
+  </div>
+
+  <div *ngIf="eventLayout === 'list'">
+    <button mat-flat-button class="material-icons" color="primary" (click)="addToTimeline()">add</button>
+
+    <mat-form-field class="app-field-month">
+      <mat-label>Timelines</mat-label>
+      <mat-select [(ngModel)]="selectedTimeline" name="selected_timeline">
+        <mat-option [value]="null"></mat-option>
+        <mat-option *ngFor="let timeline of timelines" [value]="timeline">{{timeline.label}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-selection-list [(ngModel)]="selectedEvents" [compareWith]="selectEvent">
+      <mat-list-option *ngFor="let event of events" [value]="event">
+        <div>
+          <b>{{event.label}}</b> ({{event.formattedStartYear}}<span *ngIf="event.formattedStartYear !== event.formattedEndYear"> - {{event.formattedEndYear}}</span>)
         </div>
-        <div class="app-drawer-tools">
-          <a routerLink="{{eventLink}}">
-            <span class="material-icons mat-icon-button mat-button-base">
-              launch
-            </span>
-          </a>
+      </mat-list-option>
+    </mat-selection-list>
+  </div>
 
-          <button mat-icon-button class=" material-icons" type="button" (click)="removeEvent(eventDetails)">delete</button>
-          <button mat-icon-button class=" material-icons" type="button" (click)="closeEventDetails(eventDetails)">close</button>
-        </div>
-      </div>
-
-      <div class="app-drawer-content">
-        <section class="app-section horizontal">
-          <section class="app-subsection">
-            <label>Beginning Date</label>
-            <span>{{event.formattedStartDate}}</span>
-          </section>
-
-          <section class="app-subsection">
-            <label>Ending Date</label>
-            <span>{{event.formattedEndDate}}</span>
-          </section>
-        </section>
-
-        <section class="app-section">
-          <label>Description</label>
-          <app-editor [isEditable]="false" [content]="event.description"></app-editor>
-        </section>
-
-        <section class="app-section">
-          <label>Source</label>
-          <span *ngIf="event.source">{{event.source.title}}</span>
-        </section>
-      </div>
-    </div>
-  </mat-sidenav>
-</mat-sidenav-container>
+  <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+</div>

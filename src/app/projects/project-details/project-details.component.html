@@ -1,0 +1,119 @@
+<div *ngIf="project">
+  <h1>{{project.label}}</h1>
+
+  <div *ngFor="let user of projectUsers">
+    <span>{{user.firstName}}</span> <span> {{user.lastName}}</span>
+  </div>
+
+  <button mat-flat-button class="material-icons" color="secondary" (click)="addUser()">+</button>
+
+  <div class="app-body-content">
+    <div class="app-content-toolbar">
+      <h1>Essays</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="addEssay()">add</button>
+    </div>
+
+    <div class="essay-container">
+      <app-essay-card
+        class="app-card"
+        *ngFor="let essay of project.essays"
+        [essay]="essay.essay"
+        [canDelete]="true" (removeEssay)="deleteEssay(essay)">
+      </app-essay-card>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="app-body-content">
+    <div class="app-content-toolbar">
+      <h1>Timelines</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="addProjectTimeline()">add</button>
+    </div>
+
+    <div class="app-cards-container cards-xlarge">
+      <app-timeline-card
+        class="app-card"
+        *ngFor="let timeline of project.timelines"
+        [timeline]="timeline.timeline"
+        [canDelete]="true"
+        (removeTimeline)="deleteTimeline(timeline)">
+      </app-timeline-card>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="app-body-content">
+    <div class="app-content-toolbar">
+      <h1>Events</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="addEvent()">add</button>
+    </div>
+
+    <div class="app-cards-container cards-medium">
+      <app-event-card
+        class="app-card"
+        *ngFor="let event of project.events"
+        [event]="event.event"
+        [canDelete]="true"
+        (removeEvent)="deleteEvent(event)">
+      </app-event-card>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="app-body-content">
+    <div class="app-content-toolbar">
+      <h1>People</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="addPerson()">add</button>
+    </div>
+
+    <div class="app-cards-container cards-medium">
+      <app-person-card
+        class="app-card"
+        *ngFor="let person of project.persons"
+        [person]="person.person"
+        [canDelete]="true" (removePerson)="deletePerson(person)">
+      </app-person-card>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="app-body-content">
+    <div class="app-content-toolbar">
+      <h1>Charts</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="addChart()">add</button>
+    </div>
+
+    <div class="app-cards-container cards-large">
+      <app-chart-card
+        class="app-card"
+        *ngFor="let chart of project.charts"
+        [chart]="chart.chart"
+        [canDelete]="true"
+        (removeChart)="deleteChart(chart)">
+      </app-chart-card>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="app-body-content">
+    <div class="app-content-toolbar">
+      <h1>Brainstorms</h1>
+      <button mat-flat-button class="material-icons" color="primary" (click)="addBrainstorm()">add</button>
+    </div>
+
+    <div class="app-cards-container cards-medium">
+      <app-brainstorm-card
+        class="app-card"
+        *ngFor="let brainstorm of project.brainstorms"
+        [brainstorm]="brainstorm.brainstorm"
+        [canDelete]="true"
+        (removeBrainstorm)="deleteBrainstorm(brainstorm)">
+      </app-brainstorm-card>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
-import { Person } from '../../../models/person';
+import { Person } from '../../../models/persons/person';
 
 @Component({
   selector: 'app-person-card',
@@ -9,17 +9,18 @@ import { Person } from '../../../models/person';
 })
 export class PersonCardComponent implements OnInit {
   @Input() public person: Person;
+  @Input() public canDelete: boolean;
 
-  @Output() private loadPerson: EventEmitter<Person>;
+  @Output() private removePerson: EventEmitter<Person>;
 
   constructor() {
-    this.loadPerson = new EventEmitter<Person>();
+    this.removePerson = new EventEmitter<Person>();
   }
 
   ngOnInit() {
   }
 
-  onLoadDetails() {
-    this.loadPerson.emit(this.person);
+  doRemovePerson() {
+    this.removePerson.emit(this.person);
   }
 }

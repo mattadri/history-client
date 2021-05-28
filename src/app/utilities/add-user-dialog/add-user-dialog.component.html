@@ -1,0 +1,21 @@
+<div class="app-drawer-header">
+  <div class="app-drawer-title">
+    <div class="app-drawer-subheading">Add User</div>
+  </div>
+  <div class="app-drawer-tools">
+    <button mat-icon-button type="button" class="material-icons" [mat-dialog-close]="user">save</button>
+    <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
+  </div>
+</div>
+
+<div class="app-drawer-content" *ngIf="users.length">
+  <section class="app-section">
+    <mat-form-field style="width: 100%">
+      <mat-select [(ngModel)]="user" name="selected_user">
+        <mat-option [value]="null"></mat-option>
+        <mat-option [value]="currentUser">Myself</mat-option>
+        <mat-option *ngFor="let user of users" [value]="user">{{user.firstName}} {{user.lastName}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </section>
+</div>

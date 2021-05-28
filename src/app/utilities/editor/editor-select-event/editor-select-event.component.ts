@@ -6,7 +6,7 @@ import {map, startWith} from 'rxjs/operators';
 
 import { MatDialogRef } from '@angular/material/dialog';
 
-import {Event} from '../../../models/event';
+import {Event} from '../../../models/events/event';
 
 import {EventService} from '../../../services/event.service';
 

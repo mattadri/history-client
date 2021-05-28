@@ -1,9 +1,15 @@
-<mat-card (click)="onLoadDetails()">
-  <mat-card-title>{{person.firstName}} {{person.lastName}}</mat-card-title>
-  <mat-card-content>
-    <div class="mat-card-subtitle">
-      <span>{{person.formattedBirthYear}} - <span>{{person.formattedDeathYear}}</span>
-      </span>
-    </div>
-  </mat-card-content>
+<mat-card>
+  <button *ngIf="canDelete" mat-icon-button class="material-icons" (click)="doRemovePerson()">delete</button>
+
+  <div routerLink="/manager/persons/{{person.id}}">
+    <img class="person-image" src="{{person.image}}">
+
+    <mat-card-title>{{person.firstName}} {{person.lastName}}</mat-card-title>
+    <mat-card-content>
+      <div class="mat-card-subtitle">
+        <span>{{person.formattedBirthYear}} - <span>{{person.formattedDeathYear}}</span>
+        </span>
+      </div>
+    </mat-card-content>
+  </div>
 </mat-card>

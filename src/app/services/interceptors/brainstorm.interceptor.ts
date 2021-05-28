@@ -50,6 +50,24 @@ export class BrainstormInterceptor implements HttpInterceptor {
 
           event.body = this.body;
 
+        } else if (req.headers.get('type') === 'user_brainstorms') {
+          this.brainstorms = [];
+
+          for (const data of event.body.data) {
+            this.brainstorm = new Brainstorm();
+            this.brainstorm.initializeNewBrainstorm();
+            this.brainstorm.mapBrainstorm(data.attributes.brainstorm.data);
+
+
+            this.brainstorms.push(this.brainstorm);
+          }
+
+          this.body.brainstorms = this.brainstorms;
+          this.body.total = event.body.meta.count;
+          this.body.links = event.body.links;
+
+          event.body = this.body;
+
         } else if ((req.headers.get('type') === 'brainstorm')) {
           this.brainstorm = new Brainstorm();
           this.brainstorm.initializeNewBrainstorm();

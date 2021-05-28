@@ -1,6 +1,6 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 
-import { Timeline } from '../../models/timeline';
+import { Timeline } from '../../models/timelines/timeline';
 
 @Component({
   selector: 'app-timeline-card',
@@ -9,10 +9,17 @@ import { Timeline } from '../../models/timeline';
 })
 export class TimelineCardComponent implements OnInit {
   @Input() public timeline: Timeline;
+  @Input() public canDelete: boolean;
 
-  constructor() { }
+  @Output() private removeTimeline: EventEmitter<Timeline>;
 
-  ngOnInit() {
+  constructor() {
+    this.removeTimeline = new EventEmitter<Timeline>();
   }
 
+  ngOnInit() { }
+
+  doRemoveTimeline() {
+    this.removeTimeline.emit(this.timeline);
+  }
 }

@@ -6,13 +6,14 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 import { PersonPost } from '../models/posts/person-post';
-import { Person } from '../models/person';
-import { PersonNote } from '../models/person-note';
+import { Person } from '../models/persons/person';
+import { PersonNote } from '../models/persons/person-note';
 import { PersonNotePost } from '../models/posts/person-note-post';
-import {PersonResponse} from '../models/responses/person-response';
-import {PersonBiography} from '../models/person-biography';
+import {PersonBiographiesResponse, PersonResponse, PersonTimelinesResponse} from '../models/responses/person-response';
+import {PersonBiography} from '../models/persons/person-biography';
 import {PersonBiographyPost} from '../models/posts/person-biography-post';
-import {Essay} from '../models/essay';
+import {PersonTimeline} from '../models/persons/person-timeline';
+import {Timeline} from '../models/timelines/timeline';
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,8 @@ export class PersonService {
   private personBiographyPost: PersonBiographyPost;
 
   private persons: Person[];
+  private personTimelines: PersonTimeline[];
+  private personBiographies: PersonBiography[];
 
   private filterObject: Array<any>;
 
@@ -168,6 +171,106 @@ export class PersonService {
     });
   }
 
+  getApiPersonTimelines(person: Person): Observable<PersonTimelinesResponse> {
+    this.filterObject = [];
+
+    this.personTimelines = [];
+
+    let path = '/timeline_persons';
+
+    const personFilter = {
+      name: 'person_rel',
+      op: 'has',
+      val: {
+        name: 'id',
+        op: 'eq',
+        val: person.id.toString()
+      }
+    };
+
+    this.filterObject.push(personFilter);
+
+    const filterQuery = JSON.stringify(this.filterObject);
+
+    path = path + '?filter=' + filterQuery;
+
+    path = path + '&page[size]=0';
+
+    return this.http.get<PersonTimelinesResponse>(environment.apiUrl + path, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'person_timelines')
+    });
+  }
+
+  getApiTimelinePersons(timeline: Timeline): Observable<PersonTimelinesResponse> {
+    this.filterObject = [];
+
+    this.personTimelines = [];
+
+    let path = '/timeline_persons';
+
+    const personFilter = {
+      name: 'timeline_rel',
+      op: 'has',
+      val: {
+        name: 'id',
+        op: 'eq',
+        val: timeline.id.toString()
+      }
+    };
+
+    this.filterObject.push(personFilter);
+
+    const filterQuery = JSON.stringify(this.filterObject);
+
+    path = path + '?filter=' + filterQuery;
+
+    path = path + '&page[size]=0';
+
+    return this.http.get<PersonTimelinesResponse>(environment.apiUrl + path, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'person_timelines')
+    });
+  }
+
+  getApiPersonBiographies(person: Person): Observable<PersonBiographiesResponse> {
+    this.filterObject = [];
+
+    this.personBiographies = [];
+
+    let path = '/person_biographies';
+
+    const personFilter = {
+      name: 'person_rel',
+      op: 'has',
+      val: {
+        name: 'id',
+        op: 'eq',
+        val: person.id.toString()
+      }
+    };
+
+    this.filterObject.push(personFilter);
+
+    const filterQuery = JSON.stringify(this.filterObject);
+
+    path = path + '?filter=' + filterQuery;
+
+    path = path + '&page[size]=0';
+
+    return this.http.get<PersonBiographiesResponse>(environment.apiUrl + path, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'person_biographies')
+    });
+  }
+
+  createApiPersonImage(imageForm: FormData): Observable<any> {
+    return this.http.post(environment.apiUrl + '/upload_person_image', imageForm, {responseType: 'text'});
+  }
+
   createApiPersonNote(note: PersonNote, person: Person): Observable<any> {
     this.personNotePost = new PersonNotePost();
     this.personNotePost.mapToNotePost(note, person, false);
@@ -179,9 +282,9 @@ export class PersonService {
     });
   }
 
-  createPersonBiography(person: Person, biography: Essay): Observable<any> {
+  createPersonBiography(personBiography: PersonBiography): Observable<any> {
     this.personBiographyPost = new PersonBiographyPost();
-    this.personBiographyPost.mapToPersonBiographyPost(person, biography);
+    this.personBiographyPost.mapToPersonBiographyPost(personBiography);
 
     return this.http.post(environment.apiUrl + '/person_biographies', this.personBiographyPost, {
       headers: new HttpHeaders()
@@ -202,6 +305,12 @@ export class PersonService {
         this.persons.splice(i, 1);
       }
     }
+  }
+
+  removeApiPersonTimeline(personTimeline: PersonTimeline): Observable<any> {
+    return this.http.delete(environment.apiUrl + '/timeline_persons/' + personTimeline.id, {
+      headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
+    });
   }
 
   setPerson(person: Person) {

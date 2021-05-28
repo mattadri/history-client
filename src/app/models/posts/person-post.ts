@@ -1,4 +1,4 @@
-import { Person } from '../person';
+import { Person } from '../persons/person';
 
 export class PersonPost {
   data;
@@ -9,6 +9,7 @@ export class PersonPost {
       attributes: {
         first_name: person.firstName,
         birth_year: person.birthYear,
+        image: person.image,
         birth_era_rel: {
           data: {
             type: 'era',

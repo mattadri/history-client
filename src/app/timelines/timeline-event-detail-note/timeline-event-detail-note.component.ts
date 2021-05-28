@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { EventNote } from '../../models/event-note';
+import { EventNote } from '../../models/events/event-note';
 
 @Component({
   selector: 'app-timeline-event-detail-note',

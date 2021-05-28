@@ -9,6 +9,9 @@ import {BrainstormService} from '../../services/brainstorm.service';
 import {Brainstorm} from '../../models/brainstorm';
 import {BrainstormThought} from '../../models/brainstorm-thought';
 import {QuickBrainstormTopicComponent} from './quick-brainstorm-topic/quick-brainstorm-topic.component';
+import {User} from '../../models/user';
+import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-dialog.component';
+import {MessageDialogComponent} from '../../utilities/message-dialog/message-dialog.component';
 
 @Component({
   selector: 'app-brainstorm',
@@ -22,6 +25,8 @@ export class BrainstormComponent implements OnInit {
   public isAddThoughtMode: boolean;
   public isAddBrainstormThoughtMode: boolean;
 
+  public brainstormUsers: User[];
+
   constructor(private route: ActivatedRoute,
               private brainstormService: BrainstormService,
               public dialog: MatDialog) {
@@ -29,12 +34,18 @@ export class BrainstormComponent implements OnInit {
     this.isAddThoughtMode = false;
     this.isAddBrainstormThoughtMode = false;
 
+    this.brainstormUsers = [];
+
     const brainstormId = parseInt(this.route.snapshot.paramMap.get('id'), 10);
 
     this.initializeNewBrainstormThought();
 
     this.brainstormService.getApiBrainstorm(brainstormId).subscribe(brainstorm => {
       this.brainstorm = brainstorm;
+
+      this.brainstormService.getApiBrainstormUsers(null, this.brainstorm).subscribe((response) => {
+        this.brainstormUsers = response.users;
+      });
     });
   }
 
@@ -51,6 +62,37 @@ export class BrainstormComponent implements OnInit {
 
   closeTopicReorderPanel(contentPanel) {
     contentPanel.close();
+  }
+
+  addUser() {
+    const dialogRef = this.dialog.open(AddUserDialogComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(user => {
+      let userExists = false;
+
+      for (const currentUser of this.brainstormUsers) {
+        if (user.id === currentUser.id) {
+          userExists = true;
+          break;
+        }
+      }
+
+      if (userExists) {
+        this.dialog.open(MessageDialogComponent, {
+          width: '250px',
+          data: {
+            title: 'Could Not Add User',
+            message: 'User is already part of the brainstorm.'
+          }
+        });
+      } else {
+        this.brainstormService.addUserToBrainstorm(this.brainstorm, user.id).subscribe(() => {
+          this.brainstormUsers.push(user);
+        });
+      }
+    });
   }
 
   createThought(thoughtContent) {

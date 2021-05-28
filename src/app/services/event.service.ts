@@ -5,24 +5,34 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 
-import { Event } from '../models/event';
-import { EventNote } from '../models/event-note';
-import { EventNotePost } from '../models/posts/event-note-post';
-import { EventPost } from '../models/posts/event-post';
-import {EventResponse} from '../models/responses/event-response';
+import { Event } from '../models/events/event';
+import { EventNote } from '../models/events/event-note';
+import { EventNotePost } from '../models/events/posts/event-note-post';
+import { EventPost } from '../models/events/posts/event-post';
+import {EventResponse, EventTimelinesResponse, TimelineEventsResponse} from '../models/responses/event-response';
+import {TimelineEvent} from '../models/timelines/timeline-event';
+import {EventTimeline} from '../models/events/event-timeline';
+import {TimelineEventPost} from '../models/posts/timeline-event-post';
+import {Timeline} from '../models/timelines/timeline';
+import {PersonTimelinesResponse} from '../models/responses/person-response';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventService {
   private events: Event[];
+
   private eventNotePost: EventNotePost;
   private eventPost: EventPost;
+  private timelineEventPost: TimelineEventPost;
 
   private filterObject: Array<any>;
 
+  private eventTimelines: TimelineEvent[];
+
   constructor(private http: HttpClient) {
     this.events = [];
+    this.eventTimelines = [];
     this.filterObject = [];
   }
 
@@ -157,11 +167,86 @@ export class EventService {
     });
   }
 
+  getApiEventTimelines(event: Event): Observable<EventTimelinesResponse> {
+    this.filterObject = [];
+
+    this.eventTimelines = [];
+
+    let path = '/timeline_events';
+
+    const eventFilter = {
+      name: 'event_rel',
+      op: 'has',
+      val: {
+        name: 'id',
+        op: 'eq',
+        val: event.id.toString()
+      }
+    };
+
+    this.filterObject.push(eventFilter);
+
+    const filterQuery = JSON.stringify(this.filterObject);
+
+    path = path + '?filter=' + filterQuery;
+
+    path = path + '&page[size]=0';
+
+    return this.http.get<EventTimelinesResponse>(environment.apiUrl + path, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'event_timelines')
+    });
+  }
+
+  getApiTimelineEvents(timeline: Timeline): Observable<TimelineEventsResponse> {
+    this.filterObject = [];
+
+    this.eventTimelines = [];
+
+    let path = '/timeline_events';
+
+    const timelineFilter = {
+      name: 'timeline_rel',
+      op: 'has',
+      val: {
+        name: 'id',
+        op: 'eq',
+        val: timeline.id.toString()
+      }
+    };
+
+    this.filterObject.push(timelineFilter);
+
+    const filterQuery = JSON.stringify(this.filterObject);
+
+    path = path + '?filter=' + filterQuery;
+
+    path = path + '&page[size]=0';
+
+    return this.http.get<TimelineEventsResponse>(environment.apiUrl + path, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Type', 'timeline_events')
+    });
+  }
+
   createApiEvent(event: Event): Observable<any> {
     this.eventPost = new EventPost();
     this.eventPost.mapToPost(event, false);
 
     return this.http.post(environment.apiUrl + '/events', this.eventPost, {
+      headers: new HttpHeaders()
+        .set('Accept', 'application/vnd.api+json')
+        .set('Content-Type', 'application/vnd.api+json')
+    });
+  }
+
+  createTimelineApiEvent(eventTimeline: EventTimeline, event: Event): Observable<any> {
+    this.timelineEventPost = new TimelineEventPost();
+    this.timelineEventPost.mapToPost(event, eventTimeline.timeline, false, 0, false, null);
+
+    return this.http.post(environment.apiUrl + '/timeline_events', this.timelineEventPost, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
@@ -185,6 +270,12 @@ export class EventService {
     });
   }
 
+  removeTimelineApiEvent(eventTimeline: EventTimeline): Observable<any> {
+    return this.http.delete(environment.apiUrl + '/timeline_events/' + eventTimeline.id, {
+      headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
+    });
+  }
+
   createApiEventNote(note: EventNote, event: Event): Observable<any> {
     this.eventNotePost = new EventNotePost();
     this.eventNotePost.mapToPost(note, event, false);
@@ -194,6 +285,10 @@ export class EventService {
         .set('Accept', 'application/vnd.api+json')
         .set('Content-Type', 'application/vnd.api+json')
     });
+  }
+
+  createApiEventImage(imageForm: FormData): Observable<any> {
+    return this.http.post(environment.apiUrl + '/upload_event_image', imageForm, {responseType: 'text'});
   }
 
   patchApiEventNote(note: EventNote, event: Event): Observable<any> {

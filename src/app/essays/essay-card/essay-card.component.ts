@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Essay} from '../../models/essay';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Essay} from '../../models/essays/essay';
 
 @Component({
   selector: 'app-essay-card',
@@ -8,10 +8,18 @@ import {Essay} from '../../models/essay';
 })
 export class EssayCardComponent implements OnInit {
   @Input() essay: Essay;
+  @Input() canDelete: boolean;
 
-  constructor() { }
+  @Output() private removeEssay: EventEmitter<Essay>;
+
+  constructor() {
+    this.removeEssay = new EventEmitter<Essay>();
+  }
 
   ngOnInit() {
   }
 
+  doRemoveEssay() {
+    this.removeEssay.emit(this.essay);
+  }
 }

@@ -1,3 +1,5 @@
+import { environment } from '../../environments/environment';
+
 import {BrainstormTopic} from './brainstorm-topic';
 import {BrainstormThought} from './brainstorm-thought';
 
@@ -5,6 +7,7 @@ export class Brainstorm {
   id: number;
   title: string;
   description: string;
+  image: string;
 
   topics: BrainstormTopic[];
   thoughts: BrainstormThought[];
@@ -12,6 +15,7 @@ export class Brainstorm {
   initializeNewBrainstorm() {
     this.title = '';
     this.description = '';
+    this.image = 'https://s3.us-east-2.amazonaws.com/' + environment.s3Bucket + '/brainstorm-default.png';
     this.topics = [];
     this.thoughts = [];
   }

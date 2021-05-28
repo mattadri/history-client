@@ -1,0 +1,70 @@
+<form #addChartForm="ngForm">
+  <div *ngIf="data.showExisting">
+    <div class="app-drawer-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">Charts</div>
+      </div>
+    </div>
+
+    <div class="app-add-object-overlay">
+      <section class="app-section">
+        <mat-form-field style="width: 100%">
+          <input
+            type="text"
+            placeholder="Chart"
+            matInput
+            #chartLabelField
+            name="chart_title"
+            id="chart_title"
+            [formControl]="chartNameAutocompleteControl"
+            [matAutocomplete]="chartNameAutoComplete">
+
+          <mat-autocomplete autoActiveFirstOption #chartNameAutoComplete="matAutocomplete" (optionSelected)="saveExistingChart($event.option.value)">
+            <mat-option *ngFor="let chart of chartNameFilteredOptions | async" [value]="chart">
+              {{chart.options.title.text}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </section>
+    </div>
+  </div>
+
+  <div *ngIf="data.showNew && data.showExisting" class="app-add-object-overlay">
+    <div>OR</div>
+  </div>
+
+  <div *ngIf="data.showNew">
+    <div class="app-drawer-header">
+      <div class="app-drawer-title">
+        <div class="app-drawer-subheading">New Chart</div>
+      </div>
+      <div class="app-drawer-tools">
+        <button mat-icon-button type="button" class="material-icons" (click)="saveNewChart()">save</button>
+        <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
+      </div>
+    </div>
+
+    <div class="app-drawer-content">
+      <section class="app-section">
+        <mat-form-field style="width: 100%">
+          <input
+            type="text"
+            placeholder="Title"
+            matInput
+            #chartTitleField
+            name="chart_title"
+            id="chart_title"
+            (focusout)="saveChartTitle(chartTitleField.value)"
+            [formControl]="chartNameAutocompleteControl"
+            [matAutocomplete]="chartTitleAutoComplete">
+
+          <mat-autocomplete #chartTitleAutoComplete="matAutocomplete" (optionSelected)="saveExistingChart(null)">
+            <mat-option *ngFor="let chart of chartNameFilteredOptions | async" [value]="chart">
+              {{chart.options.title.text}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </section>
+    </div>
+  </div>
+</form>

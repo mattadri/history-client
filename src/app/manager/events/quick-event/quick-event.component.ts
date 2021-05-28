@@ -1,6 +1,6 @@
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit, Inject} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {MatDialogRef} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
@@ -12,10 +12,20 @@ import {EraService} from '../../../services/era.service';
 import {MonthService} from '../../../services/month.service';
 
 import {Source} from '../../../models/source';
-import {Event} from '../../../models/event';
+import {Event} from '../../../models/events/event';
 import {Era} from '../../../models/era';
 import {Month} from '../../../models/month';
 import {EventService} from '../../../services/event.service';
+
+export interface DialogData {
+  showExisting: boolean;
+  showNew: boolean;
+}
+
+class QuickEventReturnData {
+  event: Event;
+  isExisting: boolean;
+}
 
 @Component({
   selector: 'app-quick-event',
@@ -38,14 +48,19 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
 
   public event: Event;
 
+  private returnData: QuickEventReturnData;
+
   constructor(private eventService: EventService,
               private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
+              @Inject(MAT_DIALOG_DATA) public data: DialogData,
               public dialogRef: MatDialogRef<QuickEventComponent>) {
 
     this.event = new Event();
     this.event.initializeNewEvent();
+
+    this.returnData = new QuickEventReturnData();
 
     this.eraService.getEras().subscribe(eras => {
       for (const era of eras.data) {
@@ -80,7 +95,9 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label&sort=label', null, null, false).subscribe(response => {
+    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label,description,image,event_start_day,event_start_month,' +
+      'event_start_year,event_start_era,event_end_day,event_end_month,event_end_year,event_end_era,reference&sort=label',
+      null, null, false).subscribe(response => {
       this.searchEvents = response.events;
 
       this.eventTitleFilteredOptions = this.eventTitleAutocompleteControl.valueChanges.pipe(
@@ -110,6 +127,20 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
     } else {
       this.event.label = this.eventTitleAutocompleteControl.value;
     }
+  }
+
+  saveExistingEvent(event: Event) {
+    this.returnData.event = event;
+    this.returnData.isExisting = true;
+
+    this.dialogRef.close(this.returnData);
+  }
+
+  saveNewEvent() {
+    this.returnData.event = this.event;
+    this.returnData.isExisting = false;
+
+    this.dialogRef.close(this.returnData);
   }
 
   displaySource(source: Source) {
@@ -164,6 +195,10 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
   async activateCreateForm() {
     await Sleep.wait(500);
 
-    document.getElementById('event_label').focus();
+    try {
+      document.getElementById('existing_event_title').focus();
+    } catch(e) {
+      document.getElementById('event_label').focus();
+    }
   }
 }

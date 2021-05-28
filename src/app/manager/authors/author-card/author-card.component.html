@@ -1,15 +1,27 @@
-<!-- shows if on the authors page -->
-<mat-card (click)="onLoadDetails()" *ngIf="!isSourceAttachment">
-  <mat-card-title>
-    {{author.firstName}}
-    <span *ngIf="author.middleName"> {{author.middleName}}</span>
-    <span *ngIf="author.lastName"> {{author.lastName}}</span>
-  </mat-card-title>
+<mat-card>
+  <button *ngIf="canDelete" mat-icon-button class="material-icons" (click)="doRemoveAuthor()">delete</button>
+
+  <div routerLink="/manager/authors/{{author.id}}">
+    <mat-card-title>
+      {{author.firstName}}
+      <span *ngIf="author.middleName"> {{author.middleName}}</span>
+      <span *ngIf="author.lastName"> {{author.lastName}}</span>
+    </mat-card-title>
+  </div>
 </mat-card>
 
+
+<!--<mat-card (click)="onLoadDetails()" *ngIf="!isSourceAttachment">-->
+  <!--<mat-card-title>-->
+    <!--{{author.firstName}}-->
+    <!--<span *ngIf="author.middleName"> {{author.middleName}}</span>-->
+    <!--<span *ngIf="author.lastName"> {{author.lastName}}</span>-->
+  <!--</mat-card-title>-->
+<!--</mat-card>-->
+
 <!-- shows if displayed on the reference -->
-<div class="app-section list-item" *ngIf="isSourceAttachment">
-  <div class="app-label">{{author.firstName}}<span *ngIf="author.lastName"> {{author.lastName}}</span></div>
-  <button mat-icon-button type="button" class="material-icons" (click)="doRemoveAuthorFromSource()">delete</button>
-</div>
+<!--<div class="app-section list-item" *ngIf="isSourceAttachment">-->
+  <!--<div class="app-label">{{author.firstName}}<span *ngIf="author.lastName"> {{author.lastName}}</span></div>-->
+  <!--<button mat-icon-button type="button" class="material-icons" (click)="doRemoveAuthorFromSource()">delete</button>-->
+<!--</div>-->
 

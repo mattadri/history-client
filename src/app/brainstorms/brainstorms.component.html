@@ -4,12 +4,22 @@
     <!--TOOLBAR-->
     <div class="app-content-toolbar">
       <h1>Brainstorms</h1>
+
+      <mat-slide-toggle
+          [color]="showAllToggleColor"
+          [(ngModel)]="showAllToggleChecked"
+          (ngModelChange)="toggleBrainstorms()">
+        Show All Brainstorms
+      </mat-slide-toggle>
+
       <button mat-flat-button class="material-icons" color="primary" (click)="createBrainstorm()">add</button>
     </div>
 
     <div class="app-cards-container">
       <app-brainstorm-card
-        *ngFor="let brainstorm of brainstorms" [brainstorm]="brainstorm"
+        *ngFor="let brainstorm of brainstorms"
+        [brainstorm]="brainstorm"
+        [canDelete]="false"
         class="app-card">
       </app-brainstorm-card>
     </div>

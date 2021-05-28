@@ -7,6 +7,8 @@
       </div>
 
       <div *ngIf="!isEditPersonMode">
+        <img src="{{person.image}}">
+
         <h1 class="no-margin-bottom margin-top">
           {{person.firstName}}
           <span *ngIf="person.middleName"> {{person.middleName}}</span>
@@ -29,11 +31,23 @@
           <div class="app-drawer-header">
             <div class="app-drawer-tools">
               <button mat-icon-button type="submit" class="material-icons">save</button>
+              <button mat-icon-button type="button" class="material-icons" (click)="removePerson()">delete</button>
               <button mat-icon-button type="button" class="material-icons" (click)="deactivateEditPersonMode()">close</button>
+
             </div>
           </div>
 
           <div class="app-drawer-content">
+            <section class="app-section">
+              <label>Image</label>
+
+              <div>
+                <mat-spinner *ngIf="isSavingImage" mode="indeterminate" diameter="20"></mat-spinner>
+
+                <input type="file" (change)="saveImage($event.target.files)" />
+              </div>
+            </section>
+
             <section class="app-section">
               <mat-form-field>
                 <input
@@ -145,63 +159,37 @@
   </div>
 
   <div class="app-body-content">
-    <div class="app-body-content-narrow">
-<!-- BIOGRAPHIES -->
-      <!-- Add a timeline CTA-->
+    <div>
+      <!-- BIOGRAPHIES -->
       <div class="app-content-toolbar margin-bottom">
           <h2>Biographies</h2>
-          <button mat-flat-button color="secondary" (click)="activateAddBiographyMode()">+ Add a Biography</button>
+          <button mat-flat-button color="secondary" (click)="addPersonBiography()">+ Add a Biography</button>
       </div>
 
-      <!-- Add New Biography -->
-      <div *ngIf="isAddBiographyMode" class="app-card-note">
-        <form class="app-card-note-edit" #biographyForm="ngForm">
-          <div class=app-card-note-body-meta>
-            <mat-form-field style="width: 100%;">
-              <mat-label>Biographies</mat-label>
-              <mat-select [(ngModel)]="biography" name="person_biography" (selectionChange)="saveBiography()">
-                <mat-option *ngFor="let biography of availableBiographies" [value]="biography">{{biography.title}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <button mat-flat-button color="secondary" (click)="deactivateAddBiographyMode()">Cancel</button>
-        </form>
+      <div class="app-cards-container cards-xlarge">
+        <app-essay-card
+          class="app-card"
+          *ngFor="let personBiography of personBiographies"
+          [essay]="personBiography.biography"
+          [canDelete]="true"
+          (removeEssay)="deleteBiography($event)">
+        </app-essay-card>
       </div>
 
-      <div *ngIf="person.biographies && person.biographies.length">
-        <div class="app-section list-item" *ngFor="let biography of person.biographies">
-          <div>{{biography.biography.title}}</div>
-          <button mat-icon-button class="material-icons" (click)="deleteBiography(biography)">delete</button>
-        </div>
-      </div>
-
-<!-- TIMELINES -->
-      <!-- Add a timeline CTA-->
+      <!-- TIMELINES -->
       <div class="app-content-toolbar margin-bottom">
           <h2>Timelines</h2>
-          <button mat-flat-button color="secondary" (click)="activateAddTimelineMode()">+ Add a Timeline</button>
+          <button mat-flat-button color="secondary" (click)="addTimelinePerson()">+ Add a Timeline</button>
       </div>
 
-      <!-- Add New Timeline -->
-      <div *ngIf="isAddTimelineMode" class="app-card-note">
-        <form class="app-card-note-edit" (ngSubmit)="saveTimelinePerson()" #timelineForm="ngForm">
-          <div class=app-card-note-body-meta>
-            <mat-form-field style="width: 100%;">
-              <mat-label>Timelines</mat-label>
-              <mat-select [(ngModel)]="timeline" name="event_timelines">
-                <mat-option *ngFor="let timeline of timelines" [value]="timeline">{{timeline.label}}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <button mat-flat-button color="primary">Save</button>
-          <button mat-flat-button color="secondary" (click)="deactivateAddTimelineMode()">Cancel</button>
-        </form>
-      </div>
-
-      <div *ngIf="person.timelines && person.timelines.length">
-        <app-event-timeline *ngFor="let timeline of person.timelines" [timeline]="timeline" (removeTimeline)="deleteTimeline(timeline)"></app-event-timeline>
+      <div class="app-cards-container cards-large">
+        <app-timeline-card
+          class="app-card"
+          *ngFor="let personTimeline of personTimelines"
+          [timeline]="personTimeline.timeline"
+          [canDelete]="true"
+          (removeTimeline)="deleteTimeline($event)">
+        </app-timeline-card>
       </div>
 
 <!-- NOTES -->

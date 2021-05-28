@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
-import {PersonNote} from '../../../../models/person-note';
+import {PersonNote} from '../../../../models/persons/person-note';
 import {PersonService} from '../../../../services/person.service';
 import { MatDialog } from '@angular/material/dialog';
 import {ConfirmRemovalComponent} from '../../../../utilities/confirm-removal/confirm-removal.component';
-import {Person} from '../../../../models/person';
+import {Person} from '../../../../models/persons/person';
 
 @Component({
   selector: 'app-person-details-note',

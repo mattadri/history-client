@@ -2,8 +2,8 @@ import {Component, Inject, OnInit} from '@angular/core';
 
 import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
-import {Person} from '../../models/person';
-import {Timeline} from '../../models/timeline';
+import {Person} from '../../models/persons/person';
+import {Timeline} from '../../models/timelines/timeline';
 
 export interface DialogData {
   person: Person;

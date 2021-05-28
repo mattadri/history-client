@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 
 import {Brainstorm} from '../../models/brainstorm';
 
@@ -9,10 +9,18 @@ import {Brainstorm} from '../../models/brainstorm';
 })
 export class BrainstormCardComponent implements OnInit {
   @Input() public brainstorm: Brainstorm;
+  @Input() public canDelete: boolean;
 
-  constructor() { }
+  @Output() private removeBrainstorm: EventEmitter<Brainstorm>;
+
+  constructor() {
+    this.removeBrainstorm = new EventEmitter<Brainstorm>();
+  }
 
   ngOnInit() {
   }
 
+  doRemoveBrainstorm() {
+    this.removeBrainstorm.emit(this.brainstorm);
+  }
 }

@@ -1,11 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
 
-import { Event } from '../../models/event';
-import {Timeline} from '../../models/timeline';
+import { Event } from '../../models/events/event';
+import {Timeline} from '../../models/timelines/timeline';
 
 import { TimelineEventDetailsComponent } from '../timeline-event-details/timeline-event-details.component';
 import {Category} from '../../models/category';
+import {TimelineEvent} from '../../models/timelines/timeline-event';
 
 @Component({
   selector: 'app-timeline-event-list',
@@ -14,6 +15,7 @@ import {Category} from '../../models/category';
 })
 
 export class TimelineEventListComponent implements OnInit {
+  @Input() public timelineEvent: TimelineEvent;
   @Input() public event: Event;
   @Input() public timeline: Timeline;
   @Input() public categoryEvents: Array<Category>;
@@ -86,7 +88,7 @@ export class TimelineEventListComponent implements OnInit {
   showDetails() {
     this.bottomSheet.open(TimelineEventDetailsComponent as any, {
       data: {
-        event: this.event,
+        timelineEvent: this.timelineEvent,
         timeline: this.timeline,
         categoryEvents: this.categoryEvents
       }

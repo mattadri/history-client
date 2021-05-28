@@ -3,12 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { SourceService } from '../../services/source.service';
-import { MonthService } from '../../services/month.service';
 import { EraService } from '../../services/era.service';
-import { AuthorService } from '../../services/author.service';
 
 import { Source } from '../../models/source';
-import { Month } from '../../models/month';
 import { Era } from '../../models/era';
 import { Author } from '../../models/author';
 import { SourceNote } from '../../models/source-note';
@@ -36,10 +33,6 @@ export class SourcesComponent implements OnInit {
   public isEditSourceMode: boolean;
   public isAddAuthorMode: boolean;
   public isAddNoteMode: boolean;
-
-  public publishedMonthLabel: string;
-  public publishedEraLabel: string;
-  public authorId: number;
 
   public totalResults: number;
   public nextPage: string;
@@ -72,22 +65,6 @@ export class SourcesComponent implements OnInit {
   initializeNewSource() {
     this.source = new Source();
     this.source.initializeSource();
-  }
-
-  openSourceDetails(source, sideNav) {
-    this.source = source;
-
-    if (this.source && this.source.id) {
-      this.sourceLink = '/manager/sources/' + this.source.id.toString();
-    }
-
-    if (sideNav.opened) {
-      sideNav.close().then(() => {
-        sideNav.open();
-      });
-    } else {
-      sideNav.open();
-    }
   }
 
   getSources(path) {
@@ -124,23 +101,21 @@ export class SourcesComponent implements OnInit {
     });
   }
 
-  removeSource(sideNav) {
+  removeSource(source) {
     const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
       width: '250px',
       data: {
         label: 'the source ',
-        content: '<li>' + this.source.notes.length.toString() + ' notes will be removed.</li>'
+        content: '<li>' + source.notes.length.toString() + ' notes will be removed.</li>'
       }
     });
 
     dialogRef.afterClosed().subscribe(doClose => {
       if (doClose) {
-        this.sourceService.removeApiSource(this.source).subscribe(() => {
-          this.sourceService.removeSource(this.source);
+        this.sourceService.removeApiSource(source).subscribe(() => {
+          this.sourceService.removeSource(source);
 
           this.initializeNewSource();
-
-          this.closeSourceDetails(sideNav);
         });
       }
     });

@@ -1,44 +1,16 @@
-<mat-sidenav-container>
-  <div class="app-body-content">
-    <div class="app-content-toolbar">
-      <h1>Authors</h1>
-      <button mat-flat-button class="material-icons" color="primary" (click)="createAuthor()">add</button>
-    </div>
-
-    <div class="app-cards-container">
-      <app-author-card
-        *ngFor="let author of authors" [author]="author"
-        (loadAuthor)="openAuthorDetails($event, authorDetails)"
-        class="app-card">
-      </app-author-card>
-    </div>
-
-    <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+<div class="app-body-content">
+  <div class="app-content-toolbar">
+    <h1>Authors</h1>
+    <button mat-flat-button class="material-icons" color="primary" (click)="createAuthor()">add</button>
   </div>
 
-  <mat-sidenav #authorDetails mode="side" position="end" class="app-drawer">
-    <!-- Event Read-Only Mode -->
-    <div>
-      <div class="app-drawer-header">
-        <div class="app-drawer-title">
-          <div class="app-drawer-subheading">Author</div>
-          <div class="app-drawer-heading">
-            {{author.firstName}}
-            <span *ngIf="author.middleName"> {{author.middleName}}</span>
-            <span *ngIf="author.lastName"> {{author.lastName}}</span>
-          </div>
-        </div>
-        <div class="app-drawer-tools">
-          <a routerLink="{{authorLink}}">
-            <span class="material-icons mat-icon-button mat-button-base">
-              launch
-            </span>
-          </a>
+  <div class="app-cards-container">
+    <app-author-card
+      *ngFor="let author of authors" [author]="author" [canDelete]="true"
+      (removeAuthor)="removeAuthor($event)"
+      class="app-card">
+    </app-author-card>
+  </div>
 
-          <button mat-icon-button class=" material-icons" type="button" (click)="removeAuthor(authorDetails)">delete</button>
-          <button mat-icon-button class=" material-icons" (click)="closeAuthorDetails(authorDetails)">close</button>
-        </div>
-      </div>
-    </div>
-  </mat-sidenav>
-</mat-sidenav-container>
+  <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+</div>

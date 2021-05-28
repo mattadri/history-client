@@ -9,15 +9,25 @@
   grid-template-rows: auto;
   grid-gap: 30px 2%;
   margin: 35px 0;
+  text-align: center;
+
+  &.cards-medium {
+    grid-template-columns: repeat(3, 1fr);
+  }
 
   &.cards-large {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  &.cards-xlarge {
+    grid-template-columns: repeat(1, 1fr);
   }
 
   .app-card {
     background-color: $color-lightest;
     border: $border-light;
     box-shadow: $shadow-light;
+    cursor: pointer;
   }
 }
 
@@ -60,7 +70,7 @@
   .app-card-note-view {
     position: relative;
     padding: 1rem 2.9rem 1rem 0 ;
-  
+
     .app-card-note-toolbar {
       position: absolute;
       background: white;
@@ -77,7 +87,7 @@
   }
 
   .app-card-note-toolbar {
-    
+
     button.material-icons {
       font-size: 1.3rem;
     }

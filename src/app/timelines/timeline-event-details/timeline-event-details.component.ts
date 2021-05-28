@@ -2,16 +2,16 @@ import { Component, Inject } from '@angular/core';
 
 import { MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA } from '@angular/material/bottom-sheet';
 
-import { Event } from '../../models/event';
-import { Timeline } from '../../models/timeline';
+import { Timeline } from '../../models/timelines/timeline';
 
 import { TimelineService } from '../../services/timeline.service';
-import {TimelineCategory} from '../../models/timeline-category';
+import {TimelineCategory} from '../../models/timelines/timeline-category';
 import {Category} from '../../models/category';
-import {EventNote} from '../../models/event-note';
+import {EventNote} from '../../models/events/event-note';
+import {TimelineEvent} from '../../models/timelines/timeline-event';
 
 export interface DialogData {
-  event: Event;
+  timelineEvent: TimelineEvent;
   timeline: Timeline;
   categoryEvents: Array<Category>;
 }
@@ -45,7 +45,7 @@ export class TimelineEventDetailsComponent {
 
     const self = this;
 
-    this.isShadow = data.event.isShadow;
+    this.isShadow = data.timelineEvent.isShadow;
     this.selectedCategoryId = 0;
     this.categoryEventId = 0;
     this.selectedCategory = null;
@@ -63,7 +63,7 @@ export class TimelineEventDetailsComponent {
       }
 
       function idFound(ids) {
-        return ids[1] === self.data.event.id.toString();
+        return ids[1] === self.data.timelineEvent.id.toString();
       }
 
       const categoryEventIndex = category.events.findIndex(idFound);
@@ -76,10 +76,10 @@ export class TimelineEventDetailsComponent {
       }
     }
 
-    if (this.data.event.notes.length) {
-      for (let i = 0; i < this.data.event.notes.length; i++) {
+    if (this.data.timelineEvent.event.notes.length) {
+      for (let i = 0; i < this.data.timelineEvent.event.notes.length; i++) {
         if (i < this.numberOfNotesToShow) {
-          this.displayNotes.push(this.data.event.notes[i]);
+          this.displayNotes.push(this.data.timelineEvent.event.notes[i]);
           continue;
         }
 
@@ -87,11 +87,11 @@ export class TimelineEventDetailsComponent {
       }
     }
 
-    if (this.data.event.notes.length > this.displayNotes.length) {
-      this.numberOfAdditionalNotes = this.data.event.notes.length - this.displayNotes.length;
+    if (this.data.timelineEvent.event.notes.length > this.displayNotes.length) {
+      this.numberOfAdditionalNotes = this.data.timelineEvent.event.notes.length - this.displayNotes.length;
     }
 
-    this.eventLink = '/manager/events/' + this.data.event.id.toString();
+    this.eventLink = '/manager/events/' + this.data.timelineEvent.event.id.toString();
   }
 
   onNoClick(): void {
@@ -107,9 +107,9 @@ export class TimelineEventDetailsComponent {
       shadowState = true;
     }
 
-    this.data.event.isShadow = shadowState;
+    this.data.timelineEvent.isShadow = shadowState;
 
-    this.timelineService.patchEventApiTimeline(this.data.timeline, this.data.event).subscribe(() => { });
+    this.timelineService.patchEventApiTimeline(this.data.timelineEvent, this.data.timeline).subscribe(() => { });
   }
 
   addToCategory() {
@@ -123,20 +123,20 @@ export class TimelineEventDetailsComponent {
 
     // event was not in a category and is being added to one
     if (!this.selectedCategory) {
-      this.timelineService.createCategoryEventApiTimeline(categoryToAdd, this.data.event).subscribe(response => {
+      this.timelineService.createCategoryEventApiTimeline(categoryToAdd, this.data.timelineEvent.event).subscribe(response => {
         this.categoryEventId = response.data.id;
         this.selectedCategory = categoryToAdd;
         this.selectedCategoryId = categoryToAdd.id;
         this.isInCategory = true;
 
-        this.addCategoryEventToTimeline(this.data.event, this.categoryEventId);
+        this.addCategoryEventToTimeline(this.data.timelineEvent, this.categoryEventId);
       });
 
     } else {
       // event was in a category and is now being removed from all categories
       if (this.selectedCategoryId == 0) {
         this.timelineService.removeCategoryEventApiTimeline(this.categoryEventId).subscribe(() => {
-          this.removeCategoryEventFromTimeline(this.data.event, this.categoryEventId, false);
+          this.removeCategoryEventFromTimeline(this.data.timelineEvent, this.categoryEventId, false);
 
           this.selectedCategoryId = 0;
           this.categoryEventId = 0;
@@ -147,15 +147,15 @@ export class TimelineEventDetailsComponent {
         // event is was in category A and is being updated to category B
       } else {
         this.timelineService.removeCategoryEventApiTimeline(this.categoryEventId).subscribe(() => {
-          this.removeCategoryEventFromTimeline(this.data.event, this.categoryEventId, true);
+          this.removeCategoryEventFromTimeline(this.data.timelineEvent, this.categoryEventId, true);
 
-          this.timelineService.createCategoryEventApiTimeline(categoryToAdd, this.data.event).subscribe(secondResponse => {
+          this.timelineService.createCategoryEventApiTimeline(categoryToAdd, this.data.timelineEvent.event).subscribe(secondResponse => {
             this.categoryEventId = secondResponse.data.id;
             this.selectedCategory = categoryToAdd;
             this.selectedCategoryId = categoryToAdd.id;
             this.isInCategory = true;
 
-            this.addCategoryEventToTimeline(this.data.event, this.categoryEventId);
+            this.addCategoryEventToTimeline(this.data.timelineEvent, this.categoryEventId);
           });
         });
       }

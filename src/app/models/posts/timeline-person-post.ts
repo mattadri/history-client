@@ -1,29 +1,29 @@
-import { TimelinePerson } from '../timeline-person';
+import {PersonTimeline} from '../persons/person-timeline';
 
 export class TimelinePersonPost {
   data;
 
-  mapToPost(timelinePerson: TimelinePerson, isPatch: boolean) {
+  mapToPost(personTimeline: PersonTimeline, isPatch: boolean) {
     this.data = {
       type: 'timeline_person',
       attributes: {
         timeline_rel: {
           data: {
             type: 'timeline',
-            id: timelinePerson.timeline.id
+            id: personTimeline.timeline.id
           }
         },
         person_rel: {
           data: {
             type: 'person',
-            id: timelinePerson.person.id
+            id: personTimeline.person.id
           }
         }
       }
     };
 
     if (isPatch) {
-      this.data.id = timelinePerson.id;
+      this.data.id = personTimeline.id;
     }
   }
 }

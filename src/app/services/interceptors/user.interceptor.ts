@@ -56,6 +56,22 @@ export class UserInterceptor implements HttpInterceptor {
           this.user.mapUser(event.body.data);
 
           event.body = this.user;
+        } else if ((req.headers.get('type') === 'item_user')) {
+          this.users = [];
+
+          for (const data of event.body.data) {
+            this.user = new User();
+            this.user.initializeNewUser();
+            this.user.mapUser(data.attributes.user.data);
+
+            this.users.push(this.user);
+          }
+
+          this.body.users = this.users;
+          this.body.total = event.body.meta.count;
+          this.body.links = event.body.links;
+
+          event.body = this.body;
         }
       }
     }

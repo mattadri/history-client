@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 
 import { MatDialog } from '@angular/material/dialog';
 
-import { Event } from '../../models/event';
+import { Event } from '../../models/events/event';
 
 import { EventService } from '../../services/event.service';
 
 import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 import {QuickEventComponent} from './quick-event/quick-event.component';
 import {TimelineService} from '../../services/timeline.service';
-import {Timeline} from '../../models/timeline';
-import {TimelineEvent} from '../../models/timeline-event';
+import {Timeline} from '../../models/timelines/timeline';
+import {TimelineEvent} from '../../models/timelines/timeline-event';
 
 @Component({
   selector: 'app-events',
@@ -51,11 +51,11 @@ export class EventsComponent implements OnInit {
     this.timelines = [];
 
     this.getEvents(
-      '/events?sort=-created&page%5Bnumber%5D=1&fields[event]=label,description,event_start_day,event_start_month,event_start_year,' +
+      '/events?sort=-created&page%5Bnumber%5D=1&fields[event]=label,description,image,event_start_day,event_start_month,event_start_year,' +
       'event_start_era,event_end_day,event_end_month,event_end_year,event_end_era,reference',
       null, null);
 
-    this.timelineService.getApiTimelines('/timelines?fields[timeline]=label&sort=-label&page[size]=0').subscribe((response) => {
+    this.timelineService.getApiTimelines('/timelines', null, '0', null, ['label'], ['label'], true, null, false).subscribe((response) => {
       for (const timeline of response.timelines) {
         this.timelineService.setTimeline(timeline);
       }
@@ -95,7 +95,11 @@ export class EventsComponent implements OnInit {
 
   createEvent() {
     const dialogRef = this.dialog.open(QuickEventComponent, {
-      width: '750px'
+      width: '750px',
+      data: {
+        showExisting: false,
+        showNew: true
+      }
     });
 
     dialogRef.afterClosed().subscribe(event => {
@@ -118,8 +122,7 @@ export class EventsComponent implements OnInit {
       data: {
         label: 'the event ',
         content: '' +
-        '<li>' + this.event.notes.length.toString() + ' notes will be removed.</li>' +
-        '<li>Will impact ' + this.event.timelines.length + ' timelines.</li>'
+        '<li>' + this.event.notes.length.toString() + ' notes will be removed.</li>'
       }
     });
 
@@ -127,32 +130,9 @@ export class EventsComponent implements OnInit {
       if (doClose) {
         this.eventService.removeApiEvent(this.event).subscribe(() => {
           this.eventService.removeEvent(this.event);
-          this.cleanupRemovedEvent(contentPanel);
         });
       }
     });
-  }
-
-  cleanupRemovedEvent(contentPanel) {
-    this.closeEventDetails(contentPanel);
-  }
-
-  openEventDetails(event, sideNav) {
-    this.event = event;
-
-    this.eventLink = this.event.id.toString();
-
-    if (sideNav.opened) {
-      sideNav.close().then(() => {
-        sideNav.open();
-      });
-    } else {
-      sideNav.open();
-    }
-  }
-
-  closeEventDetails(contentPanel) {
-    contentPanel.close();
   }
 
   turnPage(event) {
@@ -227,17 +207,13 @@ export class EventsComponent implements OnInit {
       ))
     );
 
-    console.log('Saving Events: ', this.selectedEvents);
-    console.log('To Timeline: ', this.selectedTimeline);
-
     for (const event of this.selectedEvents) {
       // create the event for the timeline
       this.timelineEvent = new TimelineEvent();
       this.timelineEvent.event = event;
-      this.timelineEvent.timeline = this.selectedTimeline;
 
       // call service
-      this.timelineService.createEventApiTimeline(this.timelineEvent).subscribe(() => { });
+      this.timelineService.createEventApiTimeline(this.timelineEvent, this.selectedTimeline).subscribe(() => { });
     }
   }
 

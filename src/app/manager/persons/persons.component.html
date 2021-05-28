@@ -1,71 +1,29 @@
-<mat-sidenav-container>
-  <div class="app-body-content">
-    <div class="app-content-toolbar">
-      <h1>People</h1>
+<div class="app-body-content">
+  <div class="app-content-toolbar">
+    <h1>People</h1>
 
-      <div class="app-search-box">
-        <mat-form-field>
-          <input matInput
-                 placeholder="Search..."
-                 name="person_filter"
-                 [(ngModel)]="filterQuery"
-                 (keyup.enter)="filterResults()" />
-        </mat-form-field>
-        <button mat-icon-button class="material-icons mat-icon-button mat-button-base" (click)="filterResults()">search</button>
-      </div>
-
-      <button mat-flat-button class="material-icons" color="primary" (click)="createPerson()">add</button>
+    <div class="app-search-box">
+      <mat-form-field>
+        <input matInput
+               placeholder="Search..."
+               name="person_filter"
+               [(ngModel)]="filterQuery"
+               (keyup.enter)="filterResults()" />
+      </mat-form-field>
+      <button mat-icon-button class="material-icons mat-icon-button mat-button-base" (click)="filterResults()">search</button>
     </div>
 
-    <div class="app-cards-container">
-      <app-person-card
-        *ngFor="let person of persons" [person]="person" (loadPerson)="openPersonDetails($event, personDetails)"
-        class="app-card">
-      </app-person-card>
-    </div>
-
-    <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+    <button mat-flat-button class="material-icons" color="primary" (click)="createPerson()">add</button>
   </div>
 
-  <mat-sidenav #personDetails mode="side" position="end" class="app-drawer">
-    <!-- Person Read-Only Mode -->
-    <div>
-      <div class="app-drawer-header">
-        <div class="app-drawer-title">
-          <div class="app-drawer-subheading">Person</div>
-          <div class="app-drawer-heading">{{person.firstName}} {{person.middleName}} {{person.lastName}}</div>
-        </div>
-        <div class="app-drawer-tools">
-          <a routerLink="{{personLink}}">
-            <span class="material-icons mat-icon-button mat-button-base">
-              launch
-            </span>
-          </a>
+  <div class="app-cards-container">
+    <app-person-card
+      *ngFor="let person of persons"
+      [person]="person"
+      [canDelete]="false"
+      class="app-card">
+    </app-person-card>
+  </div>
 
-          <button mat-icon-button class=" material-icons" type="button" (click)="removePerson(personDetails)">delete</button>
-          <button mat-icon-button class=" material-icons" (click)="closePersonDetails(personDetails)">close</button>
-        </div>
-      </div>
-
-      <div class="app-drawer-content">
-        <section class="app-section horizontal">
-          <section class="app-subsection">
-            <label>Birth Date</label>
-            <span>{{person.formattedBirth}}</span>
-          </section>
-
-          <section class="app-subsection">
-            <label>Death Date</label>
-            <span>{{person.formattedDeath}}</span>
-          </section>
-        </section>
-
-        <section class="app-section">
-          <label>Description</label>
-          <!--<div>{{person.description}}</div>-->
-          <app-editor *ngIf="person.description" [isEditable]="false" [content]="person.description" [isNote]="false"></app-editor>
-        </section>
-      </div>
-    </div>
-  </mat-sidenav>
-</mat-sidenav-container>
+  <mat-paginator length="{{totalResults}}" pageSize="20" (page)="turnPage($event)"></mat-paginator>
+</div>

@@ -2,24 +2,28 @@ import { Component, OnInit } from '@angular/core';
 
 import {map, startWith} from 'rxjs/operators';
 
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {Source} from '../../../models/source';
 import {Month} from '../../../models/month';
 import {Era} from '../../../models/era';
-import {Timeline} from '../../../models/timeline';
+import {Timeline} from '../../../models/timelines/timeline';
 import {TimelineService} from '../../../services/timeline.service';
-import {SourceService} from '../../../services/source.service';
 import {EraService} from '../../../services/era.service';
 import {MonthService} from '../../../services/month.service';
-import {Person} from '../../../models/person';
-import {PersonNote} from '../../../models/person-note';
-import {TimelinePerson} from '../../../models/timeline-person';
+import {Person} from '../../../models/persons/person';
+import {PersonNote} from '../../../models/persons/person-note';
 import {PersonService} from '../../../services/person.service';
-import {PersonBiography} from '../../../models/person-biography';
+import {PersonBiography} from '../../../models/persons/person-biography';
 import {EssayService} from '../../../services/essay.service';
-import {Essay} from '../../../models/essay';
+import {Essay} from '../../../models/essays/essay';
+import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confirm-removal.component';
+import {MatDialog} from '@angular/material/dialog';
+import {PersonTimeline} from '../../../models/persons/person-timeline';
+import {PersonDetailsAddTimelineComponent} from './person-details-add-timeline/person-details-add-timeline.component';
+import {PersonDetailsAddBiographyComponent} from './person-details-add-biography/person-details-add-biography.component';
+import {AddTimelineDialogComponent} from '../../../utilities/add-timeline-dialog/add-timeline-dialog.component';
 
 @Component({
   selector: 'app-person-details',
@@ -30,7 +34,8 @@ export class PersonDetailsComponent implements OnInit {
   public person: Person;
   public note: PersonNote;
   public timeline: Timeline;
-  public timelinePerson: TimelinePerson;
+  public personTimelines: PersonTimeline[];
+  public personBiographies: PersonBiography[];
   public biography: Essay;
   public personBiography: PersonBiography;
   public availableBiographies: Essay[];
@@ -42,7 +47,6 @@ export class PersonDetailsComponent implements OnInit {
   public months: Month[] = [];
 
   public isAddNoteMode: boolean;
-  public isAddTimelineMode: boolean;
   public isAddBiographyMode: boolean;
   public isEditPersonMode: boolean;
 
@@ -60,15 +64,27 @@ export class PersonDetailsComponent implements OnInit {
   public personLastNameFilteredOptions: Observable<Person[]>;
   public personLastNameFieldDisplayValue: string;
 
+  public isSavingImage: boolean;
+
+  public userId: string;
+
   constructor(private route: ActivatedRoute,
+              private router: Router,
+              public dialog: MatDialog,
               private personService: PersonService,
               private timelineService: TimelineService,
-              private sourceService: SourceService,
               private essayService: EssayService,
               private eraService: EraService,
               private monthService: MonthService) {
 
     const personId = this.route.snapshot.paramMap.get('id');
+
+    this.userId = localStorage.getItem('user.id');
+
+    this.personTimelines = [];
+    this.personBiographies = [];
+
+    this.isSavingImage = false;
 
     this.personService.getApiPerson(personId).subscribe(person => {
       this.person = person;
@@ -81,6 +97,16 @@ export class PersonDetailsComponent implements OnInit {
 
       this.sourcesAutocompleteControl.setValue(this.person.source);
 
+      // GET THE TIMELINES THE PERSON IS ATTACHED TO
+      this.personService.getApiPersonTimelines(this.person).subscribe((response) => {
+        this.personTimelines = response.personTimelines;
+      });
+
+      // GET THE BIOGRAPHIES THE PERSON IS ATTACHED TO
+      this.personService.getApiPersonBiographies(this.person).subscribe((response) => {
+        this.personBiographies = response.personBiographies;
+      });
+
       // LOAD REMAINING DATA AFTER THE INITIAL PERSON HAS BEEN RETRIEVED
       this.eraService.getEras().subscribe(eras => {
         for (const era of eras.data) {
@@ -92,13 +118,6 @@ export class PersonDetailsComponent implements OnInit {
         for (const month of months.data) {
           this.months.push(new Month().mapMonth(month));
         }
-      });
-
-      this.essayService.getApiEssays(
-        '/essays?fields[essay]=title,type&filter=[{"name": "type_rel", "op": "has", "val": ' +
-        '{"name": "label", "op": "eq", "val": "Biography"}}]').subscribe((response) => {
-
-        this.availableBiographies = response.essays;
       });
 
       this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,last_name&sort=last_name', null, null, false)
@@ -116,7 +135,7 @@ export class PersonDetailsComponent implements OnInit {
         );
       });
 
-      this.timelineService.getApiTimelines('/timelines?sort=modified&fields[timeline]=label').subscribe(response => {
+      this.timelineService.getApiTimelines('/timelines', null, '0', null, ['label'], ['modified'], false, null, false).subscribe(response => {
         for (const timeline of response.timelines) {
           this.timelineService.setTimeline(timeline);
         }
@@ -127,7 +146,6 @@ export class PersonDetailsComponent implements OnInit {
 
     this.isEditPersonMode = false;
     this.isAddNoteMode = false;
-    this.isAddTimelineMode = false;
     this.isAddBiographyMode = false;
   }
 
@@ -169,28 +187,12 @@ export class PersonDetailsComponent implements OnInit {
     this.initializeNewNote();
   }
 
-  activateAddTimelineMode() {
-    this.isAddTimelineMode = true;
-  }
-
-  activateAddBiographyMode() {
-    this.isAddBiographyMode = true;
-  }
-
   deactivateEditPersonMode() {
     this.isEditPersonMode = false;
   }
 
   deactivateAddNoteMode() {
     this.isAddNoteMode = false;
-  }
-
-  deactivateAddTimelineMode() {
-    this.isAddTimelineMode = false;
-  }
-
-  deactivateAddBiographyMode() {
-    this.isAddBiographyMode = false;
   }
 
   savePersonFirstName(value) {
@@ -224,32 +226,55 @@ export class PersonDetailsComponent implements OnInit {
     });
   }
 
-  saveTimelinePerson() {
-    this.timelinePerson = new TimelinePerson();
-    this.timelinePerson.person = this.person;
-    this.timelinePerson.timeline = this.timeline;
+  addTimelinePerson() {
+    const dialogRef = this.dialog.open(AddTimelineDialogComponent, {
+      width: '750px'
+    });
 
-    this.timelineService.createPersonApiTimeline(this.timelinePerson).subscribe(response => {
-      this.timelinePerson.id = response.data.id;
-      this.timeline.personId = this.timelinePerson.id;
+    dialogRef.afterClosed().subscribe(timeline => {
+      let personTimeline = new PersonTimeline();
+      personTimeline.initializeNewPersonTimeline();
 
-      this.person.timelines.push(this.timeline);
+      personTimeline.timeline = timeline;
+      personTimeline.person = this.person;
 
-      this.initializeNewTimeline();
+      this.timelineService.createPersonApiTimeline(personTimeline).subscribe(response => {
+        personTimeline.id = response.data.id;
 
-      this.deactivateAddTimelineMode();
+        // get the full timeline now that we have it to show on the card. The previous timeline was a
+        // truncated version for selection purposes only.
+        this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
+          personTimeline.timeline = timeline;
+
+          this.personTimelines.unshift(personTimeline);
+        });
+      });
     });
   }
 
-  saveBiography() {
-    this.personService.createPersonBiography(this.person, this.biography).subscribe(response => {
-      this.personBiography = new PersonBiography();
-      this.personBiography.id = response.data.id;
-      this.personBiography.biography = this.biography;
+  addPersonBiography() {
+    const dialogRef = this.dialog.open(PersonDetailsAddBiographyComponent, {
+      width: '750px'
+    });
 
-      this.person.biographies.push(this.personBiography);
+    dialogRef.afterClosed().subscribe(biography => {
+      let personBiography = new PersonBiography();
+      personBiography.initializeBiography();
 
-      this.deactivateAddBiographyMode();
+      personBiography.biography = biography;
+      personBiography.person = this.person;
+
+      this.personService.createPersonBiography(personBiography).subscribe(response => {
+        personBiography.id = response.data.id;
+
+        // get the full timeline now that we have it to show on the card. The previous timeline was a
+        // truncated version for selection purposes only.
+        this.essayService.getApiEssay(biography.id).subscribe(essay => {
+          personBiography.biography = essay;
+
+          this.personBiographies.unshift(personBiography);
+        });
+      });
     });
   }
 
@@ -264,27 +289,109 @@ export class PersonDetailsComponent implements OnInit {
     });
   }
 
+  saveImage(e: File[]) {
+    if (e.length) {
+      this.isSavingImage = true;
+
+      const file = e[0];
+      const imageForm = new FormData();
+      imageForm.append('image', file);
+
+      this.personService.createApiPersonImage(imageForm).subscribe((personImageResponse) => {
+        this.person.image = personImageResponse;
+
+        this.personService.patchApiPerson(this.person).subscribe(() => {
+          this.isSavingImage = false;
+        });
+      });
+    }
+  }
+
+  removePerson() {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the person ' + this.person.firstName + ' ' + this.person.lastName,
+        content: 'It will be deleted from all essays, timelines, and projects it may be associated with.'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.personService.removeApiPerson(this.person).subscribe(() => {
+          this.personService.removePerson(this.person);
+
+          this.router.navigate(['/manager/persons']).then();
+        });
+      }
+    });
+  }
+
   deleteNote(note: PersonNote) {
     this.personService.removeApiNote(note).subscribe(() => {
       PersonService.removePersonNote(this.person, note);
     });
   }
 
-  deleteTimeline(timeline) {
-    this.timelineService.removePersonApiTimeline(timeline.personId).subscribe(() => {
-      for (let i = 0; i < this.person.timelines.length; i++) {
-        if (this.person.timelines[i].id === timeline.id) {
-          this.person.timelines.splice(i, 1);
+  deleteTimeline(timeline: Timeline) {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the timeline ' + timeline.label
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        let personTimelineToDelete: PersonTimeline = null;
+
+        for (const personTimeline of this.personTimelines) {
+          if (personTimeline.timeline.id === timeline.id) {
+            personTimelineToDelete = personTimeline;
+            break;
+          }
+        }
+
+        if (personTimelineToDelete) {
+          this.personService.removeApiPersonTimeline(personTimelineToDelete).subscribe(() => {
+            for (let i = 0; i < this.personTimelines.length; i++) {
+              if (this.personTimelines[i].id === personTimelineToDelete.id) {
+                this.personTimelines.splice(i, 1);
+              }
+            }
+          });
         }
       }
     });
   }
 
-  deleteBiography(biography) {
-    this.personService.removeApiPersonBiography(biography).subscribe(() => {
-      for (let i = 0; i < this.person.biographies.length; i++) {
-        if (this.person.biographies[i].id === biography.id) {
-          this.person.biographies.splice(i, 1);
+  deleteBiography(biography: Essay) {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the biography ' + biography.title
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        let personBiographyToDelete: PersonBiography = null;
+
+        for (const personBiography of this.personBiographies) {
+          if (personBiography.biography.id === biography.id) {
+            personBiographyToDelete = personBiography;
+            break;
+          }
+        }
+
+        if (personBiographyToDelete) {
+          this.personService.removeApiPersonBiography(personBiographyToDelete).subscribe(() => {
+            for (let i = 0; i < this.personBiographies.length; i++) {
+              if (this.personBiographies[i].id === personBiographyToDelete.id) {
+                this.personBiographies.splice(i, 1);
+              }
+            }
+          });
         }
       }
     });

@@ -7,13 +7,10 @@ import {Observable} from 'rxjs';
 
 import {QuickPersonComponent} from './quick-person/quick-person.component';
 
-import { Person } from '../../models/person';
+import { Person } from '../../models/persons/person';
 import { Source } from '../../models/source';
-import { Timeline } from '../../models/timeline';
-import { TimelinePerson } from '../../models/timeline-person';
 
 import { PersonService } from '../../services/person.service';
-import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
   selector: 'app-persons',
@@ -45,7 +42,7 @@ export class PersonsComponent implements OnInit {
 
     this.getPersons(
       '/persons?sort=-created&page%5Bnumber%5D=1' +
-      '&fields[person]=first_name,middle_name,last_name,description,birth_day,birth_month,birth_year,' +
+      '&fields[person]=first_name,middle_name,last_name,image,description,birth_day,birth_month,birth_year,' +
       'birth_era,death_day,death_month,death_year,death_era,reference',
       null, null);
   }
@@ -74,60 +71,34 @@ export class PersonsComponent implements OnInit {
 
   createPerson() {
     const dialogRef = this.dialog.open(QuickPersonComponent, {
-      width: '750px'
-    });
-
-    dialogRef.afterClosed().subscribe(person => {
-      if (person) {
-        this.personService.createApiPerson(person).subscribe(response => {
-          person.id = response.data.id;
-
-          person.formatYears();
-
-          this.personService.setPerson(person);
-
-          this.persons.unshift(person);
-        });
-      }
-    });
-  }
-
-  removePerson(contentPanel) {
-    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
-      width: '250px',
+      width: '750px',
       data: {
-        label: 'the person ',
-        content: '' +
-        '<li>' + this.person.notes.length.toString() + ' notes will be removed.</li>' +
-        '<li>Will impact ' + this.person.timelines.length + ' timelines.</li>'
+        showExisting: false,
+        showNew: true
       }
     });
 
-    dialogRef.afterClosed().subscribe(doClose => {
-      if (doClose) {
-        this.personService.removeApiPerson(this.person).subscribe(() => {
-          this.personService.removePerson(this.person);
+    dialogRef.afterClosed().subscribe(returnObject => {
+      if (returnObject) {
+        let isExisting = returnObject.isExisting;
+        let person = returnObject.person;
 
-          this.closePersonDetails(contentPanel);
-        });
+        if (!isExisting) {
+          // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
+          if (person.firstName && person.birthYear) {
+            this.personService.createApiPerson(person).subscribe(response => {
+              person.id = response.data.id;
+
+              person.formatYears();
+
+              this.personService.setPerson(person);
+
+              this.persons.unshift(person);
+            });
+          }
+        }
       }
     });
-  }
-
-  openPersonDetails(person, sideNav) {
-    this.initializeNewPerson();
-
-    this.person = person;
-
-    this.personLink = this.person.id.toString();
-
-    if (sideNav.opened) {
-      sideNav.close().then(() => {
-        sideNav.open();
-      });
-    } else {
-      sideNav.open();
-    }
   }
 
   filterResults() {
@@ -143,10 +114,6 @@ export class PersonsComponent implements OnInit {
     }
 
     this.getPersons('/persons?sort=-created', stringFilter, dateFilter);
-  }
-
-  closePersonDetails(sideNav) {
-    sideNav.close();
   }
 
   turnPage(person) {

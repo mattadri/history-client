@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, EventEmitter, Output, Renderer2, ElementRef} from '@angular/core';
-import {EssayReference} from '../../models/essay-reference';
+import {EssayReference} from '../../models/essays/essay-reference';
 
 @Component({
   selector: 'app-essay-reference',

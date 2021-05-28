@@ -1,0 +1,29 @@
+<form #eventTimelineForm="ngForm">
+  <div class="app-drawer-header">
+    <div class="app-drawer-title">
+      <div class="app-drawer-subheading">Timelines</div>
+    </div>
+  </div>
+
+  <div class="app-add-object-overlay">
+    <section class="app-section">
+      <mat-form-field style="width: 100%">
+        <input
+          type="text"
+          placeholder="Timeline"
+          matInput
+          #timelineLabelField
+          name="timeline_label"
+          id="timeline_label"
+          [formControl]="timelineNameAutocompleteControl"
+          [matAutocomplete]="timelineNameAutoComplete">
+
+        <mat-autocomplete autoActiveFirstOption #timelineNameAutoComplete="matAutocomplete" (optionSelected)="saveTimeline($event.option.value)">
+          <mat-option *ngFor="let timeline of timelineNameFilteredOptions | async" [value]="timeline">
+            {{timeline.label}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </section>
+  </div>
+</form>

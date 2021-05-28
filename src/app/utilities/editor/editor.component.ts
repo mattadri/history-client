@@ -20,9 +20,9 @@ import {Source} from '../../models/source';
 import {MessageDialogComponent} from '../message-dialog/message-dialog.component';
 import {SourceService} from '../../services/source.service';
 import {EssayReferenceDetailsComponent} from '../../essays/essay-reference-details/essay-reference-details.component';
-import {Event} from '../../models/event';
-import {Person} from '../../models/person';
-import {Timeline} from '../../models/timeline';
+import {Event} from '../../models/events/event';
+import {Person} from '../../models/persons/person';
+import {Timeline} from '../../models/timelines/timeline';
 import {EditorSelectEventComponent} from './editor-select-event/editor-select-event.component';
 import {EventService} from '../../services/event.service';
 import {EssayEventDetailsComponent} from '../../essays/essay-event-details/essay-event-details.component';
@@ -115,7 +115,7 @@ export class EditorComponent implements OnInit {
       this.addClickEvents().then();
     }
 
-    if (this.isNote && this.sourceNote.exportBrainstorms.length) {
+    if (this.isNote && this.sourceNote && this.sourceNote.exportBrainstorms && this.sourceNote.exportBrainstorms.length) {
       this.exportTooltip = '';
 
       for (const brainstorm of this.sourceNote.exportBrainstorms) {
@@ -695,6 +695,8 @@ export class EditorComponent implements OnInit {
 
   doSaveContent() {
     this.displayContent = this.content;
+
+    this.setViewMode();
 
     this.saveContent.emit(this.content);
   }

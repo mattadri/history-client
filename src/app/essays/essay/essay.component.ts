@@ -17,23 +17,28 @@ import {EssayEventDetailsComponent} from '../essay-event-details/essay-event-det
 import {EssayPersonDetailsComponent} from '../essay-person-details/essay-person-details.component';
 import {EssayTimelineDetailsComponent} from '../essay-timeline-details/essay-timeline-details.component';
 
-import {Essay} from '../../models/essay';
-import {EssayNote} from '../../models/essay-note';
+import {Essay} from '../../models/essays/essay';
+import {EssayNote} from '../../models/essays/essay-note';
 import {Source} from '../../models/source';
-import {EssayReference} from '../../models/essay-reference';
-import {Event} from '../../models/event';
-import {Person} from '../../models/person';
-import {Timeline} from '../../models/timeline';
-import {EssayEvent} from '../../models/essay-event';
+import {EssayReference} from '../../models/essays/essay-reference';
+import {Event} from '../../models/events/event';
+import {Person} from '../../models/persons/person';
+import {Timeline} from '../../models/timelines/timeline';
+import {EssayEvent} from '../../models/essays/essay-event';
 import {EventService} from '../../services/event.service';
-import {EssayPerson} from '../../models/essay-person';
-import {EssayTimeline} from '../../models/essay-timeline';
+import {EssayPerson} from '../../models/essays/essay-person';
+import {EssayTimeline} from '../../models/essays/essay-timeline';
 
 import {EssayService} from '../../services/essay.service';
 import {SourceService} from '../../services/source.service';
 import {TimelineService} from '../../services/timeline.service';
 import {PersonService} from '../../services/person.service';
-import {EssayType} from '../../models/essay-type';
+import {EssayType} from '../../models/essays/essay-type';
+import {EssayUser} from '../../models/essays/essay-user';
+import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-dialog.component';
+import {MessageDialogComponent} from '../../utilities/message-dialog/message-dialog.component';
+import {User} from '../../models/user';
+import {MatDialog} from '@angular/material/dialog';
 
 @Component({
   selector: 'app-essay',
@@ -42,11 +47,14 @@ import {EssayType} from '../../models/essay-type';
   encapsulation: ViewEncapsulation.None
 })
 export class EssayComponent implements OnInit, AfterViewInit {
+  public isSavingBanner: boolean;
+
   public essayEditor: FroalaEditor;
   public initControls;
 
   public essay: Essay;
 
+  public essayUsers: User[];
   public essayTypes: EssayType[];
 
   public selectedEssayReference: EssayReference;
@@ -112,6 +120,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
   private timelineRegex = /\(\(t (\d+) ([^))]*)\)\)/ig;
 
   constructor(private elementRef: ElementRef,
+              public dialog: MatDialog,
               private renderer: Renderer2,
               private route: ActivatedRoute,
               private essayService: EssayService,
@@ -123,7 +132,10 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     const essayId = this.route.snapshot.paramMap.get('id');
 
+    this.isSavingBanner = false;
+
     this.essayTypes = [];
+    this.essayUsers = [];
 
     this.isEssayTitleEditMode = false;
     this.isAbstractEditMode = false;
@@ -140,6 +152,12 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     this.essayService.getApiEssay(essayId).subscribe(essay => {
       this.essay = essay;
+
+      this.essayService.getApiEssayUsers(null, this.essay).subscribe((response) => {
+        for (const user of response.users) {
+          this.essayUsers.push(user);
+        }
+      });
 
       this.essayNotes = essay.essayNotes;
 
@@ -194,7 +212,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.timelineService.getApiTimelines('/timelines?page[size]=0&fields[timeline]=label').subscribe(response => {
+    this.timelineService.getApiTimelines('/timelines', null, '0', null, ['label'], null, null, null, false).subscribe(response => {
       this.timelines = response.timelines;
 
       this.timelinesFilteredOptions = this.timelinesAutocompleteControl.valueChanges.pipe(
@@ -601,6 +619,43 @@ export class EssayComponent implements OnInit, AfterViewInit {
   initializeNewEssayTimeline() {
     this.essayTimeline = new EssayTimeline();
     this.essayTimeline.initializeNewEssayTimeline();
+  }
+
+  addUser() {
+    const dialogRef = this.dialog.open(AddUserDialogComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(user => {
+      let userExists = false;
+
+      for (const currentUser of this.essayUsers) {
+        if (user.id === currentUser.id) {
+          userExists = true;
+          break;
+        }
+      }
+
+      if (userExists) {
+        this.dialog.open(MessageDialogComponent, {
+          width: '250px',
+          data: {
+            title: 'Could Not Add User',
+            message: 'User is already part of the essay.'
+          }
+        });
+      } else {
+        let essayUser: EssayUser = new EssayUser();
+        essayUser.initializeNewEssayUser();
+
+        essayUser.essay = this.essay;
+        essayUser.user = user;
+
+        this.essayService.addApiUserToEssay(essayUser).subscribe(() => {
+          this.essayUsers.push(user);
+        });
+      }
+    });
   }
 
   deselectAllEssayReferences() {
@@ -1040,6 +1095,24 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
   saveTimeline() {
     this.timeline = this.timelinesAutocompleteControl.value;
+  }
+
+  saveImage(e: File[]) {
+    if (e.length) {
+      this.isSavingBanner = true;
+
+      const file = e[0];
+      const imageForm = new FormData();
+      imageForm.append('image', file);
+
+      this.essayService.createApiEssayBanner(imageForm).subscribe((essayBannerResponse) => {
+        this.essay.banner = essayBannerResponse;
+
+        this.essayService.patchApiEssay(this.essay).subscribe(() => {
+          this.isSavingBanner = false;
+        });
+      });
+    }
   }
 
   private sleep(ms) {

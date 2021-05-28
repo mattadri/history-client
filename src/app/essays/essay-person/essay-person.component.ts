@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2} from '@angular/core';
-import {EssayPerson} from '../../models/essay-person';
+import {EssayPerson} from '../../models/essays/essay-person';
 
 @Component({
   selector: 'app-essay-person',

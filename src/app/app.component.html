@@ -53,11 +53,16 @@
       </button>
     </mat-menu>
 
-    <button mat-icon-button [matMenuTriggerFor]="settingsMenu" aria-label="Logout">
+    <button mat-icon-button [matMenuTriggerFor]="settingsMenu" aria-label="Settings">
       <mat-icon>settings</mat-icon>
     </button>
 
     <mat-menu #settingsMenu="matMenu">
+      <button mat-menu-item routerLink="user">
+        <mat-icon>people</mat-icon>
+        <span>Users</span>
+      </button>
+
       <button mat-menu-item (click)="logout()">
         <mat-icon>eject</mat-icon>
         <span>Logout</span>

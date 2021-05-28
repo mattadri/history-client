@@ -1,5 +1,5 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2} from '@angular/core';
-import {EssayTimeline} from '../../models/essay-timeline';
+import {EssayTimeline} from '../../models/essays/essay-timeline';
 
 @Component({
   selector: 'app-essay-timeline',

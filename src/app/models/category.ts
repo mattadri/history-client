@@ -1,5 +1,5 @@
-import {Person} from './person';
-import {Event} from './event';
+import {Person} from './persons/person';
+import {Event} from './events/event';
 
 export class Category {
   id: number;

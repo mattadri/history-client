@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Person} from '../../models/person';
+import {Person} from '../../models/persons/person';
 
 @Component({
   selector: 'app-timeline-person',

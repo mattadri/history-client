@@ -23,10 +23,11 @@ import {AuthGuard} from './guards/auth.guard';
 import {UserComponent} from './auth/user/user.component';
 import {ProjectsComponent} from './projects/projects.component';
 import {DashboardComponent} from './dashboard/dashboard.component';
+import {ProjectDetailsComponent} from './projects/project-details/project-details.component';
 
 
 const routes: Routes = [
-  {path: '', component: DashboardComponent,},
+  {path: '', component: DashboardComponent, canActivate: [AuthGuard]},
   {path: 'login', component: LoginComponent,},
   {path: 'user', component: UserComponent,},
   {path: 'manager/sources', component: SourcesComponent, canActivate: [AuthGuard]},
@@ -46,6 +47,7 @@ const routes: Routes = [
   {path: 'brainstorming', component: BrainstormsComponent, canActivate: [AuthGuard]},
   {path: 'brainstorming/:id', component: BrainstormComponent, canActivate: [AuthGuard]},
   {path: 'projects', component: ProjectsComponent, canActivate: [AuthGuard]},
+  {path: 'projects/:id', component: ProjectDetailsComponent, canActivate: [AuthGuard]},
   {path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]}
 ];
 

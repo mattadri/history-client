@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
-import { Event } from '../../../models/event';
+import { Event } from '../../../models/events/event';
 
 @Component({
   selector: 'app-event-card',
@@ -9,16 +9,17 @@ import { Event } from '../../../models/event';
 })
 export class EventCardComponent implements OnInit {
   @Input() public event: Event;
+  @Input() public canDelete: boolean;
 
-  @Output() private loadEvent: EventEmitter<Event>;
+  @Output() private removeEvent: EventEmitter<Event>;
 
   constructor() {
-    this.loadEvent = new EventEmitter<Event>();
+    this.removeEvent = new EventEmitter<Event>();
   }
 
   ngOnInit() { }
 
-  onLoadDetails() {
-    this.loadEvent.emit(this.event);
+  doRemoveEvent() {
+    this.removeEvent.emit(this.event);
   }
 }

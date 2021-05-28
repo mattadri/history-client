@@ -1,3 +1,19 @@
 @import '../../styles/_cards.scss';
 @import '../../styles/_drawer-side.scss';
 @import '../../styles/_sections.scss';
+
+.essay-container {
+  display: flex;
+  flex-direction: column;
+  margin: 35px auto;
+  width: 1000px;
+
+  .app-card {
+    background-color: $color-lightest;
+    border: $border-light;
+    margin-bottom: 40px;
+    text-align: center;
+    box-shadow: $shadow-light;
+    cursor: pointer;
+  }
+}

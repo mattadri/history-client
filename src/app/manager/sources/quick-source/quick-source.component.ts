@@ -56,10 +56,6 @@ export class QuickSourceComponent implements OnInit, AfterViewInit {
     this.dialogRef.close();
   }
 
-  saveSource() {
-    console.log('noop');
-  }
-
   saveSourceTitle(value) {
     if (value) {
       this.source.title = value;

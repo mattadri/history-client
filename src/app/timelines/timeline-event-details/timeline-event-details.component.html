@@ -7,21 +7,21 @@
         </div>
         <div class="app-drawer-heading">
           <a routerLink="{{eventLink}}" (click)="onNoClick()">
-              {{data.event.label}}
+              {{data.timelineEvent.event.label}}
             <span class="material-icons">
               launch
             </span>
           </a>
         </div>
         <div class="app-drawer-year">
-          <span>{{data.event.formattedStartYear}}</span>
-          <span *ngIf="!data.event.isSinglePointEvent">- {{data.event.formattedEndYear}} ({{data.event.eventLength}} years)</span>
+          <span>{{data.timelineEvent.event.formattedStartYear}}</span>
+          <span *ngIf="!data.timelineEvent.event.isSinglePointEvent">- {{data.timelineEvent.event.formattedEndYear}} ({{data.timelineEvent.event.eventLength}} years)</span>
         </div>
       </div>
     </div>
 
     <div class="app-drawer-content">
-      <app-editor class="app-drawer-description" [content]="data.event.description"></app-editor>
+      <app-editor class="app-drawer-description" [content]="data.timelineEvent.event.description"></app-editor>
     </div>
 
     <div class="app-drawer-settings">

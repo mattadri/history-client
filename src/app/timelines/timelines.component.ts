@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 
-import { Timeline } from '../models/timeline';
+import { Timeline } from '../models/timelines/timeline';
 
 import { TimelineService } from '../services/timeline.service';
+
+import { AddTimelineDialogComponent } from '../utilities/add-timeline-dialog/add-timeline-dialog.component';
+import {ThemePalette} from '@angular/material/core';
 
 @Component({
   selector: 'app-timelines',
@@ -14,26 +18,31 @@ export class TimelinesComponent implements OnInit {
   public timelines: Timeline[];
   public timeline: Timeline;
 
-  public isCreateTimelineMode: boolean;
-  public isEditTimelineMode: boolean;
+  public userTimelines: Timeline[];
+  public allTimelines: Timeline[];
 
   public totalResults: number;
   public nextPage: string;
   public previousPage: string;
 
-  constructor(private timelineService: TimelineService) {
+  public showAllToggleColor: ThemePalette;
+  public showAllToggleChecked: boolean;
+
+  private userId;
+
+  constructor(public dialog: MatDialog, private timelineService: TimelineService) {
+    this.showAllToggleChecked = false;
+    this.showAllToggleColor = 'primary';
+
+    this.userId = localStorage.getItem('user.id');
+
     this.timelines = [];
+    this.userTimelines = [];
+    this.allTimelines = [];
 
     this.initializeNewTimeline();
 
-    this.isCreateTimelineMode = false;
-    this.isEditTimelineMode = false;
-
-    this.getTimelines('/timelines?order_by=ascending&page%5Bnumber%5D=1&fields[timeline]=label');
-  }
-
-  static closeTimelineDetails(sideNav) {
-    sideNav.close();
+    this.getUserTimelines(null, false);
   }
 
   ngOnInit() {
@@ -44,79 +53,93 @@ export class TimelinesComponent implements OnInit {
     this.timeline.initializeNewTimeline();
   }
 
-  getTimelines(path) {
-    this.timelineService.getApiTimelines(path).subscribe(response => {
-      for (const timeline of response.timelines) {
-        this.timelineService.setTimeline(timeline);
-      }
+  getUserTimelines(path: string, isAnotherPage: boolean) {
+    if (!this.userTimelines.length || isAnotherPage) {
+      this.timelineService.getApiTimelines(path, this.userId, '5', '1', null, null, null, null, isAnotherPage).subscribe(response => {
+        for (const timeline of response.timelines) {
+          this.timelineService.setTimeline(timeline);
+        }
 
-      this.timelines = this.timelineService.getTimelines();
+        this.timelines = this.timelineService.getTimelines();
+        this.userTimelines = this.timelineService.getTimelines();
 
-      this.totalResults = response.total;
-      this.nextPage = response.links.next;
-      this.previousPage = response.links.prev;
-    });
-  }
-
-  openCreateDialog(timeline, sideNav, isCreateMode, isEditMode) {
-    this.timeline = timeline;
-
-    if (!isCreateMode) {
-      isCreateMode = false;
-    }
-
-    if (!isEditMode) {
-      isEditMode = false;
-    }
-
-    this.isCreateTimelineMode = isCreateMode;
-    this.isEditTimelineMode = isEditMode;
-
-    if (sideNav.opened) {
-      sideNav.close().then(() => {
-        sideNav.open();
+        this.totalResults = response.total;
+        this.nextPage = response.links.next;
+        this.previousPage = response.links.prev;
       });
     } else {
-      sideNav.open();
+      this.timelines = this.userTimelines;
     }
   }
 
-   cancelEditCreateModes(sideNav) {
-    if (this.isCreateTimelineMode) {
-      TimelinesComponent.closeTimelineDetails(sideNav);
+  getAllTimelines(path: string, isAnotherPage: boolean) {
+    if (!this.allTimelines.length || isAnotherPage) {
+      this.timelineService.getApiTimelines(path, null, '5', '1', null, null, null, null, isAnotherPage).subscribe(response => {
+        for (const timeline of response.timelines) {
+          this.timelineService.setTimeline(timeline);
+        }
+
+        this.timelines = this.timelineService.getTimelines();
+        this.allTimelines = this.timelineService.getTimelines();
+
+        this.totalResults = response.total;
+        this.nextPage = response.links.next;
+        this.previousPage = response.links.prev;
+      });
+    } else {
+      this.timelines = this.allTimelines;
     }
-
-    this.isCreateTimelineMode = false;
-    this.isEditTimelineMode = false;
   }
 
-  activateCreateMode(sideNav) {
-    this.isCreateTimelineMode = true;
-
-    this.initializeNewTimeline();
-
-    this.openCreateDialog(this.timeline, sideNav, true, false);
+  toggleTimelines() {
+    if (this.showAllToggleChecked) {
+      this.getAllTimelines(null, false);
+    } else {
+      this.getUserTimelines(null, false);
+    }
   }
 
-  createTimeline(sideNav) {
-    return this.timelineService.createApiTimeline(this.timeline).subscribe(response => {
-      this.timeline.id = response.data.id;
+  createTimeline() {
+    const dialogRef = this.dialog.open(AddTimelineDialogComponent, {
+      width: '750px',
+      data: {
+        showExisting: false,
+        showNew: true
+      }
+    });
 
-      this.timelineService.setTimeline(this.timeline);
+    dialogRef.afterClosed().subscribe(responseData => {
+      let timeline = responseData.timeline;
 
-      this.isCreateTimelineMode = false;
+      if (timeline) {
+        this.timelineService.createApiTimeline(timeline).subscribe(response => {
+          timeline.id = response.data.id;
 
-      TimelinesComponent.closeTimelineDetails(sideNav);
+          this.timelineService.setTimeline(timeline);
 
-      this.initializeNewTimeline();
+          this.timelines.unshift(timeline);
+          this.allTimelines.unshift(timeline);
+          this.userTimelines.unshift(timeline);
+
+          this.timelineService.addUserToTimeline(timeline, this.userId).subscribe(() => {});
+        });
+      }
     });
   }
 
   turnPage(timeline) {
     if (timeline.pageIndex < timeline.previousPageIndex) {
-      this.getTimelines(this.previousPage);
+      if (this.showAllToggleChecked) {
+        this.getAllTimelines(this.previousPage, true);
+      } else {
+        this.getUserTimelines(this.previousPage, true);
+      }
     } else if (timeline.pageIndex > timeline.previousPageIndex) {
-      this.getTimelines(this.nextPage);
+      if (this.showAllToggleChecked) {
+        this.getAllTimelines(this.nextPage, true);
+      } else {
+        this.getUserTimelines(this.nextPage, true);
+      }
     }
   }
 }

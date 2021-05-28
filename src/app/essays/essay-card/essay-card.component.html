@@ -1,4 +1,12 @@
-<mat-card routerLink="/essay/{{essay.id}}">
-  <mat-card-title>{{essay.title}}</mat-card-title>
-  <mat-card-content [innerHtml]="essay.abstract"></mat-card-content>
+<mat-card>
+
+  <button *ngIf="canDelete" mat-icon-button class="material-icons" (click)="doRemoveEssay()">delete</button>
+
+  <div routerLink="/essay/{{essay.id}}">
+    <img class="essay-card-banner" src="{{essay.banner}}">
+
+    <mat-card-title>{{essay.title}}</mat-card-title>
+    <mat-card-content [innerHtml]="essay.abstract"></mat-card-content>
+  </div>
+
 </mat-card>
