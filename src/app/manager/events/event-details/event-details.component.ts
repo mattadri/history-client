@@ -17,7 +17,6 @@ import {TimelineService} from '../../../services/timeline.service';
 import {SourceService} from '../../../services/source.service';
 import {EraService} from '../../../services/era.service';
 import {MonthService} from '../../../services/month.service';
-import {EventDetailsAddTimelineComponent} from './event-details-add-timeline/event-details-add-timeline.component';
 import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confirm-removal.component';
 import {MatDialog} from '@angular/material/dialog';
 import {EventTimeline} from '../../../models/events/event-timeline';
@@ -175,8 +174,6 @@ export class EventDetailsComponent implements OnInit {
     dialogRef.afterClosed().subscribe(timeline => {
       let eventTimeline = new EventTimeline();
       eventTimeline.initializeNewEventTimeline();
-
-      eventTimeline.timeline = timeline;
 
       this.eventService.createTimelineApiEvent(eventTimeline, this.event).subscribe(response => {
         eventTimeline.id = response.data.id;

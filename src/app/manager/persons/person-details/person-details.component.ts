@@ -21,7 +21,6 @@ import {Essay} from '../../../models/essays/essay';
 import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confirm-removal.component';
 import {MatDialog} from '@angular/material/dialog';
 import {PersonTimeline} from '../../../models/persons/person-timeline';
-import {PersonDetailsAddTimelineComponent} from './person-details-add-timeline/person-details-add-timeline.component';
 import {PersonDetailsAddBiographyComponent} from './person-details-add-biography/person-details-add-biography.component';
 import {AddTimelineDialogComponent} from '../../../utilities/add-timeline-dialog/add-timeline-dialog.component';
 
@@ -235,7 +234,6 @@ export class PersonDetailsComponent implements OnInit {
       let personTimeline = new PersonTimeline();
       personTimeline.initializeNewPersonTimeline();
 
-      personTimeline.timeline = timeline;
       personTimeline.person = this.person;
 
       this.timelineService.createPersonApiTimeline(personTimeline).subscribe(response => {

@@ -43,7 +43,7 @@ export class AddTimelineDialogComponent implements OnInit {
     this.timeline = new Timeline();
     this.timeline.initializeNewTimeline();
 
-    this.timelineService.getApiTimelines('/timelines', null, '0', null, null, null, null, null, false).subscribe(response => {
+    this.timelineService.getApiTimelines('/timelines', null, '0', null, ['id', 'label'], null, null, null, false).subscribe(response => {
       this.searchTimelines = response.timelines;
 
       this.timelineNameFilteredOptions = this.timelineNameAutocompleteControl.valueChanges.pipe(

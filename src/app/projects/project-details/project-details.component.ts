@@ -427,8 +427,6 @@ export class ProjectDetailsComponent implements OnInit {
           let projectTimeline = new ProjectTimeline();
           projectTimeline.initializeNewProjectTimeline();
 
-          projectTimeline.timeline = timeline;
-
           this.projectService.addApiTimelineToProject(this.project, timeline).subscribe(response => {
             projectTimeline.id = response.data.id;
 
