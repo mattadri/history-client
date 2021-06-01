@@ -82,7 +82,7 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
       }
     });
 
-    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
+    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title').subscribe(sources => {
       for (const source of sources.sources) {
         this.sourceService.setSource(source);
       }
@@ -95,8 +95,7 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label,description,image,event_start_day,event_start_month,' +
-      'event_start_year,event_start_era,event_end_day,event_end_month,event_end_year,event_end_era,reference&sort=label',
+    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label',
       null, null, false).subscribe(response => {
       this.searchEvents = response.events;
 
