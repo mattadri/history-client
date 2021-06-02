@@ -260,10 +260,10 @@
         },
         {
             "name": "DialogData",
-            "id": "interface-DialogData-8927dfb5ca4c673e040077b0fde488ea-8",
-            "file": "src/app/utilities/add-chart-dialog/add-chart-dialog.component.ts",
+            "id": "interface-DialogData-4988f39402eca9da5636e5456b6cb0da-8",
+            "file": "src/app/utilities/add-brainstorm-dialog/add-brainstorm-dialog.component.ts",
             "type": "interface",
-            "sourceCode": "import {Component, Inject, OnInit} from '@angular/core';\nimport {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';\nimport {FormControl} from '@angular/forms';\n\nimport {Observable} from 'rxjs';\nimport {map, startWith} from 'rxjs/operators';\n\nimport {Chart} from '../../models/chart';\nimport {ChartService} from '../../services/chart.service';\nimport {Sleep} from '../sleep';\n\nexport interface DialogData {\n  showExisting: boolean;\n  showNew: boolean;\n}\n\nclass QuickChartReturnData {\n  chart: Chart;\n  isExisting: boolean;\n}\n\n@Component({\n  selector: 'app-add-chart-dialog',\n  templateUrl: './add-chart-dialog.component.html',\n  styleUrls: ['./add-chart-dialog.component.scss']\n})\nexport class AddChartDialogComponent implements OnInit {\n  public charts: Chart[];\n  public chart: Chart;\n\n  public searchCharts: Chart[] = [];\n\n  public chartNameAutocompleteControl = new FormControl();\n  public chartNameFilteredOptions: Observable<Chart[]>;\n\n  private returnData: QuickChartReturnData;\n\n  constructor(private chartService: ChartService,\n              public dialogRef: MatDialogRef<AddChartDialogComponent>,\n              @Inject(MAT_DIALOG_DATA) public data: DialogData) {\n\n    this.returnData = new QuickChartReturnData();\n\n    this.chart = new Chart();\n    this.chart.initializeNewChart();\n\n    this.chartService.getApiCharts('/charts?page[size]=0').subscribe(response => {\n\n      this.searchCharts = response.charts;\n\n      this.chartNameFilteredOptions = this.chartNameAutocompleteControl.valueChanges.pipe(\n        startWith(''),\n        map(chart => this._filterChartsName(chart))\n      );\n    });\n  }\n\n  ngOnInit(): void {}\n\n  ngAfterViewInit() {\n    this.activateCreateForm().then();\n  }\n\n  onNoClick(): void {\n    this.dialogRef.close();\n  }\n\n  saveChartTitle(value) {\n    if (value) {\n      this.chart.options.title.text = value;\n    } else {\n      this.chart.options.title.text = this.chartNameAutocompleteControl.value;\n    }\n  }\n\n  saveExistingChart(chart) {\n    this.returnData.chart = chart;\n    this.returnData.isExisting = true;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  saveNewChart() {\n    this.returnData.chart = this.chart;\n    this.returnData.isExisting = false;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  private _filterChartsName(filterValue: any): Chart[] {\n    if (filterValue && typeof filterValue === 'string') {\n      filterValue = filterValue.toLowerCase();\n\n      return this.searchCharts.filter(chart => {\n        if (chart.options.title.text) {\n          return chart.options.title.text.toLowerCase().includes(filterValue);\n        } else {\n          return '';\n        }\n      });\n    }\n  }\n\n  async activateCreateForm() {\n    await Sleep.wait(500);\n\n    try {\n      document.getElementById('existing_chart_title').focus();\n    } catch(e) {\n      document.getElementById('new_chart_title').focus();\n    }\n  }\n}\n",
+            "sourceCode": "import {Component, Inject, OnInit} from '@angular/core';\nimport {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';\nimport {FormControl} from '@angular/forms';\n\nimport {Observable} from 'rxjs';\nimport {map, startWith} from 'rxjs/operators';\n\nimport {BrainstormService} from '../../services/brainstorm.service';\nimport {Brainstorm} from '../../models/brainstorm';\nimport {Sleep} from '../sleep';\n\nexport interface DialogData {\n  showExisting: boolean;\n  showNew: boolean;\n}\n\nclass QuickBrainstormReturnData {\n  brainstorm: Brainstorm;\n  isExisting: boolean;\n}\n\n@Component({\n  selector: 'app-add-brainstorm-dialog',\n  templateUrl: './add-brainstorm-dialog.component.html',\n  styleUrls: ['./add-brainstorm-dialog.component.scss']\n})\nexport class AddBrainstormDialogComponent implements OnInit {\n  public brainstorms: Brainstorm[];\n  public brainstorm: Brainstorm;\n\n  public searchBrainstorms: Brainstorm[] = [];\n\n  public brainstormNameAutocompleteControl = new FormControl();\n  public brainstormNameFilteredOptions: Observable<Brainstorm[]>;\n\n  private returnData: QuickBrainstormReturnData;\n\n  constructor(public dialogRef: MatDialogRef<AddBrainstormDialogComponent>,\n              @Inject(MAT_DIALOG_DATA) public data: DialogData,\n              private brainstormService: BrainstormService) {\n    this.returnData = new QuickBrainstormReturnData();\n\n    this.brainstorm = new Brainstorm();\n    this.brainstorm.initializeNewBrainstorm();\n\n    this.brainstormService.getApiBrainstorms(null, null, '0', null, null, null, false, null, false).subscribe(response => {\n\n      this.searchBrainstorms = response.brainstorms;\n\n      this.brainstormNameFilteredOptions = this.brainstormNameAutocompleteControl.valueChanges.pipe(\n        startWith(''),\n        map(chart => this._filterBrainstormsName(chart))\n      );\n    });\n  }\n\n  ngOnInit() {\n  }\n\n  ngAfterViewInit() {\n    this.activateCreateForm().then();\n  }\n\n  onNoClick(): void {\n    this.dialogRef.close();\n  }\n\n  saveExistingBrainstorm(brainstorm) {\n    this.returnData.brainstorm = brainstorm;\n    this.returnData.isExisting = true;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  saveNewBrainstorm() {\n    this.returnData.brainstorm = this.brainstorm;\n    this.returnData.isExisting = false;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  private _filterBrainstormsName(filterValue: any): Brainstorm[] {\n    if (filterValue && typeof filterValue === 'string') {\n      filterValue = filterValue.toLowerCase();\n\n      return this.searchBrainstorms.filter(brainstorm => {\n        if (brainstorm.title) {\n          return brainstorm.title.toLowerCase().includes(filterValue);\n        } else {\n          return '';\n        }\n      });\n    }\n  }\n\n  async activateCreateForm() {\n    await Sleep.wait(500);\n\n    try {\n      document.getElementById('existing_brainstorm_title').focus();\n    } catch(e) {\n      document.getElementById('new_brainstorm_title').focus();\n    }\n  }\n}\n",
             "properties": [
                 {
                     "name": "showExisting",
@@ -289,10 +289,10 @@
         },
         {
             "name": "DialogData",
-            "id": "interface-DialogData-4988f39402eca9da5636e5456b6cb0da-9",
-            "file": "src/app/utilities/add-brainstorm-dialog/add-brainstorm-dialog.component.ts",
+            "id": "interface-DialogData-8927dfb5ca4c673e040077b0fde488ea-9",
+            "file": "src/app/utilities/add-chart-dialog/add-chart-dialog.component.ts",
             "type": "interface",
-            "sourceCode": "import {Component, Inject, OnInit} from '@angular/core';\nimport {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';\nimport {FormControl} from '@angular/forms';\n\nimport {Observable} from 'rxjs';\nimport {map, startWith} from 'rxjs/operators';\n\nimport {BrainstormService} from '../../services/brainstorm.service';\nimport {Brainstorm} from '../../models/brainstorm';\nimport {Sleep} from '../sleep';\n\nexport interface DialogData {\n  showExisting: boolean;\n  showNew: boolean;\n}\n\nclass QuickBrainstormReturnData {\n  brainstorm: Brainstorm;\n  isExisting: boolean;\n}\n\n@Component({\n  selector: 'app-add-brainstorm-dialog',\n  templateUrl: './add-brainstorm-dialog.component.html',\n  styleUrls: ['./add-brainstorm-dialog.component.scss']\n})\nexport class AddBrainstormDialogComponent implements OnInit {\n  public brainstorms: Brainstorm[];\n  public brainstorm: Brainstorm;\n\n  public searchBrainstorms: Brainstorm[] = [];\n\n  public brainstormNameAutocompleteControl = new FormControl();\n  public brainstormNameFilteredOptions: Observable<Brainstorm[]>;\n\n  private returnData: QuickBrainstormReturnData;\n\n  constructor(public dialogRef: MatDialogRef<AddBrainstormDialogComponent>,\n              @Inject(MAT_DIALOG_DATA) public data: DialogData,\n              private brainstormService: BrainstormService) {\n    this.returnData = new QuickBrainstormReturnData();\n\n    this.brainstorm = new Brainstorm();\n    this.brainstorm.initializeNewBrainstorm();\n\n    this.brainstormService.getApiBrainstorms(null, null, '0', null, null, null, false, null, false).subscribe(response => {\n\n      this.searchBrainstorms = response.brainstorms;\n\n      this.brainstormNameFilteredOptions = this.brainstormNameAutocompleteControl.valueChanges.pipe(\n        startWith(''),\n        map(chart => this._filterBrainstormsName(chart))\n      );\n    });\n  }\n\n  ngOnInit() {\n  }\n\n  ngAfterViewInit() {\n    this.activateCreateForm().then();\n  }\n\n  onNoClick(): void {\n    this.dialogRef.close();\n  }\n\n  saveExistingBrainstorm(brainstorm) {\n    this.returnData.brainstorm = brainstorm;\n    this.returnData.isExisting = true;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  saveNewBrainstorm() {\n    this.returnData.brainstorm = this.brainstorm;\n    this.returnData.isExisting = false;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  private _filterBrainstormsName(filterValue: any): Brainstorm[] {\n    if (filterValue && typeof filterValue === 'string') {\n      filterValue = filterValue.toLowerCase();\n\n      return this.searchBrainstorms.filter(brainstorm => {\n        if (brainstorm.title) {\n          return brainstorm.title.toLowerCase().includes(filterValue);\n        } else {\n          return '';\n        }\n      });\n    }\n  }\n\n  async activateCreateForm() {\n    await Sleep.wait(500);\n\n    try {\n      document.getElementById('existing_brainstorm_title').focus();\n    } catch(e) {\n      document.getElementById('new_brainstorm_title').focus();\n    }\n  }\n}\n",
+            "sourceCode": "import {Component, Inject, OnInit} from '@angular/core';\nimport {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';\nimport {FormControl} from '@angular/forms';\n\nimport {Observable} from 'rxjs';\nimport {map, startWith} from 'rxjs/operators';\n\nimport {Chart} from '../../models/chart';\nimport {ChartService} from '../../services/chart.service';\nimport {Sleep} from '../sleep';\n\nexport interface DialogData {\n  showExisting: boolean;\n  showNew: boolean;\n}\n\nclass QuickChartReturnData {\n  chart: Chart;\n  isExisting: boolean;\n}\n\n@Component({\n  selector: 'app-add-chart-dialog',\n  templateUrl: './add-chart-dialog.component.html',\n  styleUrls: ['./add-chart-dialog.component.scss']\n})\nexport class AddChartDialogComponent implements OnInit {\n  public charts: Chart[];\n  public chart: Chart;\n\n  public searchCharts: Chart[] = [];\n\n  public chartNameAutocompleteControl = new FormControl();\n  public chartNameFilteredOptions: Observable<Chart[]>;\n\n  private returnData: QuickChartReturnData;\n\n  constructor(private chartService: ChartService,\n              public dialogRef: MatDialogRef<AddChartDialogComponent>,\n              @Inject(MAT_DIALOG_DATA) public data: DialogData) {\n\n    this.returnData = new QuickChartReturnData();\n\n    this.chart = new Chart();\n    this.chart.initializeNewChart();\n\n    this.chartService.getApiCharts('/charts?page[size]=0').subscribe(response => {\n\n      this.searchCharts = response.charts;\n\n      this.chartNameFilteredOptions = this.chartNameAutocompleteControl.valueChanges.pipe(\n        startWith(''),\n        map(chart => this._filterChartsName(chart))\n      );\n    });\n  }\n\n  ngOnInit(): void {}\n\n  ngAfterViewInit() {\n    this.activateCreateForm().then();\n  }\n\n  onNoClick(): void {\n    this.dialogRef.close();\n  }\n\n  saveChartTitle(value) {\n    if (value) {\n      this.chart.options.title.text = value;\n    } else {\n      this.chart.options.title.text = this.chartNameAutocompleteControl.value;\n    }\n  }\n\n  saveExistingChart(chart) {\n    this.returnData.chart = chart;\n    this.returnData.isExisting = true;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  saveNewChart() {\n    this.returnData.chart = this.chart;\n    this.returnData.isExisting = false;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  private _filterChartsName(filterValue: any): Chart[] {\n    if (filterValue && typeof filterValue === 'string') {\n      filterValue = filterValue.toLowerCase();\n\n      return this.searchCharts.filter(chart => {\n        if (chart.options.title.text) {\n          return chart.options.title.text.toLowerCase().includes(filterValue);\n        } else {\n          return '';\n        }\n      });\n    }\n  }\n\n  async activateCreateForm() {\n    await Sleep.wait(500);\n\n    try {\n      document.getElementById('existing_chart_title').focus();\n    } catch(e) {\n      document.getElementById('new_chart_title').focus();\n    }\n  }\n}\n",
             "properties": [
                 {
                     "name": "showExisting",
@@ -318,7 +318,36 @@
         },
         {
             "name": "DialogData",
-            "id": "interface-DialogData-8397335f3edcea1f94cd1993bf921401-10",
+            "id": "interface-DialogData-0e0991e36da759b8d3ba9cc807176377-10",
+            "file": "src/app/utilities/add-timeline-dialog/add-timeline-dialog.component.ts",
+            "type": "interface",
+            "sourceCode": "import {Component, Inject, OnInit} from '@angular/core';\nimport {FormControl} from '@angular/forms';\nimport {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';\n\nimport {map, startWith} from 'rxjs/operators';\nimport {Observable} from 'rxjs';\n\nimport {TimelineService} from '../../services/timeline.service';\nimport {Timeline} from '../../models/timelines/timeline';\nimport {Sleep} from '../sleep';\n\nexport interface DialogData {\n  showExisting: boolean;\n  showNew: boolean;\n}\n\nclass QuickTimelineReturnData {\n  timeline: Timeline;\n  isExisting: boolean;\n}\n\n@Component({\n  selector: 'app-add-timeline-dialog',\n  templateUrl: './add-timeline-dialog.component.html',\n  styleUrls: ['./add-timeline-dialog.component.scss']\n})\nexport class AddTimelineDialogComponent implements OnInit {\n  public timelines: Timeline[];\n  public timeline: Timeline;\n\n  public searchTimelines: Timeline[] = [];\n\n  public timelineNameAutocompleteControl = new FormControl();\n  public timelineNameFilteredOptions: Observable<Timeline[]>;\n\n  private returnData: QuickTimelineReturnData;\n\n  constructor(private timelineService: TimelineService,\n              public dialogRef: MatDialogRef<AddTimelineDialogComponent>,\n              @Inject(MAT_DIALOG_DATA) public data: DialogData) {\n    this.returnData = new QuickTimelineReturnData();\n\n    this.timeline = new Timeline();\n    this.timeline.initializeNewTimeline();\n\n    this.timelineService.getApiTimelines('/timelines', null, '0', null, ['id', 'label'], null, null, null, false).subscribe(response => {\n      this.searchTimelines = response.timelines;\n\n      this.timelineNameFilteredOptions = this.timelineNameAutocompleteControl.valueChanges.pipe(\n        startWith(''),\n        map(timeline => this._filterTimelinesName(timeline))\n      );\n    });\n  }\n\n  ngOnInit(): void {}\n\n  onNoClick(): void {\n    this.dialogRef.close();\n  }\n\n  ngAfterViewInit() {\n    this.activateCreateForm().then();\n  }\n\n  saveExistingTimeline(timeline) {\n    this.returnData.timeline = timeline;\n    this.returnData.isExisting = true;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  saveNewTimeline() {\n    this.returnData.timeline = this.timeline;\n    this.returnData.isExisting = false;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  saveTimelineTitle(value) {\n    if (value) {\n      this.timeline.label = value;\n    } else {\n      this.timeline.label = this.timelineNameAutocompleteControl.value;\n    }\n  }\n\n  private _filterTimelinesName(filterValue: any): Timeline[] {\n    if (filterValue && typeof filterValue === 'string') {\n      filterValue = filterValue.toLowerCase();\n\n      return this.searchTimelines.filter(timeline => {\n        if (timeline.label) {\n          return timeline.label.toLowerCase().includes(filterValue);\n        } else {\n          return '';\n        }\n      });\n    }\n  }\n\n  async activateCreateForm() {\n    await Sleep.wait(500);\n\n    try {\n      document.getElementById('existing_timeline_title').focus();\n    } catch(e) {\n      document.getElementById('new_timeline_title').focus();\n    }\n  }\n}\n",
+            "properties": [
+                {
+                    "name": "showExisting",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 13
+                },
+                {
+                    "name": "showNew",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 14
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": [],
+            "isDuplicate": true,
+            "duplicateId": 10,
+            "duplicateName": "DialogData-10"
+        },
+        {
+            "name": "DialogData",
+            "id": "interface-DialogData-8397335f3edcea1f94cd1993bf921401-11",
             "file": "src/app/utilities/confirm-removal/confirm-removal.component.ts",
             "type": "interface",
             "sourceCode": "import {Component, Inject, OnInit} from '@angular/core';\n\nimport {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';\n\nexport interface DialogData {\n  label: string;\n  content: string;\n}\n\n@Component({\n  selector: 'app-confirm-removal',\n  templateUrl: './confirm-removal.component.html',\n  styleUrls: ['./confirm-removal.component.scss']\n})\nexport class ConfirmRemovalComponent implements OnInit {\n\n  constructor(public dialogRef: MatDialogRef<ConfirmRemovalComponent>,\n              @Inject(MAT_DIALOG_DATA) public data: DialogData) { }\n\n  ngOnInit() {\n  }\n\n  onNoClick(): void {\n    this.dialogRef.close();\n  }\n}\n",
@@ -342,12 +371,12 @@
             "kind": 150,
             "methods": [],
             "isDuplicate": true,
-            "duplicateId": 10,
-            "duplicateName": "DialogData-10"
+            "duplicateId": 11,
+            "duplicateName": "DialogData-11"
         },
         {
             "name": "DialogData",
-            "id": "interface-DialogData-bb6c10debdb875419589349674003f9d-11",
+            "id": "interface-DialogData-bb6c10debdb875419589349674003f9d-12",
             "file": "src/app/utilities/message-dialog/message-dialog.component.ts",
             "type": "interface",
             "sourceCode": "import {Component, Inject, OnInit} from '@angular/core';\n\nimport { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';\n\nexport interface DialogData {\n  title: string;\n  message: string;\n}\n\n@Component({\n  selector: 'app-message-dialog',\n  templateUrl: './message-dialog.component.html',\n  styleUrls: ['./message-dialog.component.scss']\n})\nexport class MessageDialogComponent implements OnInit {\n\n  constructor(public dialogRef: MatDialogRef<MessageDialogComponent>,\n              @Inject(MAT_DIALOG_DATA) public data: DialogData) { }\n\n  ngOnInit() {\n  }\n\n  onNoClick(): void {\n    this.dialogRef.close();\n  }\n}\n",
@@ -365,35 +394,6 @@
                     "optional": false,
                     "description": "",
                     "line": 6
-                }
-            ],
-            "indexSignatures": [],
-            "kind": 150,
-            "methods": [],
-            "isDuplicate": true,
-            "duplicateId": 11,
-            "duplicateName": "DialogData-11"
-        },
-        {
-            "name": "DialogData",
-            "id": "interface-DialogData-0e0991e36da759b8d3ba9cc807176377-12",
-            "file": "src/app/utilities/add-timeline-dialog/add-timeline-dialog.component.ts",
-            "type": "interface",
-            "sourceCode": "import {Component, Inject, OnInit} from '@angular/core';\nimport {FormControl} from '@angular/forms';\nimport {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';\n\nimport {map, startWith} from 'rxjs/operators';\nimport {Observable} from 'rxjs';\n\nimport {TimelineService} from '../../services/timeline.service';\nimport {Timeline} from '../../models/timelines/timeline';\nimport {Sleep} from '../sleep';\n\nexport interface DialogData {\n  showExisting: boolean;\n  showNew: boolean;\n}\n\nclass QuickTimelineReturnData {\n  timeline: Timeline;\n  isExisting: boolean;\n}\n\n@Component({\n  selector: 'app-add-timeline-dialog',\n  templateUrl: './add-timeline-dialog.component.html',\n  styleUrls: ['./add-timeline-dialog.component.scss']\n})\nexport class AddTimelineDialogComponent implements OnInit {\n  public timelines: Timeline[];\n  public timeline: Timeline;\n\n  public searchTimelines: Timeline[] = [];\n\n  public timelineNameAutocompleteControl = new FormControl();\n  public timelineNameFilteredOptions: Observable<Timeline[]>;\n\n  private returnData: QuickTimelineReturnData;\n\n  constructor(private timelineService: TimelineService,\n              public dialogRef: MatDialogRef<AddTimelineDialogComponent>,\n              @Inject(MAT_DIALOG_DATA) public data: DialogData) {\n    this.returnData = new QuickTimelineReturnData();\n\n    this.timeline = new Timeline();\n    this.timeline.initializeNewTimeline();\n\n    this.timelineService.getApiTimelines('/timelines', null, '0', null, ['id', 'label'], null, null, null, false).subscribe(response => {\n      this.searchTimelines = response.timelines;\n\n      this.timelineNameFilteredOptions = this.timelineNameAutocompleteControl.valueChanges.pipe(\n        startWith(''),\n        map(timeline => this._filterTimelinesName(timeline))\n      );\n    });\n  }\n\n  ngOnInit(): void {}\n\n  onNoClick(): void {\n    this.dialogRef.close();\n  }\n\n  ngAfterViewInit() {\n    this.activateCreateForm().then();\n  }\n\n  saveExistingTimeline(timeline) {\n    this.returnData.timeline = timeline;\n    this.returnData.isExisting = true;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  saveNewTimeline() {\n    this.returnData.timeline = this.timeline;\n    this.returnData.isExisting = false;\n\n    this.dialogRef.close(this.returnData);\n  }\n\n  saveTimelineTitle(value) {\n    if (value) {\n      this.timeline.label = value;\n    } else {\n      this.timeline.label = this.timelineNameAutocompleteControl.value;\n    }\n  }\n\n  private _filterTimelinesName(filterValue: any): Timeline[] {\n    if (filterValue && typeof filterValue === 'string') {\n      filterValue = filterValue.toLowerCase();\n\n      return this.searchTimelines.filter(timeline => {\n        if (timeline.label) {\n          return timeline.label.toLowerCase().includes(filterValue);\n        } else {\n          return '';\n        }\n      });\n    }\n  }\n\n  async activateCreateForm() {\n    await Sleep.wait(500);\n\n    try {\n      document.getElementById('existing_timeline_title').focus();\n    } catch(e) {\n      document.getElementById('new_timeline_title').focus();\n    }\n  }\n}\n",
-            "properties": [
-                {
-                    "name": "showExisting",
-                    "type": "boolean",
-                    "optional": false,
-                    "description": "",
-                    "line": 13
-                },
-                {
-                    "name": "showNew",
-                    "type": "boolean",
-                    "optional": false,
-                    "description": "",
-                    "line": 14
                 }
             ],
             "indexSignatures": [],
@@ -33932,6 +33932,14 @@
                 "defaultValue": "{\n  production: false,\n  apiUrl: 'http://127.0.0.1:5000',\n  s3Bucket: 'dev.history'\n}"
             },
             {
+                "name": "EventNoteStory",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/manager/events/event-note/event-note.stories.ts",
+                "type": "",
+                "defaultValue": "Template.bind({})"
+            },
+            {
                 "name": "Large",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -34144,6 +34152,14 @@
                     "file": "src/app/manager/events/event-note/event-note.stories.ts",
                     "type": "object",
                     "defaultValue": "{\n  onPinTask: action('onPinTask'),\n  onArchiveTask: action('onArchiveTask'),\n}"
+                },
+                {
+                    "name": "EventNoteStory",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/manager/events/event-note/event-note.stories.ts",
+                    "type": "",
+                    "defaultValue": "Template.bind({})"
                 },
                 {
                     "name": "Template",
@@ -34991,6 +35007,16 @@
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
                 "name": "actionsData",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/manager/events/event-note/event-note.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "EventNoteStory",
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
                 "status": "low"

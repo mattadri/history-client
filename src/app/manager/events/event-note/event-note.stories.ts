@@ -31,3 +31,6 @@ const Template: Story<EventNoteComponent> = args => ({
   },
 });
 
+export const EventNoteStory = Template.bind({});
+
+EventNoteStory.args = {};
