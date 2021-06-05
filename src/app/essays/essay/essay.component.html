@@ -1,5 +1,9 @@
 <mat-sidenav-container>
   <div class="app-body-content">
+    <div *ngIf="showReturnHeader" style="cursor: pointer" routerLink="{{returnPath}}">
+      Return To Project
+    </div>
+
     <div class="app-card-content">
       <div>
         <img class="essay-image" src="{{essay.banner}}" />

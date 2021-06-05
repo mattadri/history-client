@@ -21,6 +21,7 @@ import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confir
 import {MatDialog} from '@angular/material/dialog';
 import {EventTimeline} from '../../../models/events/event-timeline';
 import {AddTimelineDialogComponent} from '../../../utilities/add-timeline-dialog/add-timeline-dialog.component';
+import {UserService} from '../../../services/user.service';
 
 @Component({
   selector: 'app-event-details',
@@ -47,12 +48,16 @@ export class EventDetailsComponent implements OnInit {
 
   public isSavingImage: boolean;
 
+  public showReturnHeader: boolean;
+  public returnPath: string;
+
   constructor(private route: ActivatedRoute,
               private eventService: EventService,
               private timelineService: TimelineService,
               private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
+              private userService: UserService,
               public dialog: MatDialog,) {
 
     const eventId = this.route.snapshot.paramMap.get('id');
@@ -60,6 +65,11 @@ export class EventDetailsComponent implements OnInit {
     this.eventTimelines = [];
 
     this.isSavingImage = false;
+
+    this.showReturnHeader = false;
+    this.returnPath = '';
+
+    this._setReturnHeader();
 
     this.eventService.getApiEvent(eventId).subscribe(event => {
       this.event = event;
@@ -181,8 +191,6 @@ export class EventDetailsComponent implements OnInit {
 
       eventTimeline.timeline = timelineObj.timeline;
 
-      console.log(eventTimeline);
-
       this.eventService.createTimelineApiEvent(eventTimeline, this.event).subscribe(response => {
         eventTimeline.id = response.data.id;
 
@@ -284,6 +292,15 @@ export class EventDetailsComponent implements OnInit {
       return this.sources.filter(source => {
         return source.title.toLowerCase().includes(filterValue);
       });
+    }
+  }
+
+  private _setReturnHeader() {
+    const previousPage = this.userService.getPreviousPage();
+
+    if (previousPage.length && previousPage.includes('/projects/')) {
+      this.returnPath = previousPage;
+      this.showReturnHeader = true;
     }
   }
 }

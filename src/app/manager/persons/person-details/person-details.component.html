@@ -1,5 +1,9 @@
 <div *ngIf="person">
   <div class="app-body-content app-body-darker-canvas">
+    <div *ngIf="showReturnHeader" style="cursor: pointer" routerLink="{{returnPath}}">
+      Return To Project
+    </div>
+
     <div class="app-body-content-narrow">
       <div class="subheading">
         Person
@@ -7,7 +11,7 @@
       </div>
 
       <div *ngIf="!isEditPersonMode">
-        <img src="{{person.image}}">
+        <img style="width: 400px" src="{{person.image}}">
 
         <h1 class="no-margin-bottom margin-top">
           {{person.firstName}}

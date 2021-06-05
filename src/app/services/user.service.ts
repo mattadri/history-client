@@ -13,6 +13,8 @@ export class UserService {
   public users: User[];
   public user: User;
 
+  public previousPage: string;
+
   constructor(private http: HttpClient) {
     this.users = [];
   }
@@ -45,6 +47,14 @@ export class UserService {
 
   getUser() {
     return this.user;
+  }
+
+  setPreviousPage(previousPage: string) {
+    this.previousPage = previousPage;
+  }
+
+  getPreviousPage(): string {
+    return this.previousPage;
   }
 
   getLoggedInUser() {

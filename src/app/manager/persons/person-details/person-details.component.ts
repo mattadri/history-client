@@ -23,6 +23,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {PersonTimeline} from '../../../models/persons/person-timeline';
 import {PersonDetailsAddBiographyComponent} from './person-details-add-biography/person-details-add-biography.component';
 import {AddTimelineDialogComponent} from '../../../utilities/add-timeline-dialog/add-timeline-dialog.component';
+import {UserService} from '../../../services/user.service';
 
 @Component({
   selector: 'app-person-details',
@@ -37,7 +38,6 @@ export class PersonDetailsComponent implements OnInit {
   public personBiographies: PersonBiography[];
   public biography: Essay;
   public personBiography: PersonBiography;
-  public availableBiographies: Essay[];
 
   public sources: Source[] = [];
   public timelines: Timeline[] = [];
@@ -67,6 +67,9 @@ export class PersonDetailsComponent implements OnInit {
 
   public userId: string;
 
+  public showReturnHeader: boolean;
+  public returnPath: string;
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               public dialog: MatDialog,
@@ -74,6 +77,7 @@ export class PersonDetailsComponent implements OnInit {
               private timelineService: TimelineService,
               private essayService: EssayService,
               private eraService: EraService,
+              private userService: UserService,
               private monthService: MonthService) {
 
     const personId = this.route.snapshot.paramMap.get('id');
@@ -84,6 +88,11 @@ export class PersonDetailsComponent implements OnInit {
     this.personBiographies = [];
 
     this.isSavingImage = false;
+
+    this.showReturnHeader = false;
+    this.returnPath = '';
+
+    this._setReturnHeader();
 
     this.personService.getApiPerson(personId).subscribe(person => {
       this.person = person;
@@ -449,6 +458,15 @@ export class PersonDetailsComponent implements OnInit {
           return '';
         }
       });
+    }
+  }
+
+  private _setReturnHeader() {
+    const previousPage = this.userService.getPreviousPage();
+
+    if (previousPage.length && previousPage.includes('/projects/')) {
+      this.returnPath = previousPage;
+      this.showReturnHeader = true;
     }
   }
 }

@@ -39,6 +39,7 @@ import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-d
 import {MessageDialogComponent} from '../../utilities/message-dialog/message-dialog.component';
 import {User} from '../../models/user';
 import {MatDialog} from '@angular/material/dialog';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-essay',
@@ -114,6 +115,9 @@ export class EssayComponent implements OnInit, AfterViewInit {
   public timelinesFilteredOptions: Observable<Timeline[]>;
   public timelineFieldDisplayValue: string;
 
+  public showReturnHeader: boolean;
+  public returnPath: string;
+
   private referenceRegex = /\(\(r (\d+) ([^))]*)\)\)/ig;
   private eventRegex = /\(\(e (\d+) ([^))]*)\)\)/ig;
   private personRegex = /\(\(p (\d+) ([^))]*)\)\)/ig;
@@ -128,6 +132,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
               private eventService: EventService,
               private personService: PersonService,
               private timelineService: TimelineService,
+              private userService: UserService,
               public bottomSheet: MatBottomSheet) {
 
     const essayId = this.route.snapshot.paramMap.get('id');
@@ -144,6 +149,11 @@ export class EssayComponent implements OnInit, AfterViewInit {
     this.isAddEssayNoteMode = false;
 
     this.essayScreenSize = 'fullscreen_exit';
+
+    this.showReturnHeader = false;
+    this.returnPath = '';
+
+    this._setReturnHeader();
 
     this.essay = new Essay();
     this.essay.initializeNewEssay();
@@ -1168,6 +1178,15 @@ export class EssayComponent implements OnInit, AfterViewInit {
       return this.timelines.filter(timeline => {
         return timeline.label.toLowerCase().includes(filterValue);
       });
+    }
+  }
+
+  private _setReturnHeader() {
+    const previousPage = this.userService.getPreviousPage();
+
+    if (previousPage.length && previousPage.includes('/projects/')) {
+      this.returnPath = previousPage;
+      this.showReturnHeader = true;
     }
   }
 }

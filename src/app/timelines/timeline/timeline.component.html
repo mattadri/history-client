@@ -1,4 +1,8 @@
 <div class="app-body-content" *ngIf="timeline">
+  <div *ngIf="showReturnHeader" style="cursor: pointer" routerLink="{{returnPath}}">
+      Return To Project
+    </div>
+
   <div class="app-content-toolbar">
     <h1 *ngIf="timeline && !isTimelineEditMode">{{timeline.label}}</h1>
 

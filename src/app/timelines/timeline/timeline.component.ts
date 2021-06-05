@@ -20,6 +20,7 @@ import {TimelineEvent} from '../../models/timelines/timeline-event';
 import {User} from '../../models/user';
 import {MessageDialogComponent} from '../../utilities/message-dialog/message-dialog.component';
 import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-dialog.component';
+import {UserService} from '../../services/user.service';
 
 @Component({
   selector: 'app-timeline',
@@ -61,6 +62,9 @@ export class TimelineComponent implements OnInit {
 
   public persons = [];
 
+  public showReturnHeader: boolean;
+  public returnPath: string;
+
   private eventColorClasses = [
     '#39ab28',
     '#23c28f',
@@ -89,6 +93,7 @@ export class TimelineComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private timelineService: TimelineService,
               private eventService: EventService,
+              private userService: UserService,
               public dialog: MatDialog) {
     this.isTimelineEditMode = false;
     this.isAddDescriptionMode = false;
@@ -97,6 +102,11 @@ export class TimelineComponent implements OnInit {
     this.cursorLineDatePosition = 'above';
 
     this.timelineUsers = [];
+
+    this.showReturnHeader = false;
+    this.returnPath = '';
+
+    this._setReturnHeader();
 
     const timelineId = this.route.snapshot.paramMap.get('id');
 
@@ -412,5 +422,14 @@ export class TimelineComponent implements OnInit {
 
   private sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  private _setReturnHeader() {
+    const previousPage = this.userService.getPreviousPage();
+
+    if (previousPage.length && previousPage.includes('/projects/')) {
+      this.returnPath = previousPage;
+      this.showReturnHeader = true;
+    }
   }
 }

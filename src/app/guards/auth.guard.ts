@@ -23,14 +23,15 @@ export class AuthGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Promise<boolean> {
 
+    this.userService.setPreviousPage(localStorage.getItem('returnPath'));
+    localStorage.setItem('returnPath', state.url);
+
     await this.isLoggedIn();
 
     if (this.userIsLoggedIn) {
       this.checkUserSelected();
 
       if (!this.userIsSelected) {
-        localStorage.setItem('returnPath', state.url);
-
         this.router.navigate(['/user']).then();
       }
 
