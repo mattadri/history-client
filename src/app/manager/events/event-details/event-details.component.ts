@@ -168,19 +168,27 @@ export class EventDetailsComponent implements OnInit {
 
   addEventTimeline() {
     const dialogRef = this.dialog.open(AddTimelineDialogComponent, {
-      width: '750px'
+      width: '750px',
+      data: {
+        showExisting: true,
+        showNew: false
+      }
     });
 
-    dialogRef.afterClosed().subscribe(timeline => {
+    dialogRef.afterClosed().subscribe(timelineObj => {
       let eventTimeline = new EventTimeline();
       eventTimeline.initializeNewEventTimeline();
+
+      eventTimeline.timeline = timelineObj.timeline;
+
+      console.log(eventTimeline);
 
       this.eventService.createTimelineApiEvent(eventTimeline, this.event).subscribe(response => {
         eventTimeline.id = response.data.id;
 
         // get the full timeline now that we have it to show on the card. The previous timeline was a
         // truncated version for selection purposes only.
-        this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
+        this.timelineService.getApiTimeline(timelineObj.timeline.id).subscribe(timeline => {
           eventTimeline.timeline = timeline;
 
           this.eventTimelines.unshift(eventTimeline);

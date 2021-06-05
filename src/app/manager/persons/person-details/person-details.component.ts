@@ -227,21 +227,26 @@ export class PersonDetailsComponent implements OnInit {
 
   addTimelinePerson() {
     const dialogRef = this.dialog.open(AddTimelineDialogComponent, {
-      width: '750px'
+      width: '750px',
+      data: {
+        showExisting: true,
+        showNew: false
+      }
     });
 
-    dialogRef.afterClosed().subscribe(timeline => {
+    dialogRef.afterClosed().subscribe(timelineObj => {
       let personTimeline = new PersonTimeline();
       personTimeline.initializeNewPersonTimeline();
 
       personTimeline.person = this.person;
+      personTimeline.timeline = timelineObj.timeline;
 
       this.timelineService.createPersonApiTimeline(personTimeline).subscribe(response => {
         personTimeline.id = response.data.id;
 
         // get the full timeline now that we have it to show on the card. The previous timeline was a
         // truncated version for selection purposes only.
-        this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
+        this.timelineService.getApiTimeline(timelineObj.timeline.id).subscribe(timeline => {
           personTimeline.timeline = timeline;
 
           this.personTimelines.unshift(personTimeline);
