@@ -17,7 +17,7 @@ export class TimelineDisplayComponent implements OnInit {
   @Input() public categoryEvents: Category[];
   @Input() public timeline: Timeline;
 
-  @Output() private returnTimelineSpan: EventEmitter<string>;
+  @Output() private returnTimelineSpan: EventEmitter<number>;
   @Output() private returnTimelineStartEndYears: EventEmitter<Array<number>>;
 
   public cursorLineActive: boolean;
@@ -169,14 +169,20 @@ export class TimelineDisplayComponent implements OnInit {
     const oldestEvent = years[years.length - 1];
     const distance = oldestEvent - earliestEvent;
 
-    this.timelineSpanInYears = distance;
+    // in the case of a timeline with no events
+    if (!distance) {
+      this.timelineSpanInYears = 0;
+    } else {
+      this.timelineSpanInYears = distance;
+    }
 
     this.timelineStart = Math.floor(TimelineDisplayComponent.padTimelineDate(earliestEvent, distance, false));
     this.timelineEnd = Math.ceil(TimelineDisplayComponent.padTimelineDate(oldestEvent, distance, true));
 
     this.timelineLength = this.timelineEnd - this.timelineStart;
 
-    this.returnTimelineSpan.emit(this.timelineSpanInYears.toString());
+    this.returnTimelineSpan.emit(this.timelineSpanInYears);
+
     this.returnTimelineStartEndYears.emit([this.timelineStart, this.timelineEnd]);
   }
 

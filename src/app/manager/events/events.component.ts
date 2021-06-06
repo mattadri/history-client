@@ -102,21 +102,21 @@ export class EventsComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(event => {
-      if (event) {
-        this.eventService.createApiEvent(event).subscribe(response => {
-          event.id = response.data.id;
+    dialogRef.afterClosed().subscribe(eventObj => {
+      if (eventObj.event) {
+        this.eventService.createApiEvent(eventObj.event).subscribe(response => {
+          eventObj.event.id = response.data.id;
 
-          event.formatDates();
-          event.formatYears();
+          eventObj.event.formatDates();
+          eventObj.event.formatYears();
 
-          this.events.unshift(event);
+          this.events.unshift(eventObj.event);
         });
       }
     });
   }
 
-  removeEvent(contentPanel) {
+  removeEvent() {
     const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
       width: '250px',
       data: {

@@ -106,6 +106,8 @@ export class TimelineComponent implements OnInit {
     this.showReturnHeader = false;
     this.returnPath = '';
 
+    this.timelineSpanInYears = 0;
+
     this._setReturnHeader();
 
     const timelineId = this.route.snapshot.paramMap.get('id');
@@ -307,7 +309,10 @@ export class TimelineComponent implements OnInit {
     this.timelineStart = startEndYears[0];
     this.timelineEnd = startEndYears[1];
 
-    this.getRelatedEvents(null, false);
+    // If a new timeline it won't have a start or end value. If so skip related events lookup.
+    if (this.timelineStart && this.timelineEnd) {
+      this.getRelatedEvents(null, false);
+    }
   }
 
   getRelatedEvents(path, isPageLink) {
@@ -371,7 +376,9 @@ export class TimelineComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(event => {
+    dialogRef.afterClosed().subscribe(eventObj => {
+      let event = eventObj.event;
+
       if (event) {
         this.eventService.createApiEvent(event).subscribe(newEventResponse => {
           event.id = newEventResponse.data.id;

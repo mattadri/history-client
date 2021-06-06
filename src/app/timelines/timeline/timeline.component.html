@@ -35,8 +35,8 @@
 
   <button mat-flat-button class="material-icons" color="secondary" (click)="addUser()">+</button>
 
-  <div id="timeline_timespan">
-    <h3 *ngIf="timeline && !isTimelineEditMode">Spans {{this.timelineSpanInYears}} years</h3>
+  <div id="timeline_timespan" *ngIf="!isTimelineEditMode">
+    <h3>Spans {{timelineSpanInYears}} years</h3>
   </div>
 
   <div *ngIf="!timeline.description">
