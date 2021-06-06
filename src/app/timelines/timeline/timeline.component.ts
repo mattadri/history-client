@@ -414,65 +414,48 @@ export class TimelineComponent implements OnInit {
             this.timelineDisplayComponent.setTimeframe();
             this.timelineDisplayComponent.setTimelineEventLocations();
             this.timelineDisplayComponent.setTimelinePersonLocations();
-            // this.timelineDisplayComponent.mapEventsToCategories();
           });
         });
 
       } else { // IF ADDING A NEW EVENT TO THE TIMELINE
         // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
         if (event.label) {
-          // this.eventService.createApiEvent(event).subscribe(response => {
-          //   event.id = response.data.id;
-          //
-          //   event.formatDates();
-          //   event.formatYears();
-          //
-          //   this.eventService.setEvent(event);
-          //
-          //   this.projectService.addApiEventToProject(this.project, event).subscribe((response) => {
-          //     let projectEvent = new ProjectEvent();
-          //     projectEvent.initializeNewProjectEvent();
-          //
-          //     projectEvent.id = response.id;
-          //     projectEvent.event = event;
-          //
-          //     this.project.events.unshift(projectEvent);
-          //   });
-          // });
+          this.eventService.createApiEvent(event).subscribe(newEventResponse => {
+            event.id = newEventResponse.data.id;
+
+            event.formatYears();
+            event.formatDates();
+
+            const timelineEvent = new TimelineEvent();
+            timelineEvent.initializeNewTimelineEvent();
+
+            timelineEvent.event = event;
+
+            this.timelineService.createEventApiTimeline(timelineEvent, this.timeline).subscribe(timelineEventResponse => {
+              timelineEvent.id = timelineEventResponse.data.id;
+
+              this.timeline.events.push(timelineEvent);
+
+              for (const categoryEvent of this.categoryEvents) {
+                if (categoryEvent.id === null) {
+                  if (event.formattedStartYear === event.formattedEndYear) {
+                    categoryEvent.singlePointEvents.push(event);
+                  } else {
+                    categoryEvent.multiPointEvents.push(event);
+                  }
+
+                  break;
+                }
+              }
+
+              this.timelineDisplayComponent.setTimelineStartAndEnd();
+              this.timelineDisplayComponent.setTimeframe();
+              this.timelineDisplayComponent.setTimelineEventLocations();
+              this.timelineDisplayComponent.setTimelinePersonLocations();
+            });
+          });
         }
       }
-
-      // if (event) {
-      //   this.eventService.createApiEvent(event).subscribe(newEventResponse => {
-      //     event.id = newEventResponse.data.id;
-      //
-      //     event.formatYears();
-      //     event.formatDates();
-      //
-      //     const timelineEvent = new TimelineEvent();
-      //     timelineEvent.initializeNewTimelineEvent();
-      //
-      //     timelineEvent.event = event;
-      //
-      //     this.timelineService.createEventApiTimeline(timelineEvent, this.timeline).subscribe(timelineEventResponse => {
-      //       timelineEvent.id = timelineEventResponse.data.id;
-      //
-      //       this.timeline.events.push(timelineEvent);
-      //
-      //       for (const categoryEvent of this.categoryEvents) {
-      //         if (categoryEvent.id === null) {
-      //           if (event.formattedStartYear === event.formattedEndYear) {
-      //             categoryEvent.singlePointEvents.push(event);
-      //           } else {
-      //             categoryEvent.multiPointEvents.push(event);
-      //           }
-      //
-      //           break;
-      //         }
-      //       }
-      //     });
-      //   });
-      // }
     });
   }
 
