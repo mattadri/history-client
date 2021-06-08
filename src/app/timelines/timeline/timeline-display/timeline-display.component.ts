@@ -14,11 +14,11 @@ import {Timeline} from '../../../models/timelines/timeline';
   styleUrls: ['./timeline-display.component.scss', '../timeline.component.scss']
 })
 export class TimelineDisplayComponent implements OnInit {
-  @Input() public categoryEvents: Category[];
   @Input() public timeline: Timeline;
 
   @Output() private returnTimelineSpan: EventEmitter<number>;
   @Output() private returnTimelineStartEndYears: EventEmitter<Array<number>>;
+  @Output() private returnCategoryEvents: EventEmitter<Category[]>;
 
   public cursorLineActive: boolean;
   public cursorLineStyles: object;
@@ -29,6 +29,7 @@ export class TimelineDisplayComponent implements OnInit {
   public timelineStart: number;
   public timelineEnd: number;
   public timelineSpanInYears: number;
+  public categoryEvents: Category[];
 
   private timelineLength: number;
   private  minYearToMonths = 11;
@@ -61,6 +62,7 @@ export class TimelineDisplayComponent implements OnInit {
   constructor() {
     this.returnTimelineSpan = new EventEmitter();
     this.returnTimelineStartEndYears = new EventEmitter();
+    this.returnCategoryEvents = new EventEmitter();
 
     this.cursorLineActive = false;
     this.cursorLineDatePosition = 'above';
@@ -103,10 +105,8 @@ export class TimelineDisplayComponent implements OnInit {
     this.setTimelineEventLocations();
     this.setTimelinePersonLocations();
 
-    if (!this.categoryEvents) {
-      this.categoryEvents = [];
-      this.mapEventsToCategories();
-    }
+    this.categoryEvents = [];
+    this.mapEventsToCategories();
   }
 
   setTimelineStartAndEnd() {
@@ -399,6 +399,8 @@ export class TimelineDisplayComponent implements OnInit {
     this.categoryEvents.push(genericCategory);
 
     this.categoryEvents.reverse();
+
+    this.returnCategoryEvents.emit(this.categoryEvents);
   }
 
   setTimelineEventLocations() {

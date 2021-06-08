@@ -50,7 +50,7 @@ export class TimelineComponent implements OnInit {
   public timeframe: any[];
   public options: Options;
 
-  public categoryEvents: Category[] = [];
+  public categoryEvents: Category[];
 
   public singlePointEvents = [];
   public multiPointEvents = [];
@@ -67,31 +67,6 @@ export class TimelineComponent implements OnInit {
 
   public showReturnHeader: boolean;
   public returnPath: string;
-
-  private eventColorClasses = [
-    '#39ab28',
-    '#23c28f',
-    '#3b99ca',
-    '#2b66c4',
-    '#554db7',
-    '#715ab7',
-    '#a53ab7',
-    '#b73560',
-    '#c40c09',
-    '#d5531e',
-    '#d48e01',
-    '#6fab05',
-    '#028014',
-    '#009673',
-    '#0461a9',
-    '#354cb0',
-    '#5747b0',
-    '#6f2da6',
-    '#b74783',
-    '#da392f',
-    '#ee6e1f',
-    '#c39c3b',
-  ];
 
   constructor(private route: ActivatedRoute,
               private timelineService: TimelineService,
@@ -126,9 +101,7 @@ export class TimelineComponent implements OnInit {
       this.timelineService.getApiTimelineUsers(null, this.timeline).subscribe((response) => {
         this.timelineUsers = response.users;
       });
-
-      this.mapEventsToCategories();
-
+      
       this.setPersons();
     });
   }
@@ -187,106 +160,8 @@ export class TimelineComponent implements OnInit {
     this.timelineSpanInYears = span;
   }
 
-  mapEventsToCategories() {
-    const eventIdsUsed = [];
-    let backupColorArray = [];
-
-    this.eventColorClasses.reverse();
-
-    // assign the events to each respective category
-    for (const category of this.timeline.categories) {
-      if (category.events.length) {
-        const newCategory = new Category();
-
-        newCategory.id = category.id;
-        newCategory.label = category.label;
-
-        for (const categoryEvent of category.events) {
-          const eventId = categoryEvent[1];
-
-          for (const timelineEvent of this.timeline.events) {
-            if (timelineEvent.event.id === eventId) {
-              if (timelineEvent.event.formattedStartDate === timelineEvent.event.formattedEndDate) {
-                newCategory.singlePointEvents.push(timelineEvent.event);
-
-                eventIdsUsed.push(eventId);
-
-              } else {
-                if (this.eventColorClasses.length) {
-                  const color = this.eventColorClasses.pop();
-
-                  timelineEvent.event.colorClass = color;
-                  backupColorArray.push(color);
-
-                  if (!this.eventColorClasses.length) {
-                    for (const backupColor of backupColorArray) {
-                      this.eventColorClasses.push(backupColor);
-                    }
-
-                    this.eventColorClasses.reverse();
-
-                    backupColorArray = [];
-                  }
-                }
-
-                newCategory.multiPointEvents.push(timelineEvent.event);
-
-                eventIdsUsed.push(eventId);
-              }
-            }
-          }
-        }
-
-        // sort the events in a category oldest to newest
-        if (newCategory.multiPointEvents.length) {
-          newCategory.multiPointEvents.sort((a, b) => {
-            return a.startYear - b.startYear;
-          });
-        }
-
-        this.categoryEvents.push(newCategory);
-      }
-    }
-
-    // for any events not assigned to category create a generic category to contain them
-    const genericCategory = new Category();
-
-    genericCategory.id = null;
-    genericCategory.label = '';
-
-    if (this.timeline.events && this.timeline.events.length) {
-      for (const timelineEvent of this.timeline.events) {
-        if (!eventIdsUsed.includes(timelineEvent.event.id)) {
-          if (timelineEvent.event.formattedStartDate === timelineEvent.event.formattedEndDate) {
-            genericCategory.singlePointEvents.push(timelineEvent.event);
-
-          } else {
-            if (this.eventColorClasses.length) {
-              const color = this.eventColorClasses.pop();
-
-              timelineEvent.event.colorClass = color;
-              backupColorArray.push(color);
-
-              if (!this.eventColorClasses.length) {
-                for (const backupColor of backupColorArray) {
-                  this.eventColorClasses.push(backupColor);
-                }
-
-                this.eventColorClasses.reverse();
-
-                backupColorArray = [];
-              }
-            }
-
-            genericCategory.multiPointEvents.push(timelineEvent.event);
-          }
-        }
-      }
-    }
-
-    this.categoryEvents.push(genericCategory);
-
-    this.categoryEvents.reverse();
+  setCategoryEvents(categoryEvents) {
+    this.categoryEvents = categoryEvents;
   }
 
   setPersons() {

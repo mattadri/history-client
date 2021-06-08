@@ -63,7 +63,7 @@ export class TimelineEventDetailsComponent {
       }
 
       function idFound(ids) {
-        return ids[1] === self.data.timelineEvent.id.toString();
+        return ids[1] === self.data.timelineEvent.event.id.toString();
       }
 
       const categoryEventIndex = category.events.findIndex(idFound);

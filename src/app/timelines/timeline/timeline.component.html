@@ -65,9 +65,9 @@
 
   <app-timeline-display
     [timeline]="timeline"
-    [categoryEvents]="categoryEvents"
     (returnTimelineSpan)="setTimelineSpan($event)"
-    (returnTimelineStartEndYears)="setRelatedEvents($event)">
+    (returnTimelineStartEndYears)="setRelatedEvents($event)"
+    (returnCategoryEvents)="setCategoryEvents($event)">
   </app-timeline-display>
 
   <mat-tab-group>
