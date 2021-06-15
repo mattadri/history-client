@@ -54,3 +54,24 @@
   }
 
 }
+
+.app-sidebar {
+  border: 1px solid $color-gray-scale-200;
+  .mat-sidenav {
+    width: 180px;
+  }
+  .mat-subheader {
+    padding-bottom: 0;
+    font-size: 14px;
+    color: $color-medium-150;
+  }
+  .mat-list-base .mat-list-item {
+    font-size: 14px
+  }
+  .mat-list-icon {
+    font-size: 23px;
+  }
+  .mat-list-base .mat-list-item.mat-list-item-with-avatar {
+    height: 40px;
+  }
+}

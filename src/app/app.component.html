@@ -71,7 +71,86 @@
   </nav>
 </header>
 
-<div class="main-content">
-  <router-outlet></router-outlet>
-</div>
+<mat-sidenav-container class="app-sidebar">
+  <mat-sidenav mode="side" opened>
+
+      <a class="app-name" routerLink="/timelines" (click)="addActiveClass($event)">HDM</a>
+      
+      <div matSubheader>My Content</div>
+      <mat-nav-list role="list">
+        <a mat-list-item href="/projects">
+          <mat-icon class="icon-pre" matListIcon>folder_special</mat-icon>
+          Projects
+        </a>
+
+        <a mat-list-item href="/timelines">
+          <mat-icon class="icon-pre" matListIcon>timeline</mat-icon>
+          Timelines
+        </a>
+
+        <a mat-list-item href="/essays">
+          <mat-icon class="icon-pre" matListIcon>subject</mat-icon>
+          Essays
+        </a>
+
+        <a mat-list-item href="/brainstorming">
+          <mat-icon class="icon-pre" matListIcon>bubble_chart</mat-icon>
+          Brainstorms
+        </a>
+      </mat-nav-list>
+
+      <mat-divider></mat-divider>
+      <div mat-subheader>Library</div>
+      <mat-nav-list role="list">
+        <a mat-list-item href="/manager/events">
+          <mat-icon class="icon-pre" matListIcon>event</mat-icon>
+          Events
+        </a>
+
+        <a mat-list-item href="/manager/persons">
+          <mat-icon class="icon-pre" matListIcon>people</mat-icon>
+          People
+        </a>
+
+        <a mat-list-item href="/manager/charts">
+          <mat-icon class="icon-pre" matListIcon>equalizer</mat-icon>
+          Charts
+        </a>
+
+        <a mat-list-item href="/manager/sources">
+          <mat-icon class="icon-pre" matListIcon>bookmark_border</mat-icon>
+          Sources
+        </a>
+
+        <a mat-list-item href="/manager/authors">
+          <mat-icon class="icon-pre" matListIcon>account_box</mat-icon>
+          Authors
+        </a>
+      </mat-nav-list>
+
+      <mat-divider></mat-divider>
+      <div mat-subheader>Settings</div>
+      <mat-nav-list>
+        <a mat-list-item href="user">
+          <mat-icon class="icon-pre" matListIcon>people_outlined</mat-icon>
+          Users
+        </a>
+
+        <a mat-list-item (click)="logout()">
+          <mat-icon class="icon-pre" matListIcon>power_settings_new_icon</mat-icon>
+          Log Out
+        </a>
+
+        
+      </mat-nav-list>
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+
 
