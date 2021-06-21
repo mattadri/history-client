@@ -1,15 +1,10 @@
-<mat-card>
-  <button *ngIf="canDelete" mat-icon-button class="material-icons" (click)="doRemovePerson()">delete</button>
-
-  <div routerLink="/manager/persons/{{person.id}}">
-    <img class="person-image" src="{{person.image}}">
-
-    <mat-card-title>{{person.firstName}} {{person.lastName}}</mat-card-title>
-    <mat-card-content>
-      <div class="mat-card-subtitle">
-        <span>{{person.formattedBirthYear}} - <span>{{person.formattedDeathYear}}</span>
-        </span>
-      </div>
-    </mat-card-content>
-  </div>
+<mat-card routerLink="/manager/persons/{{person.id}}">
+  <mat-card-title>{{person.firstName}} {{person.lastName}}</mat-card-title>
+  <mat-card-subtitle>
+    <span>{{person.formattedBirthYear}}</span> - <span>{{person.formattedDeathYear}}</span>
+  </mat-card-subtitle>
+  <img class="person-image" src="{{person.image}}">
+  <mat-card-actions>
+    <button *ngIf="canDelete" color="warn" mat-icon-button class="material-icons" (click)="doRemovePerson()">delete</button>
+  </mat-card-actions>
 </mat-card>

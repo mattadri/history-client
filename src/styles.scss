@@ -1,6 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
-  @import 'assets/fonts/iconfont/material-icons.scss';
+@import 'assets/fonts/iconfont/material-icons.scss';
 @import 'styles/_variables.scss';
 @import 'styles/utilities';
 @import 'styles/_typography.scss';
@@ -9,6 +9,7 @@
 @import 'styles/_grid-list.scss';
 @import 'styles/_search.scss';
 @import 'styles/_drawer-bottom.scss';
+@import 'styles/chips.scss';
 
 // makes the bottomsheet that shows the timeline when clicked from text link wide
 .timeline-bottomsheet-width {

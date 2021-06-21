@@ -14,6 +14,12 @@
   border: 1px solid $color-gray-scale-200;
   .mat-sidenav {
     width: 180px;
+    .mat-icon {
+      color: $color-brand;
+    }
+    .mat-list-base .mat-list-item {
+      color: $color-gray-scale-500;
+    }
   }
   .mat-subheader {
     padding-bottom: 0;

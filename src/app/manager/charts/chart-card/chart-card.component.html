@@ -1,9 +1,8 @@
-<mat-card>
-  <button *ngIf="canDelete" mat-icon-button class="material-icons" (click)="doRemoveChart()">delete</button>
-
-  <div routerLink="/manager/charts/{{chart.id}}">
-    <mat-card-content>
-      <app-chart-display [chart]="chart"></app-chart-display>
-    </mat-card-content>
-  </div>
+<mat-card routerLink="/manager/charts/{{chart.id}}">
+  <mat-card-content>
+    <app-chart-display [chart]="chart"></app-chart-display>
+  </mat-card-content>
+  <mat-card-actions>
+    <button *ngIf="canDelete" mat-icon-button color="warn" class="material-icons" (click)="doRemoveChart()">delete</button>
+  </mat-card-actions>
 </mat-card>

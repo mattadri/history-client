@@ -14,15 +14,18 @@ html, body { height: 100%; }
 
 body {
   font-family: $font-family-sans-serif;
-  background-color: $color-lightest;
+  background-color: $color-gray-scale-100;
   color: $font-color-default;
   .mat-drawer-container {
-    background-color: $color-gray-scale-25;
+    background-color: $color-gray-scale-100;
+  }
+  .mat-drawer-content {
+    height: 100vh;
   }
 }
 
 .app-main-content {
-  background-color: $color-light;
+  background-color: $color-gray-scale-100;
 }
 
 .app-body-content {

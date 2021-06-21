@@ -1,13 +1,10 @@
-<mat-card>
-  <button *ngIf="canDelete" mat-icon-button class="material-icons" (click)="doRemoveBrainstorm()">delete</button>
-
-  <div routerLink="/brainstorming/{{brainstorm.id}}">
-    <img class="brainstorm-image" src="{{brainstorm.image}}">
-
-    <mat-card-title>{{brainstorm.title}}</mat-card-title>
-
-    <mat-card-content>
-      <div class="mat-card-content" *ngIf="brainstorm.description">{{brainstorm.description}}</div>
-    </mat-card-content>
-  </div>
+<mat-card routerLink="/brainstorming/{{brainstorm.id}}">
+  <mat-card-title>{{brainstorm.title}}</mat-card-title>
+  <img class="brainstorm-image" src="{{brainstorm.image}}">
+  <mat-card-content>
+    <div class="mat-card-content" *ngIf="brainstorm.description">{{brainstorm.description}}</div>
+  </mat-card-content>
+  <mat-card-actions>
+    <button *ngIf="canDelete" color="warn" mat-icon-button class="material-icons" (click)="doRemoveBrainstorm()">delete</button>
+  </mat-card-actions>
 </mat-card>
