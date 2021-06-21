@@ -11,6 +11,7 @@
         <div class="app-content-toolbar" *ngIf="!isEssayTitleEditMode">
           <h1 *ngIf="essay.title">{{essay.title}} <span *ngIf="essay.type && essay.type.label">({{essay.type.label}})</span></h1>
           <button mat-flat-button class="material-icons" (click)="setEssayTitleEditMode()">edit</button>
+          <button mat-icon-button class="material-icons" type="button" (click)="removeEssay()">delete</button>
           <button mat-flat-button class="material-icons" (click)="toggleContentPanel(essayManager)">{{essayScreenSize}}</button>
         </div>
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs';
@@ -52,6 +52,7 @@ export class EventDetailsComponent implements OnInit {
   public returnPath: string;
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private eventService: EventService,
               private timelineService: TimelineService,
               private sourceService: SourceService,
@@ -173,6 +174,27 @@ export class EventDetailsComponent implements OnInit {
   editEvent() {
     return this.eventService.patchApiEvent(this.event).subscribe(() => {
       this.isEditEventMode = false;
+    });
+  }
+
+  removeEvent() {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the event ',
+        content: '' +
+        '<li>' + this.event.notes.length.toString() + ' notes will be removed.</li>'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.eventService.removeApiEvent(this.event).subscribe(() => {
+          this.eventService.removeEvent(this.event);
+
+          this.router.navigate(['/manager/events']).then();
+        });
+      }
     });
   }
 

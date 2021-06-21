@@ -27,6 +27,7 @@
     <button *ngIf="!isTimelineEditMode" mat-icon-button class="material-icons" (click)="activateTimelineEditMode()">
       edit
     </button>
+    <button *ngIf="!isTimelineEditMode" mat-icon-button class="material-icons" type="button" (click)="removeTimeline()">delete</button>
   </div>
 
   <div *ngFor="let user of timelineUsers">

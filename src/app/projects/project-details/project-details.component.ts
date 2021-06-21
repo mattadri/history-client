@@ -54,15 +54,21 @@ export class ProjectDetailsComponent implements OnInit {
 
     this.projectUsers = [];
 
-    this.projectService.getApiProject(projectId).subscribe((project) => {
-      this.project = project;
+    this.project = this.projectService.getProject(projectId);
 
-      this.projectService.getApiProjectUsers('/project_users', this.project).subscribe((response) => {
-        for (const user of response.users) {
-          this.projectUsers.push(user);
-        }
+    if (!this.project) {
+      this.projectService.getApiProject(projectId).subscribe((project) => {
+        this.project = project;
+
+        this.projectService.getApiProjectUsers('/project_users', this.project).subscribe((response) => {
+          for (const user of response.users) {
+            this.projectUsers.push(user);
+          }
+        });
+
+        this.projectService.setProject(this.project);
       });
-    });
+    }
   }
 
   ngOnInit(): void {
@@ -277,8 +283,6 @@ export class ProjectDetailsComponent implements OnInit {
         // IF ADDING AN EXISTING CHART TO THE PROJECT
         if (isExisting) {
           this.projectService.addApiChartToProject(this.project, chart).subscribe((response) => {
-            console.log(response);
-
             let projectChart = new ProjectChart();
             projectChart.initializeNewProjectChart();
 
@@ -369,8 +373,6 @@ export class ProjectDetailsComponent implements OnInit {
         // IF ADDING AN EXISTING BRAINSTORM TO THE PROJECT
         if (isExisting) {
           this.projectService.addApiBrainstormToProject(this.project, brainstorm).subscribe((response) => {
-            console.log(response);
-
             let projectBrainstorm = new ProjectBrainstorm();
             projectBrainstorm.initializeNewProjectBrainstorm();
 
@@ -389,8 +391,6 @@ export class ProjectDetailsComponent implements OnInit {
               this.brainstormService.setBrainstorm(brainstorm);
 
               this.projectService.addApiBrainstormToProject(this.project, brainstorm).subscribe((response) => {
-                console.log(response);
-
                 let projectBrainstorm = new ProjectBrainstorm();
                 projectBrainstorm.initializeNewProjectBrainstorm();
 

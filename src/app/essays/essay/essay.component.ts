@@ -6,7 +6,7 @@ import {Component, ElementRef, OnInit, AfterViewInit, Renderer2, ViewEncapsulati
 import {FormControl} from '@angular/forms';
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import FroalaEditor from 'froala-editor/js/froala_editor.min.js';
 
@@ -40,6 +40,7 @@ import {MessageDialogComponent} from '../../utilities/message-dialog/message-dia
 import {User} from '../../models/user';
 import {MatDialog} from '@angular/material/dialog';
 import {UserService} from '../../services/user.service';
+import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
   selector: 'app-essay',
@@ -127,6 +128,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
               public dialog: MatDialog,
               private renderer: Renderer2,
               private route: ActivatedRoute,
+              private router: Router,
               private essayService: EssayService,
               private sourceService: SourceService,
               private eventService: EventService,
@@ -663,6 +665,26 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
         this.essayService.addApiUserToEssay(essayUser).subscribe(() => {
           this.essayUsers.push(user);
+        });
+      }
+    });
+  }
+
+  removeEssay() {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the essay ',
+        content: ''
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.essayService.removeApiEssay(this.essay).subscribe(() => {
+          this.essayService.removeEssay(this.essay);
+
+          this.router.navigate(['/essays']).then();
         });
       }
     });

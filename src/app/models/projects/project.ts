@@ -6,7 +6,7 @@ import {ProjectEvent} from './project-event';
 import {ProjectChart} from './project-chart';
 
 export class Project {
-  id: number;
+  id: string;
   label: string;
 
   essays: ProjectEssay[];
@@ -21,7 +21,7 @@ export class Project {
     this.label = project.attributes.label;
 
     // map essays if they exist
-    if (project.attributes.project_essay.data && project.attributes.project_essay.data.length) {
+    if (project.attributes.project_essay && project.attributes.project_essay.data && project.attributes.project_essay.data.length) {
       for (const projectEssay of project.attributes.project_essay.data) {
         let essay = new ProjectEssay();
         essay.initializeNewProjectEssay();
@@ -32,7 +32,7 @@ export class Project {
     }
 
     // map timelines if they exist
-    if (project.attributes.project_timeline.data && project.attributes.project_timeline.data.length) {
+    if (project.attributes.project_timeline && project.attributes.project_timeline.data && project.attributes.project_timeline.data.length) {
       for (const projectTimeline of project.attributes.project_timeline.data) {
         let timeline = new ProjectTimeline();
         timeline.initializeNewProjectTimeline();
@@ -43,7 +43,7 @@ export class Project {
     }
 
     // map brainstorms if they exist
-    if (project.attributes.project_brainstorm.data && project.attributes.project_brainstorm.data.length) {
+    if (project.attributes.project_brainstorm && project.attributes.project_brainstorm.data && project.attributes.project_brainstorm.data.length) {
       for (const projectBrainstorm of project.attributes.project_brainstorm.data) {
         let brainstorm = new ProjectBrainstorm();
         brainstorm.initializeNewProjectBrainstorm();
@@ -54,7 +54,7 @@ export class Project {
     }
 
     // map persons if they exist
-    if (project.attributes.project_person.data && project.attributes.project_person.data.length) {
+    if (project.attributes.project_person && project.attributes.project_person.data && project.attributes.project_person.data.length) {
       for (const projectPerson of project.attributes.project_person.data) {
         let person = new ProjectPerson();
         person.initializeNewProjectPerson();
@@ -65,7 +65,7 @@ export class Project {
     }
 
     // map events if they exist
-    if (project.attributes.project_event.data && project.attributes.project_event.data.length) {
+    if (project.attributes.project_event && project.attributes.project_event.data && project.attributes.project_event.data.length) {
       for (const projectEvent of project.attributes.project_event.data) {
         let event = new ProjectEvent();
         event.initializeNewProjectEvent();
@@ -76,7 +76,7 @@ export class Project {
     }
 
     // map charts if they exist
-    if (project.attributes.project_chart.data && project.attributes.project_chart.data.length) {
+    if (project.attributes.project_chart && project.attributes.project_chart.data && project.attributes.project_chart.data.length) {
       for (const projectChart of project.attributes.project_chart.data) {
         let chart = new ProjectChart();
         chart.initializeNewProjectChart();

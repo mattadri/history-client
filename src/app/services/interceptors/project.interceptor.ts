@@ -53,10 +53,10 @@ export class ProjectInterceptor implements HttpInterceptor {
         } else if (req.headers.get('type') === 'user_projects') {
           this.projects = [];
 
-          for (const data of event.body.data) {
+          for (const data of event.body.included) {
             this.project = new Project();
             this.project.initializeNewProject();
-            this.project.mapProject(data.attributes.project.data);
+            this.project.mapProject(data);
 
             this.projects.push(this.project);
           }

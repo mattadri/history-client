@@ -331,6 +331,12 @@ export class EssayService {
     });
   }
 
+  removeApiEssay(essay: Essay): Observable<any> {
+    return this.http.delete(environment.apiUrl + '/essays/' + essay.id, {
+      headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
+    });
+  }
+
   removeApiNote(essayNote: EssayNote): Observable<any> {
     return this.http.delete(environment.apiUrl + '/essay_notes/' + essayNote.id, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')

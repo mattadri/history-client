@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import { MatDialog } from '@angular/material/dialog';
 
@@ -22,6 +22,7 @@ import {MessageDialogComponent} from '../../utilities/message-dialog/message-dia
 import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-dialog.component';
 import {UserService} from '../../services/user.service';
 import {TimelineDisplayComponent} from './timeline-display/timeline-display.component';
+import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
   selector: 'app-timeline',
@@ -69,6 +70,7 @@ export class TimelineComponent implements OnInit {
   public returnPath: string;
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private timelineService: TimelineService,
               private eventService: EventService,
               private userService: UserService,
@@ -101,7 +103,7 @@ export class TimelineComponent implements OnInit {
       this.timelineService.getApiTimelineUsers(null, this.timeline).subscribe((response) => {
         this.timelineUsers = response.users;
       });
-      
+
       this.setPersons();
     });
   }
@@ -243,6 +245,26 @@ export class TimelineComponent implements OnInit {
   editTimeline() {
     this.timelineService.patchApiTimeline(this.timeline).subscribe(() => {
       this.isTimelineEditMode = false;
+    });
+  }
+
+  removeTimeline() {
+    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
+      width: '250px',
+      data: {
+        label: 'the timeline ',
+        content: ''
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(doClose => {
+      if (doClose) {
+        this.timelineService.removeApiTimeline(this.timeline).subscribe(() => {
+          this.timelineService.removeTimeline(this.timeline);
+
+          this.router.navigate(['/timelines']).then();
+        });
+      }
     });
   }
 

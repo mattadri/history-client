@@ -14,7 +14,9 @@
 
   <div class="essay-container">
     <app-essay-card
-      *ngFor="let essay of essays" [essay]="essay"
+      *ngFor="let essay of essays"
+      [essay]="essay"
+      [canDelete]="false"
       class="app-card">
     </app-essay-card>
   </div>

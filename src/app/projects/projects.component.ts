@@ -3,7 +3,6 @@ import {ProjectService} from '../services/project.service';
 import {Project} from '../models/projects/project';
 import {AddProjectDialogComponent} from '../utilities/add-project-dialog/add-project-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
-import {MessageDialogComponent} from '../utilities/message-dialog/message-dialog.component';
 import {ConfirmRemovalComponent} from '../utilities/confirm-removal/confirm-removal.component';
 
 @Component({
@@ -30,12 +29,8 @@ export class ProjectsComponent implements OnInit {
   }
 
   getProjects(path, userId) {
-    this.projectService.getApiProjects(path, userId).subscribe((response) => {
-      for (const project of response.projects) {
-        this.projectService.setProject(project);
-      }
-
-      this.projects = this.projectService.getProjects();
+    this.projectService.getApiProjects(path, userId, null, null, ['project_rel'], ['label'], null, false, null, false).subscribe((response) => {
+      this.projects = response.projects;
     });
   }
 

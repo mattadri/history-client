@@ -116,25 +116,6 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  removeEvent() {
-    const dialogRef = this.dialog.open(ConfirmRemovalComponent, {
-      width: '250px',
-      data: {
-        label: 'the event ',
-        content: '' +
-        '<li>' + this.event.notes.length.toString() + ' notes will be removed.</li>'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(doClose => {
-      if (doClose) {
-        this.eventService.removeApiEvent(this.event).subscribe(() => {
-          this.eventService.removeEvent(this.event);
-        });
-      }
-    });
-  }
-
   turnPage(event) {
     if (event.pageIndex < event.previousPageIndex) {
       this.getEvents(this.previousPage, null, null);

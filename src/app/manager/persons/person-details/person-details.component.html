@@ -8,6 +8,7 @@
       <div class="subheading">
         Person
         <button *ngIf="!isEditPersonMode" mat-icon-button class="material-icons" type="button" (click)="activateEditPersonMode()">edit</button>
+        <button mat-icon-button type="button" class="material-icons" (click)="removePerson()">delete</button>
       </div>
 
       <div *ngIf="!isEditPersonMode">
@@ -35,7 +36,6 @@
           <div class="app-drawer-header">
             <div class="app-drawer-tools">
               <button mat-icon-button type="submit" class="material-icons">save</button>
-              <button mat-icon-button type="button" class="material-icons" (click)="removePerson()">delete</button>
               <button mat-icon-button type="button" class="material-icons" (click)="deactivateEditPersonMode()">close</button>
 
             </div>
@@ -186,7 +186,7 @@
           <button mat-flat-button color="secondary" (click)="addTimelinePerson()">+ Add a Timeline</button>
       </div>
 
-      <div class="app-cards-container cards-large">
+      <div class="app-cards-container cards-xlarge">
         <app-timeline-card
           class="app-card"
           *ngFor="let personTimeline of personTimelines"

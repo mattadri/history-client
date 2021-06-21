@@ -276,6 +276,12 @@ export class TimelineService {
     });
   }
 
+  removeApiTimeline(timeline: Timeline): Observable<any> {
+    return this.http.delete(environment.apiUrl + '/timelines/' + timeline.id, {
+      headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
+    });
+  }
+
   removeCategoryApiTimeline(categoryId: number): Observable<any> {
     return this.http.delete(environment.apiUrl + '/timeline_categories/' + categoryId, {
       headers: new HttpHeaders().set('Accept', 'application/vnd.api+json')
@@ -306,5 +312,13 @@ export class TimelineService {
 
   getTimelines() {
     return this.timelines;
+  }
+
+  removeTimeline(timeline: Timeline) {
+    for (let i = 0; i < this.timelines.length; i++) {
+      if (this.timelines[i].id === timeline.id) {
+        this.timelines.splice(i, 1);
+      }
+    }
   }
 }

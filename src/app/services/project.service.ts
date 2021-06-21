@@ -58,6 +58,14 @@ export class ProjectService {
     return this.projects;
   }
 
+  getProject(projectId: string): Project {
+    for (const project of this.projects) {
+      if (project.id === projectId) {
+        return project;
+      }
+    }
+  }
+
   createApiProject(project: Project): Observable<any> {
     this.projectPost = new ProjectPost();
     this.projectPost.mapToPost(project, false);
@@ -73,32 +81,116 @@ export class ProjectService {
     });
   }
 
-  getApiProjects(path, userId): Observable<ProjectResponse> {
-    this.projects = [];
-
-    if (!path) {
-      path = '/projects';
-    }
-
+  getApiProjects(path,
+                 userId,
+                 pageSize: string,
+                 pageNumber: string,
+                 include: Array<string>,
+                 fields: Array<string>,
+                 sort: Array<string>,
+                 sortDescending: boolean,
+                 additionalFilters: Array<Object>,
+                 isAnotherPage: boolean): Observable<ProjectResponse> {
     let type = 'projects';
-    let filter = [];
 
-    if (userId) {
-      let userFilter = {
-        name: 'user_rel',
-        op: 'has',
-        val: {
-          name: 'id',
-          op: 'eq',
-          val: userId
+    // if a next of previous page is being retrieved just all the path as is
+    if (!isAnotherPage) {
+      if (!path) {
+        path = '/projects';
+      }
+
+      // default page size is 20 records per page
+      if (!pageSize) {
+        pageSize = '20';
+      }
+
+      // default page number to 1
+      if (!pageNumber) {
+        pageNumber = '1';
+      }
+
+      let filter = [];
+
+      if (userId) {
+        let userFilter = {
+          name: 'user_rel',
+          op: 'has',
+          val: {
+            name: 'id',
+            op: 'eq',
+            val: userId
+          }
+        };
+
+        filter.push(userFilter);
+
+        path = '/project_users';
+
+        type = 'user_projects';
+      }
+
+      path = path + '?page[size]=' + pageSize;
+
+      path = path + '&page[number]=' + pageNumber;
+
+      // include any related objects
+      if (include && include.length) {
+        path = path + '&include=';
+
+        for (let i = 0; i < include.length; i++) {
+          path = path + include[i];
+
+          if (i < include.length - 1) {
+            path = path + ',';
+          }
         }
-      };
+      }
 
-      filter.push(userFilter);
+      // add any fields filter to the path
+      if (fields && fields.length) {
+        path = path + '&fields[project]=';
 
-      path = '/project_users?filter=' + JSON.stringify(filter);
+        for (let i = 0; i < fields.length; i++) {
+          path = path + fields[i];
 
-      type = 'user_projects';
+          if (i < fields.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // add any sorting if requested
+      if (sort && sort.length) {
+        path = path + '&sort=';
+
+        if (sortDescending) {
+          path = path + '-';
+        }
+
+        for (let i = 0; i < sort.length; i++) {
+          path = path + sort[i];
+
+          if (i < sort.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // lastly tack on any additional filters passed
+      if (additionalFilters && additionalFilters.length) {
+        for (const additionalFilter of additionalFilters) {
+          filter.push(additionalFilter);
+        }
+      }
+
+      if (filter.length) {
+        path = path + '&filter=' + JSON.stringify(filter);
+      }
+    } else {
+      // set the type to user if the next page are user timelines
+      if (path.includes('/project_users')) {
+        type = 'user_projects';
+      }
     }
 
     return this.http.get<ProjectResponse>(environment.apiUrl + path, {

@@ -8,6 +8,7 @@
       <div class="subheading">
         Event
         <button *ngIf="!isEditEventMode" mat-icon-button class="material-icons" type="button" (click)="activateEditEventMode()">edit</button>
+        <button *ngIf="!isEditEventMode" mat-icon-button class="material-icons" type="button" (click)="removeEvent()">delete</button>
       </div>
 
       <div *ngIf="!isEditEventMode">
@@ -164,7 +165,7 @@
       </div>
 
 <!-- TIMELINES -->
-      <div class="app-cards-container cards-large" *ngIf="eventTimelines && eventTimelines.length">
+      <div class="app-cards-container cards-xlarge" *ngIf="eventTimelines && eventTimelines.length">
         <app-timeline-card
           class="app-card"
           *ngFor="let timelineEvent of eventTimelines"

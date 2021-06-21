@@ -24,7 +24,6 @@ export class EssaysComponent implements OnInit {
   private allEssays: Essay[];
 
   public isCreateEssayMode: boolean;
-  public isCreateTimelineMode: boolean;
 
   public totalResults: number;
   public nextPage: string;
