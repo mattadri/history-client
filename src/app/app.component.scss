@@ -1,61 +1,16 @@
 @import '../styles/_variables.scss';
 
-.app-main-nav {
-  display: flex;
-  justify-content: center;
-  background-color: $color-gray-scale-600;
-  color: $color-lightest;
-  list-style: none;
-  height: 60px;
-  padding: 0 5%;
-  box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.3);
-
-  nav {
-    display: flex;
-    align-items: center;
-
-    .app-name {
-      color: white;
-      opacity: 1;
-      font-weight: bold;
-      font-size: 1.2rem;
-      width: 9rem;
-      }
-
-    li {
-      height: 100%;
-      margin-right: 82px;
-      a {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        border-bottom: solid 4px transparent;
-        &.active {
-          border-bottom-color: $color-active;
-          opacity: 1;
-        }
-      }
-    }
-
-    a {
-      color: $color-lightest;
-      opacity: 0.7;
-      &:hover {
-        opacity: 1;
-        text-decoration: none;
-      }
-
-    }
-
-    button {
-      margin-left: 30px;
-
+.app-sidebar {
+  .app-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: $color-darkest;
+    margin: 0.5rem 1rem;
+    display: block;
+    &:hover {
+      text-decoration: none;
     }
   }
-
-}
-
-.app-sidebar {
   border: 1px solid $color-gray-scale-200;
   .mat-sidenav {
     width: 180px;
@@ -69,7 +24,7 @@
     font-size: 14px
   }
   .mat-list-icon {
-    font-size: 23px;
+    font-size: 20px;
   }
   .mat-list-base .mat-list-item.mat-list-item-with-avatar {
     height: 40px;
