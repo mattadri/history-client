@@ -1,7 +1,6 @@
-<mat-card>
-  <button *ngIf="canDelete" mat-icon-button class="material-icons" (click)="doRemoveProject()">delete</button>
-
-  <div routerLink="/projects/{{project.id}}">
-    <mat-card-title>{{project.label}}</mat-card-title>
-  </div>
+<mat-card routerLink="/projects/{{project.id}}">
+  <mat-card-title>{{project.label}}</mat-card-title>
+  <mat-card-actions>
+    <button *ngIf="canDelete" mat-icon-button class="material-icons" color="warn" (click)="doRemoveProject()">delete</button>
+  </mat-card-actions>
 </mat-card>

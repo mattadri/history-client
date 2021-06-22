@@ -1,6 +1,7 @@
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { Component } from '@angular/core';
 
 describe('AppComponent', () => {
   beforeEach(waitForAsync(() => {
@@ -33,3 +34,4 @@ describe('AppComponent', () => {
     expect(compiled.querySelector('.content span').textContent).toContain('history-app app is running!');
   });
 });
+

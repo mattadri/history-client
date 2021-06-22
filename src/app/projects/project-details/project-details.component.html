@@ -1,18 +1,29 @@
-<div *ngIf="project">
-  <h1>{{project.label}}</h1>
+<mat-sidenav-container>
+  <div *ngIf="project" class="app-body-content">
+    <h1>{{project.label}}</h1>
 
-  <div *ngFor="let user of projectUsers">
-    <span>{{user.firstName}}</span> <span> {{user.lastName}}</span>
-  </div>
-
-  <button mat-flat-button class="material-icons" color="secondary" (click)="addUser()">+</button>
-
-  <div class="app-body-content">
-    <div class="app-content-toolbar">
-      <h1>Essays</h1>
-      <button mat-flat-button class="material-icons" color="primary" (click)="addEssay()">add</button>
+    <div class="chip-users margin-bottom">
+      <div *ngFor="let user of projectUsers">
+        <mat-chip-list>
+          <mat-chip>
+            <span>{{user.firstName}}</span> 
+            <span class="user-lastname">{{user.lastName}}</span>
+          </mat-chip>
+        </mat-chip-list>
+      </div>
+      <button mat-flat-button class="material-icons" color="secondary" (click)="addUser()">add</button>
     </div>
 
+    <mat-divider></mat-divider>
+
+    <div class="app-content-toolbar margin-top">
+      <h2>Essays</h2>
+      <button mat-flat-button [matMenuTriggerFor]="menuEssays" class="material-icons" color="primary" >add</button>
+        <mat-menu #menuEssays="matMenu">
+          <button mat-menu-item (click)="addEssay()">New Essay</button>
+          <button mat-menu-item>Existing Essay</button>
+        </mat-menu>
+    </div>
     <div class="essay-container">
       <app-essay-card
         class="app-card"
@@ -21,16 +32,13 @@
         [canDelete]="true" (removeEssay)="deleteEssay(essay)">
       </app-essay-card>
     </div>
-  </div>
 
-  <hr>
+    <mat-divider></mat-divider>
 
-  <div class="app-body-content">
-    <div class="app-content-toolbar">
-      <h1>Timelines</h1>
+    <div class="app-content-toolbar margin-top">
+      <h2>Timelines</h2>
       <button mat-flat-button class="material-icons" color="primary" (click)="addProjectTimeline()">add</button>
     </div>
-
     <div class="app-cards-container cards-xlarge">
       <app-timeline-card
         class="app-card"
@@ -39,14 +47,12 @@
         [canDelete]="true"
         (removeTimeline)="deleteTimeline(timeline)">
       </app-timeline-card>
-    </div>
-  </div>
+    </div>  
 
-  <hr>
-
-  <div class="app-body-content">
-    <div class="app-content-toolbar">
-      <h1>Events</h1>
+    <mat-divider></mat-divider>
+    
+    <div class="app-content-toolbar margin-top">
+      <h2>Events</h2>
       <button mat-flat-button class="material-icons" color="primary" (click)="addEvent()">add</button>
     </div>
 
@@ -59,13 +65,11 @@
         (removeEvent)="deleteEvent(event)">
       </app-event-card>
     </div>
-  </div>
-
-  <hr>
-
-  <div class="app-body-content">
-    <div class="app-content-toolbar">
-      <h1>People</h1>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="app-content-toolbar margin-top">
+      <h2>People</h2>
       <button mat-flat-button class="material-icons" color="primary" (click)="addPerson()">add</button>
     </div>
 
@@ -77,13 +81,11 @@
         [canDelete]="true" (removePerson)="deletePerson(person)">
       </app-person-card>
     </div>
-  </div>
-
-  <hr>
-
-  <div class="app-body-content">
-    <div class="app-content-toolbar">
-      <h1>Charts</h1>
+      
+    <mat-divider></mat-divider>
+      
+    <div class="app-content-toolbar margin-top">
+      <h2>Charts</h2>
       <button mat-flat-button class="material-icons" color="primary" (click)="addChart()">add</button>
     </div>
 
@@ -96,13 +98,11 @@
         (removeChart)="deleteChart(chart)">
       </app-chart-card>
     </div>
-  </div>
-
-  <hr>
-
-  <div class="app-body-content">
-    <div class="app-content-toolbar">
-      <h1>Brainstorms</h1>
+      
+    <mat-divider></mat-divider>
+      
+    <div class="app-content-toolbar margin-top">
+      <h2>Brainstorms</h2>
       <button mat-flat-button class="material-icons" color="primary" (click)="addBrainstorm()">add</button>
     </div>
 
@@ -115,5 +115,6 @@
         (removeBrainstorm)="deleteBrainstorm(brainstorm)">
       </app-brainstorm-card>
     </div>
+
   </div>
-</div>
+</mat-sidenav-container>
