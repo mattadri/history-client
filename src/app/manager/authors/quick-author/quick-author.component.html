@@ -1,62 +1,58 @@
 <form #authorForm="ngForm">
-  <div class="app-drawer-header">
-    <div class="app-drawer-title">
-      <div class="app-drawer-subheading">New Author</div>
-    </div>
-    <div class="app-drawer-tools">
-      <button mat-icon-button type="button" class="material-icons" [mat-dialog-close]="author">save</button>
-      <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
-    </div>
-  </div>
+  <h2 mat-dialog-title>New Author</h2>
 
-  <div class="app-drawer-content">
-    <section class="app-section">
-      <mat-form-field style="width: 33%">
-        <input
-          type="search"
-          placeholder="First Name"
-          matInput
-          #authorFirstNameField
-          name="author_first_name"
-          id="author_first_name"
-          (focusout)="saveAuthorFirstName(authorFirstNameField.value)"
-          [formControl]="authorFirstNameAutocompleteControl"
-          [matAutocomplete]="authorFirstNameAutoComplete">
+  <mat-dialog-content class="mat-typography">
+    <mat-form-field style="width: 32%" class="margin-right">
+      <input
+        type="search"
+        placeholder="First Name"
+        matInput
+        #authorFirstNameField
+        name="author_first_name"
+        id="author_first_name"
+        (focusout)="saveAuthorFirstName(authorFirstNameField.value)"
+        [formControl]="authorFirstNameAutocompleteControl"
+        [matAutocomplete]="authorFirstNameAutoComplete">
 
-        <mat-autocomplete #authorFirstNameAutoComplete="matAutocomplete" [displayWith]="displayAuthorFirstName" (optionSelected)="saveAuthorFirstName(null)">
-          <mat-option *ngFor="let author of authorFirstNameFilteredOptions | async" [value]="author.firstName">
-            <span *ngIf="author.firstName">{{author.firstName}} </span><span *ngIf="author.lastName">{{author.lastName}}</span>
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
+      <mat-autocomplete #authorFirstNameAutoComplete="matAutocomplete" [displayWith]="displayAuthorFirstName" (optionSelected)="saveAuthorFirstName(null)">
+        <mat-option *ngFor="let author of authorFirstNameFilteredOptions | async" [value]="author.firstName">
+          <span *ngIf="author.firstName">{{author.firstName}} </span><span *ngIf="author.lastName">{{author.lastName}}</span>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
 
-      <mat-form-field style="width: 33%">
-        <input
-          matInput
-          type="search"
-          placeholder="Middle Name"
-          name="author_middle_name"
-          #authorFirstName="ngModel"
-          [(ngModel)]="author.middleName" />
-      </mat-form-field>
+    <mat-form-field style="width: 32%" class="margin-right">
+      <input
+        matInput
+        type="search"
+        placeholder="Middle Name"
+        name="author_middle_name"
+        #authorFirstName="ngModel"
+        [(ngModel)]="author.middleName" />
+    </mat-form-field>
 
-      <mat-form-field>
-        <input
-          type="search"
-          placeholder="Last Name"
-          matInput
-          name="author_last_name"
-          #authorLastNameField
-          (focusout)="saveAuthorLastName(authorLastNameField.value)"
-          [formControl]="authorLastNameAutocompleteControl"
-          [matAutocomplete]="authorLastNameAutoComplete">
+    <mat-form-field style="width: 31%">
+      <input
+        type="search"
+        placeholder="Last Name"
+        matInput
+        name="author_last_name"
+        #authorLastNameField
+        (focusout)="saveAuthorLastName(authorLastNameField.value)"
+        [formControl]="authorLastNameAutocompleteControl"
+        [matAutocomplete]="authorLastNameAutoComplete">
 
-        <mat-autocomplete #authorLastNameAutoComplete="matAutocomplete" [displayWith]="displayAuthorLastName" (optionSelected)="saveAuthorLastName(null)">
-          <mat-option *ngFor="let author of authorLastNameFilteredOptions | async" [value]="author.lastName">
-            <span *ngIf="author.firstName">{{author.firstName}} </span><span *ngIf="author.lastName">{{author.lastName}}</span>
-          </mat-option>
-        </mat-autocomplete>
-      </mat-form-field>
-    </section>
-  </div>
+      <mat-autocomplete #authorLastNameAutoComplete="matAutocomplete" [displayWith]="displayAuthorLastName" (optionSelected)="saveAuthorLastName(null)">
+        <mat-option *ngFor="let author of authorLastNameFilteredOptions | async" [value]="author.lastName">
+          <span *ngIf="author.firstName">{{author.firstName}} </span><span *ngIf="author.lastName">{{author.lastName}}</span>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-flat-button color="primary" type="button" [mat-dialog-close]="author">Save</button>
+    <button mat-flat-button type="button" (click)="onNoClick()">Cancel</button>
+  </mat-dialog-actions>
+  
 </form>
