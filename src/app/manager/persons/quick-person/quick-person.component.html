@@ -1,32 +1,25 @@
 <form #personForm="ngForm">
   <div *ngIf="data.showExisting">
-    <div class="app-drawer-header">
-      <div class="app-drawer-title">
-        <div class="app-drawer-subheading">Existing Person</div>
-      </div>
-    </div>
+    <h2 mat-dialog-title>Existing Person</h2>
+    <mat-dialog-content class="mat-typography">
+      <mat-form-field style="width: 100%">
+        <input
+          type="text"
+          placeholder="Name"
+          matInput
+          #personNameField
+          name="person_name"
+          id="person_name"
+          [formControl]="personNameAutocompleteControl"
+          [matAutocomplete]="personNameAutoComplete">
 
-    <div class="app-add-object-overlay">
-      <section class="app-section">
-        <mat-form-field style="width: 100%">
-          <input
-            type="text"
-            placeholder="Name"
-            matInput
-            #personNameField
-            name="person_name"
-            id="person_name"
-            [formControl]="personNameAutocompleteControl"
-            [matAutocomplete]="personNameAutoComplete">
-
-          <mat-autocomplete autoActiveFirstOption #personNameAutoComplete="matAutocomplete" [displayWith]="displayPersonName" (optionSelected)="saveExistingPerson($event.option.value)">
-            <mat-option *ngFor="let personOption of personNameFilteredOptions | async" [value]="personOption">
-              <span *ngIf="personOption.firstName">{{personOption.firstName}} </span><span *ngIf="personOption.lastName">{{personOption.lastName}}</span>
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </section>
-    </div>
+        <mat-autocomplete autoActiveFirstOption #personNameAutoComplete="matAutocomplete" [displayWith]="displayPersonName" (optionSelected)="saveExistingPerson($event.option.value)">
+          <mat-option *ngFor="let personOption of personNameFilteredOptions | async" [value]="personOption">
+            <span *ngIf="personOption.firstName">{{personOption.firstName}} </span><span *ngIf="personOption.lastName">{{personOption.lastName}}</span>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </mat-dialog-content> 
   </div>
 
   <div *ngIf="data.showNew && data.showExisting" class="app-add-object-overlay">
@@ -34,20 +27,11 @@
   </div>
 
   <div *ngIf="data.showNew">
-    <div class="app-drawer-header">
-      <div class="app-drawer-title">
-        <div class="app-drawer-subheading">New Person</div>
-      </div>
+    <h2 mat-dialog-title>New Person</h2>
 
-      <div class="app-drawer-tools">
-        <button mat-icon-button type="button" class="material-icons" (click)="saveNewPerson()">save</button>
-        <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
-      </div>
-    </div>
-
-    <div class="app-add-object-overlay">
-      <section class="app-section">
-        <mat-form-field style="width: 33%">
+    <mat-dialog-content class="mat-typography">
+      <section>
+        <mat-form-field style="width: 32%" class="margin-right">
           <input
             type="text"
             placeholder="First Name"
@@ -67,7 +51,7 @@
           </mat-autocomplete>
         </mat-form-field>
 
-        <mat-form-field style="width: 33%">
+        <mat-form-field style="width: 32%" class="margin-right">
           <input
             matInput
             placeholder="Middle Name"
@@ -76,7 +60,7 @@
             [(ngModel)]="person.middleName" />
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field style="width: 31%">
           <input
             type="text"
             placeholder="Last Name"
@@ -95,49 +79,46 @@
         </mat-form-field>
       </section>
 
-      <section class="app-section inline">
-        <label>Birth</label>
+      <section>
+        <mat-form-field style="width: 32%" class="margin-right">
+          <mat-label>Birth Era</mat-label>
+          <mat-select [(ngModel)]="person.birthEra" name="person_birth_era" required>
+            <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-        <div class="app-field-group">
-          <mat-form-field class="app-field-era">
-            <mat-label>Era</mat-label>
-            <mat-select [(ngModel)]="person.birthEra" name="person_birth_era" required>
-              <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field class="app-field-year">
-            <input
-              matInput
-              placeholder="Year"
-              name="person_birth_year"
-              required
-              [(ngModel)]="person.birthYear" />
-          </mat-form-field>
-        </div>
-
+        <mat-form-field style="width: 65%">
+          <input
+            matInput
+            placeholder="Birth Year"
+            name="person_birth_year"
+            required
+            [(ngModel)]="person.birthYear" />
+        </mat-form-field>
       </section>
 
-      <section class="app-section inline">
-        <label>Death</label>
-        <div class="app-field-group">
-          <mat-form-field class="app-field-era">
-            <mat-label>Era</mat-label>
-            <mat-select [(ngModel)]="person.deathEra" name="person_death_era">
-              <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+      <section>
+        <mat-form-field style="width: 32%" class="margin-right">
+          <mat-label>Death Era</mat-label>
+          <mat-select [(ngModel)]="person.deathEra" name="person_death_era">
+            <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-          <mat-form-field class="app-field-year">
-            <input
-              matInput
-              placeholder="Year"
-              name="person_death_year"
-              [(ngModel)]="person.deathYear" />
-          </mat-form-field>
-        </div>
+        <mat-form-field style="width: 65%">
+          <input
+            matInput
+            placeholder="Death Year"
+            name="person_death_year"
+            [(ngModel)]="person.deathYear" />
+        </mat-form-field>
       </section>
+    </mat-dialog-content>
 
-    </div>
+    <mat-dialog-actions align="end">
+      <button mat-flat-button color="primary" type="button" (click)="saveNewPerson()">Save</button>
+      <button mat-flat-button type="button" (click)="onNoClick()">Cancel</button>
+    </mat-dialog-actions>
+    
   </div>
 </form>
