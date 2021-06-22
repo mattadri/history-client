@@ -4,7 +4,6 @@ import { Source } from '../source';
 import { Month } from '../month';
 import { Era } from '../era';
 import { EventNote } from './event-note';
-import { Timeline } from '../timelines/timeline';
 
 export class Event {
   id: number;
