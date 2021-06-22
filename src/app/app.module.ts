@@ -27,6 +27,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 import {DragDropModule} from '@angular/cdk/drag-drop';
 
@@ -270,6 +271,7 @@ import { AddUserDialogComponent } from './utilities/add-user-dialog/add-user-dia
     MatProgressSpinnerModule,
     MatSlideToggleModule,
     MatChipsModule,
+    MatGridListModule,
     DragDropModule,
     Ng5SliderModule,
     FroalaViewModule.forRoot(),
