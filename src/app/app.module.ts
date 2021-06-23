@@ -137,7 +137,6 @@ import { ProjectsComponent } from './projects/projects.component';
 import {ProjectInterceptor} from './services/interceptors/project.interceptor';
 import { ProjectCardComponent } from './projects/project-card/project-card.component';
 import { ProjectDetailsComponent } from './projects/project-details/project-details.component';
-import { QuickEssayComponent } from './essays/quick-essay/quick-essay.component';
 import { PersonDetailsAddTimelineComponent } from './manager/persons/person-details/person-details-add-timeline/person-details-add-timeline.component';
 import { PersonDetailsAddBiographyComponent } from './manager/persons/person-details/person-details-add-biography/person-details-add-biography.component';
 import { EventDetailsAddTimelineComponent } from './manager/events/event-details/event-details-add-timeline/event-details-add-timeline.component';
@@ -146,6 +145,8 @@ import { AddChartDialogComponent } from './utilities/add-chart-dialog/add-chart-
 import { AddBrainstormDialogComponent } from './utilities/add-brainstorm-dialog/add-brainstorm-dialog.component';
 import { AddProjectDialogComponent } from './utilities/add-project-dialog/add-project-dialog.component';
 import { AddUserDialogComponent } from './utilities/add-user-dialog/add-user-dialog.component';
+import { AddEssayDialogComponent } from './utilities/add-essay-dialog/add-essay-dialog.component';
+import { AddExistingEssayDialogComponent } from './utilities/add-existing-essay-dialog/add-existing-essay-dialog.component';
 
 @NgModule({
   declarations: [
@@ -231,7 +232,6 @@ import { AddUserDialogComponent } from './utilities/add-user-dialog/add-user-dia
     ProjectsComponent,
     ProjectCardComponent,
     ProjectDetailsComponent,
-    QuickEssayComponent,
     PersonDetailsAddTimelineComponent,
     PersonDetailsAddBiographyComponent,
     EventDetailsAddTimelineComponent,
@@ -239,7 +239,9 @@ import { AddUserDialogComponent } from './utilities/add-user-dialog/add-user-dia
     AddChartDialogComponent,
     AddBrainstormDialogComponent,
     AddProjectDialogComponent,
-    AddUserDialogComponent
+    AddUserDialogComponent,
+    AddEssayDialogComponent,
+    AddExistingEssayDialogComponent
   ],
   entryComponents: [
   ],

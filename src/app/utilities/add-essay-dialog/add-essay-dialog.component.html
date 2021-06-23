@@ -1,0 +1,31 @@
+<form>
+  <h2 mat-dialog-title>New Essay</h2>
+
+  <div>
+    <mat-dialog-content class="mat-typography">
+      <mat-form-field style="width: 100%">
+        <input
+          type="text"
+          placeholder="Title"
+          matInput
+          #essayLabelField
+          name="essay_label"
+          id="essay_label"
+          [(ngModel)]="essay.title" />
+      </mat-form-field>
+
+      <mat-form-field class="app-field-era">
+        <mat-label>Essay Type</mat-label>
+        <mat-select [(ngModel)]="essay.type" name="essay_type" [compareWith]="selectEssayType">
+          <mat-option [value]="null"></mat-option>
+          <mat-option *ngFor="let type of essayTypes" [value]="type">{{type.label}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-flat-button color="primary" (click)="saveNewEssay()">Save</button>
+      <button mat-flat-button type="button" (click)="onNoClick()">Cancel</button>
+    </mat-dialog-actions>
+  </div>
+</form>

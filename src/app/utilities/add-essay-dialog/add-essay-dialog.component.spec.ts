@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QuickEssayComponent } from './quick-essay.component';
+import { AddEssayDialogComponent } from './add-essay-dialog.component';
 
-describe('QuickEssayComponent', () => {
-  let component: QuickEssayComponent;
-  let fixture: ComponentFixture<QuickEssayComponent>;
+describe('AddEssayDialogComponent', () => {
+  let component: AddEssayDialogComponent;
+  let fixture: ComponentFixture<AddEssayDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ QuickEssayComponent ]
+      declarations: [ AddEssayDialogComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(QuickEssayComponent);
+    fixture = TestBed.createComponent(AddEssayDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

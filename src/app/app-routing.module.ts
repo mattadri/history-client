@@ -27,7 +27,7 @@ import {ProjectDetailsComponent} from './projects/project-details/project-detail
 
 
 const routes: Routes = [
-  {path: '', component: DashboardComponent, canActivate: [AuthGuard]},
+  {path: '', component: ProjectsComponent, canActivate: [AuthGuard]},
   {path: 'login', component: LoginComponent,},
   {path: 'user', component: UserComponent,},
   {path: 'manager/sources', component: SourcesComponent, canActivate: [AuthGuard]},

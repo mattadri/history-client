@@ -1,0 +1,25 @@
+<form #essayForm="ngForm">
+  <div>
+    <h2 mat-dialog-title>Existing Essay</h2>
+
+    <mat-dialog-content class="mat-typography">
+      <mat-form-field style="width: 100%">
+        <input
+          type="text"
+          placeholder="Essay Title"
+          matInput
+          #essayTitleField
+          name="existing_essay_label"
+          id="existing_essay_label"
+          [formControl]="essayTitleAutocompleteControl"
+          [matAutocomplete]="essayTitleAutoComplete">
+
+        <mat-autocomplete autoActiveFirstOption #essayTitleAutoComplete="matAutocomplete" [displayWith]="displayEssayName" (optionSelected)="saveExistingEssay($event.option.value)">
+          <mat-option *ngFor="let essayOption of essayTitleFilteredOptions | async" [value]="essayOption">
+            <span *ngIf="essayOption.title">{{essayOption.title}} </span>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </mat-dialog-content>
+  </div>
+</form>

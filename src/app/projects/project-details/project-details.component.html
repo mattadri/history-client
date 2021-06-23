@@ -6,7 +6,7 @@
       <div *ngFor="let user of projectUsers">
         <mat-chip-list>
           <mat-chip>
-            <span>{{user.firstName}}</span> 
+            <span>{{user.firstName}}</span>
             <span class="user-lastname">{{user.lastName}}</span>
           </mat-chip>
         </mat-chip-list>
@@ -20,8 +20,8 @@
       <h2>Essays</h2>
       <button mat-flat-button [matMenuTriggerFor]="menuEssays" class="material-icons" color="primary" >add</button>
         <mat-menu #menuEssays="matMenu">
-          <button mat-menu-item (click)="addEssay()">New Essay</button>
-          <button mat-menu-item>Existing Essay</button>
+          <button mat-menu-item (click)="addNewEssay()">New Essay</button>
+          <button mat-menu-item (click)="addExistingEssay()">Existing Essay</button>
         </mat-menu>
     </div>
     <div class="essay-container">
@@ -47,10 +47,10 @@
         [canDelete]="true"
         (removeTimeline)="deleteTimeline(timeline)">
       </app-timeline-card>
-    </div>  
+    </div>
 
     <mat-divider></mat-divider>
-    
+
     <div class="app-content-toolbar margin-top">
       <h2>Events</h2>
       <button mat-flat-button class="material-icons" color="primary" (click)="addEvent()">add</button>
@@ -65,9 +65,9 @@
         (removeEvent)="deleteEvent(event)">
       </app-event-card>
     </div>
-    
+
     <mat-divider></mat-divider>
-    
+
     <div class="app-content-toolbar margin-top">
       <h2>People</h2>
       <button mat-flat-button class="material-icons" color="primary" (click)="addPerson()">add</button>
@@ -81,9 +81,9 @@
         [canDelete]="true" (removePerson)="deletePerson(person)">
       </app-person-card>
     </div>
-      
+
     <mat-divider></mat-divider>
-      
+
     <div class="app-content-toolbar margin-top">
       <h2>Charts</h2>
       <button mat-flat-button class="material-icons" color="primary" (click)="addChart()">add</button>
@@ -98,9 +98,9 @@
         (removeChart)="deleteChart(chart)">
       </app-chart-card>
     </div>
-      
+
     <mat-divider></mat-divider>
-      
+
     <div class="app-content-toolbar margin-top">
       <h2>Brainstorms</h2>
       <button mat-flat-button class="material-icons" color="primary" (click)="addBrainstorm()">add</button>

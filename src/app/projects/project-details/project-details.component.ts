@@ -6,7 +6,6 @@ import {QuickPersonComponent} from '../../manager/persons/quick-person/quick-per
 import {MatDialog} from '@angular/material/dialog';
 import {PersonService} from '../../services/person.service';
 import {ProjectPerson} from '../../models/projects/project-person';
-import {QuickEssayComponent} from '../../essays/quick-essay/quick-essay.component';
 import {EssayService} from '../../services/essay.service';
 import {ProjectEssay} from '../../models/projects/project-essay';
 import {EssayUser} from '../../models/essays/essay-user';
@@ -26,6 +25,8 @@ import {AddBrainstormDialogComponent} from '../../utilities/add-brainstorm-dialo
 import {User} from '../../models/user';
 import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-dialog.component';
 import {MessageDialogComponent} from '../../utilities/message-dialog/message-dialog.component';
+import {AddExistingEssayDialogComponent} from '../../utilities/add-existing-essay-dialog/add-existing-essay-dialog.component';
+import {AddEssayDialogComponent} from '../../utilities/add-essay-dialog/add-essay-dialog.component';
 
 @Component({
   selector: 'app-project-details',
@@ -105,59 +106,55 @@ export class ProjectDetailsComponent implements OnInit {
     });
   }
 
-  addEssay() {
-    const dialogRef = this.dialog.open(QuickEssayComponent, {
-      width: '750px',
-      data: {
-        showExisting: true,
-        showNew: true
-      }
+  addExistingEssay() {
+    const dialogRef = this.dialog.open(AddExistingEssayDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(returnObject => {
-      if (returnObject) {
-        let isExisting = returnObject.isExisting;
-        let essay = returnObject.essay;
+    dialogRef.afterClosed().subscribe(essay => {
+      this.projectService.addApiEssayToProject(this.project, essay).subscribe(projectEssayResponse => {
+        let projectEssay = new ProjectEssay();
+        projectEssay.initializeNewProjectEssay();
 
-        if (isExisting) {
-          this.projectService.addApiEssayToProject(this.project, essay).subscribe(projectEssayResponse => {
-            let projectEssay = new ProjectEssay();
-            projectEssay.initializeNewProjectEssay();
+        projectEssay.id = projectEssayResponse.id;
+        projectEssay.essay = essay;
 
-            projectEssay.id = projectEssayResponse.id;
-            projectEssay.essay = essay;
+        this.project.essays.unshift(projectEssay);
+      });
+    });
+  }
 
-            this.project.essays.unshift(projectEssay);
-          });
+  addNewEssay() {
+    const dialogRef = this.dialog.open(AddEssayDialogComponent, {
+      width: '750px'
+    });
 
-        } else {
-          this.essayService.createApiEssay(essay).subscribe(response => {
-            essay.id = response.data.id;
+    dialogRef.afterClosed().subscribe(essay => {
+      this.essayService.createApiEssay(essay).subscribe(response => {
+        essay.id = response.data.id;
 
-            let essayUser = new EssayUser();
+        let essayUser = new EssayUser();
 
-            essayUser.essay = essay;
-            essayUser.user = this.userService.getLoggedInUser();
+        essayUser.essay = essay;
+        essayUser.user = this.userService.getLoggedInUser();
 
 
-            this.essayService.addApiUserToEssay(essayUser).subscribe((response) => {
-              essayUser.id = response.id;
+        this.essayService.addApiUserToEssay(essayUser).subscribe((response) => {
+          essayUser.id = response.id;
 
-              essay.essayUsers.push(essayUser);
-            });
+          essay.essayUsers.push(essayUser);
+        });
 
-            this.projectService.addApiEssayToProject(this.project, essay).subscribe(projectEssayResponse => {
-              let projectEssay = new ProjectEssay();
-              projectEssay.initializeNewProjectEssay();
+        this.projectService.addApiEssayToProject(this.project, essay).subscribe(projectEssayResponse => {
+          let projectEssay = new ProjectEssay();
+          projectEssay.initializeNewProjectEssay();
 
-              projectEssay.id = projectEssayResponse.id;
-              projectEssay.essay = essay;
+          projectEssay.id = projectEssayResponse.id;
+          projectEssay.essay = essay;
 
-              this.project.essays.unshift(projectEssay);
-            });
-          });
-        }
-      }
+          this.project.essays.unshift(projectEssay);
+        });
+      });
     });
   }
 

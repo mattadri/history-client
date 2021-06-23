@@ -3,12 +3,12 @@ import {Component, OnInit} from '@angular/core';
 import {Essay} from '../models/essays/essay';
 
 import {EssayService} from '../services/essay.service';
-import {QuickEssayComponent} from './quick-essay/quick-essay.component';
 import {MatDialog} from '@angular/material/dialog';
 import {EssayUser} from '../models/essays/essay-user';
 import {User} from '../models/user';
 import {UserService} from '../services/user.service';
 import {ThemePalette} from '@angular/material/core';
+import {AddEssayDialogComponent} from '../utilities/add-essay-dialog/add-essay-dialog.component';
 
 @Component({
   selector: 'app-essays',
@@ -106,39 +106,28 @@ export class EssaysComponent implements OnInit {
   }
 
   createEssay() {
-    const dialogRef = this.dialog.open(QuickEssayComponent, {
-      width: '750px',
-      data: {
-        showExisting: false,
-        showNew: true
-      }
+    const dialogRef = this.dialog.open(AddEssayDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(returnObject => {
-      if (returnObject) {
-        let isExisting = returnObject.isExisting;
-        let essay = returnObject.essay;
+    dialogRef.afterClosed().subscribe(essay => {
+      this.essayService.createApiEssay(essay).subscribe(response => {
+        essay.id = response.data.id;
 
-        if (!isExisting) {
-          this.essayService.createApiEssay(essay).subscribe(response => {
-            essay.id = response.data.id;
+        let essayUser = new EssayUser();
 
-            let essayUser = new EssayUser();
-
-            essayUser.essay = essay;
-            essayUser.user = this.userService.getLoggedInUser();
+        essayUser.essay = essay;
+        essayUser.user = this.userService.getLoggedInUser();
 
 
-            this.essayService.addApiUserToEssay(essayUser).subscribe((response) => {
-              essayUser.id = response.id;
+        this.essayService.addApiUserToEssay(essayUser).subscribe((response) => {
+          essayUser.id = response.id;
 
-              essay.essayUsers.push(essayUser);
-            });
+          essay.essayUsers.push(essayUser);
+        });
 
-            this.essays.unshift(essay);
-          });
-        }
-      }
+        this.essays.unshift(essay);
+      });
     });
   }
 
