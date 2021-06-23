@@ -1,38 +1,24 @@
-import {Component, OnInit, AfterViewInit, Inject} from '@angular/core';
-import {FormControl} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-
-import {Observable} from 'rxjs';
+import { Component, OnInit } from '@angular/core';
 import {map, startWith} from 'rxjs/operators';
-
-import {Sleep} from '../../../utilities/sleep';
-
-import {SourceService} from '../../../services/source.service';
-import {EraService} from '../../../services/era.service';
-import {MonthService} from '../../../services/month.service';
-
-import {Source} from '../../../models/source';
-import {Event} from '../../../models/events/event';
-import {Era} from '../../../models/era';
-import {Month} from '../../../models/month';
-import {EventService} from '../../../services/event.service';
-
-export interface DialogData {
-  showExisting: boolean;
-  showNew: boolean;
-}
-
-class QuickEventReturnData {
-  event: Event;
-  isExisting: boolean;
-}
+import {FormControl} from '@angular/forms';
+import {Observable} from 'rxjs';
+import {Source} from '../../models/source';
+import {Era} from '../../models/era';
+import {Month} from '../../models/month';
+import {Event} from '../../models/events/event';
+import {MonthService} from '../../services/month.service';
+import {EraService} from '../../services/era.service';
+import {SourceService} from '../../services/source.service';
+import {EventService} from '../../services/event.service';
+import {MatDialogRef} from '@angular/material/dialog';
+import {Sleep} from '../sleep';
 
 @Component({
-  selector: 'app-quick-event',
-  templateUrl: './quick-event.component.html',
-  styleUrls: ['./quick-event.component.scss']
+  selector: 'app-add-event-dialog',
+  templateUrl: './add-event-dialog.component.html',
+  styleUrls: ['./add-event-dialog.component.scss']
 })
-export class QuickEventComponent implements OnInit, AfterViewInit {
+export class AddEventDialogComponent implements OnInit {
   public sourcesAutocompleteControl = new FormControl();
   public sourcesFilteredOptions: Observable<Source[]>;
   public sourceFieldDisplayValue: string;
@@ -48,19 +34,13 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
 
   public event: Event;
 
-  private returnData: QuickEventReturnData;
-
   constructor(private eventService: EventService,
               private sourceService: SourceService,
               private eraService: EraService,
               private monthService: MonthService,
-              @Inject(MAT_DIALOG_DATA) public data: DialogData,
-              public dialogRef: MatDialogRef<QuickEventComponent>) {
-
+              public dialogRef: MatDialogRef<AddEventDialogComponent>) {
     this.event = new Event();
     this.event.initializeNewEvent();
-
-    this.returnData = new QuickEventReturnData();
 
     this.eraService.getEras().subscribe(eras => {
       for (const era of eras.data) {
@@ -106,7 +86,8 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnInit() { }
+  ngOnInit(): void {
+  }
 
   ngAfterViewInit() {
     this.activateCreateForm().then();
@@ -128,18 +109,8 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
     }
   }
 
-  saveExistingEvent(event: Event) {
-    this.returnData.event = event;
-    this.returnData.isExisting = true;
-
-    this.dialogRef.close(this.returnData);
-  }
-
   saveNewEvent() {
-    this.returnData.event = this.event;
-    this.returnData.isExisting = false;
-
-    this.dialogRef.close(this.returnData);
+    this.dialogRef.close(this.event);
   }
 
   displaySource(source: Source) {
@@ -194,10 +165,6 @@ export class QuickEventComponent implements OnInit, AfterViewInit {
   async activateCreateForm() {
     await Sleep.wait(500);
 
-    try {
-      document.getElementById('existing_event_title').focus();
-    } catch(e) {
-      document.getElementById('event_label').focus();
-    }
+    document.getElementById('event_label').focus();
   }
 }

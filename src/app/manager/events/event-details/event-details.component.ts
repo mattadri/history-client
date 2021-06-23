@@ -20,8 +20,8 @@ import {MonthService} from '../../../services/month.service';
 import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confirm-removal.component';
 import {MatDialog} from '@angular/material/dialog';
 import {EventTimeline} from '../../../models/events/event-timeline';
-import {AddTimelineDialogComponent} from '../../../utilities/add-timeline-dialog/add-timeline-dialog.component';
 import {UserService} from '../../../services/user.service';
+import {AddExistingTimelineDialogComponent} from '../../../utilities/add-existing-timeline-dialog/add-existing-timeline-dialog.component';
 
 @Component({
   selector: 'app-event-details',
@@ -199,26 +199,22 @@ export class EventDetailsComponent implements OnInit {
   }
 
   addEventTimeline() {
-    const dialogRef = this.dialog.open(AddTimelineDialogComponent, {
-      width: '750px',
-      data: {
-        showExisting: true,
-        showNew: false
-      }
+    const dialogRef = this.dialog.open(AddExistingTimelineDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(timelineObj => {
+    dialogRef.afterClosed().subscribe(timeline => {
       let eventTimeline = new EventTimeline();
       eventTimeline.initializeNewEventTimeline();
 
-      eventTimeline.timeline = timelineObj.timeline;
+      eventTimeline.timeline = timeline;
 
       this.eventService.createTimelineApiEvent(eventTimeline, this.event).subscribe(response => {
         eventTimeline.id = response.data.id;
 
         // get the full timeline now that we have it to show on the card. The previous timeline was a
         // truncated version for selection purposes only.
-        this.timelineService.getApiTimeline(timelineObj.timeline.id).subscribe(timeline => {
+        this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
           eventTimeline.timeline = timeline;
 
           this.eventTimelines.unshift(eventTimeline);

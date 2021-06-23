@@ -22,8 +22,8 @@ import {ConfirmRemovalComponent} from '../../../utilities/confirm-removal/confir
 import {MatDialog} from '@angular/material/dialog';
 import {PersonTimeline} from '../../../models/persons/person-timeline';
 import {PersonDetailsAddBiographyComponent} from './person-details-add-biography/person-details-add-biography.component';
-import {AddTimelineDialogComponent} from '../../../utilities/add-timeline-dialog/add-timeline-dialog.component';
 import {UserService} from '../../../services/user.service';
+import {AddExistingTimelineDialogComponent} from '../../../utilities/add-existing-timeline-dialog/add-existing-timeline-dialog.component';
 
 @Component({
   selector: 'app-person-details',
@@ -235,27 +235,23 @@ export class PersonDetailsComponent implements OnInit {
   }
 
   addTimelinePerson() {
-    const dialogRef = this.dialog.open(AddTimelineDialogComponent, {
-      width: '750px',
-      data: {
-        showExisting: true,
-        showNew: false
-      }
+    const dialogRef = this.dialog.open(AddExistingTimelineDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(timelineObj => {
+    dialogRef.afterClosed().subscribe(timeline => {
       let personTimeline = new PersonTimeline();
       personTimeline.initializeNewPersonTimeline();
 
       personTimeline.person = this.person;
-      personTimeline.timeline = timelineObj.timeline;
+      personTimeline.timeline = timeline;
 
       this.timelineService.createPersonApiTimeline(personTimeline).subscribe(response => {
         personTimeline.id = response.data.id;
 
         // get the full timeline now that we have it to show on the card. The previous timeline was a
         // truncated version for selection purposes only.
-        this.timelineService.getApiTimeline(timelineObj.timeline.id).subscribe(timeline => {
+        this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
           personTimeline.timeline = timeline;
 
           this.personTimelines.unshift(personTimeline);

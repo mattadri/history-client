@@ -112,7 +112,6 @@ import { ChartsComponent } from './manager/charts/charts.component';
 import { ChartComponent } from './manager/charts/chart/chart.component';
 import { ChartCardComponent } from './manager/charts/chart-card/chart-card.component';
 import { ChartDisplayComponent } from './manager/charts/chart-display/chart-display.component';
-import { QuickEventComponent } from './manager/events/quick-event/quick-event.component';
 import { QuickPersonComponent } from './manager/persons/quick-person/quick-person.component';
 import { PersonDetailsComponent } from './manager/persons/person-details/person-details.component';
 import { PersonDetailsNoteComponent } from './manager/persons/person-details/person-details-note/person-details-note.component';
@@ -148,6 +147,13 @@ import { AddProjectDialogComponent } from './utilities/add-project-dialog/add-pr
 import { AddUserDialogComponent } from './utilities/add-user-dialog/add-user-dialog.component';
 import { AddEssayDialogComponent } from './utilities/add-essay-dialog/add-essay-dialog.component';
 import { AddExistingEssayDialogComponent } from './utilities/add-existing-essay-dialog/add-existing-essay-dialog.component';
+import { AddExistingTimelineDialogComponent } from './utilities/add-existing-timeline-dialog/add-existing-timeline-dialog.component';
+import { AddExistingChartDialogComponent } from './utilities/add-existing-chart-dialog/add-existing-chart-dialog.component';
+import { AddExistingBrainstormDialogComponent } from './utilities/add-existing-brainstorm-dialog/add-existing-brainstorm-dialog.component';
+import { AddExistingPersonDialogComponent } from './utilities/add-existing-person-dialog/add-existing-person-dialog.component';
+import { AddExistingEventDialogComponent } from './utilities/add-existing-event-dialog/add-existing-event-dialog.component';
+import { AddEventDialogComponent } from './utilities/add-event-dialog/add-event-dialog.component';
+import { AddPersonDialogComponent } from './utilities/add-person-dialog/add-person-dialog.component';
 
 @NgModule({
   declarations: [
@@ -209,7 +215,6 @@ import { AddExistingEssayDialogComponent } from './utilities/add-existing-essay-
     ChartComponent,
     ChartCardComponent,
     ChartDisplayComponent,
-    QuickEventComponent,
     QuickPersonComponent,
     PersonDetailsComponent,
     PersonDetailsNoteComponent,
@@ -242,7 +247,14 @@ import { AddExistingEssayDialogComponent } from './utilities/add-existing-essay-
     AddProjectDialogComponent,
     AddUserDialogComponent,
     AddEssayDialogComponent,
-    AddExistingEssayDialogComponent
+    AddExistingEssayDialogComponent,
+    AddExistingTimelineDialogComponent,
+    AddExistingChartDialogComponent,
+    AddExistingBrainstormDialogComponent,
+    AddExistingPersonDialogComponent,
+    AddExistingEventDialogComponent,
+    AddEventDialogComponent,
+    AddPersonDialogComponent
   ],
   entryComponents: [
   ],

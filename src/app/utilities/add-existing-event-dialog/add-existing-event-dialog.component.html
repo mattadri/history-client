@@ -1,0 +1,23 @@
+<form>
+  <h2 mat-dialog-title>Existing Event</h2>
+
+  <mat-dialog-content class="mat-typography">
+    <mat-form-field style="width: 100%">
+      <input
+        type="text"
+        placeholder="Name"
+        matInput
+        #existingEventTitleField
+        name="existing_event_title"
+        id="existing_event_title"
+        [formControl]="eventTitleAutocompleteControl"
+        [matAutocomplete]="existingEventTitleAutoComplete">
+
+        <mat-autocomplete autoActiveFirstOption #existingEventTitleAutoComplete="matAutocomplete" [displayWith]="displayEvent" (optionSelected)="saveExistingEvent($event.option.value)">
+          <mat-option *ngFor="let event of eventTitleFilteredOptions | async" [value]="event">
+            {{event.label}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+  </mat-dialog-content>
+</form>

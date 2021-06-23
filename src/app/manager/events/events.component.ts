@@ -6,11 +6,10 @@ import { Event } from '../../models/events/event';
 
 import { EventService } from '../../services/event.service';
 
-import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
-import {QuickEventComponent} from './quick-event/quick-event.component';
 import {TimelineService} from '../../services/timeline.service';
 import {Timeline} from '../../models/timelines/timeline';
 import {TimelineEvent} from '../../models/timelines/timeline-event';
+import {AddEventDialogComponent} from '../../utilities/add-event-dialog/add-event-dialog.component';
 
 @Component({
   selector: 'app-events',
@@ -94,23 +93,19 @@ export class EventsComponent implements OnInit {
   }
 
   createEvent() {
-    const dialogRef = this.dialog.open(QuickEventComponent, {
-      width: '750px',
-      data: {
-        showExisting: false,
-        showNew: true
-      }
+    const dialogRef = this.dialog.open(AddEventDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(eventObj => {
-      if (eventObj.event) {
-        this.eventService.createApiEvent(eventObj.event).subscribe(response => {
-          eventObj.event.id = response.data.id;
+    dialogRef.afterClosed().subscribe(event => {
+      if (event) {
+        this.eventService.createApiEvent(event).subscribe(response => {
+          event.id = response.data.id;
 
-          eventObj.event.formatDates();
-          eventObj.event.formatYears();
+          event.formatDates();
+          event.formatYears();
 
-          this.events.unshift(eventObj.event);
+          this.events.unshift(event);
         });
       }
     });

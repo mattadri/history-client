@@ -16,7 +16,6 @@ import {TimelineService} from '../../services/timeline.service';
 import {ProjectEvent} from '../../models/projects/project-event';
 import {ProjectChart} from '../../models/projects/project-chart';
 import {ProjectBrainstorm} from '../../models/projects/project-brainstorm';
-import {QuickEventComponent} from '../../manager/events/quick-event/quick-event.component';
 import {EventService} from '../../services/event.service';
 import {ChartService} from '../../services/chart.service';
 import {BrainstormService} from '../../services/brainstorm.service';
@@ -27,6 +26,9 @@ import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-d
 import {MessageDialogComponent} from '../../utilities/message-dialog/message-dialog.component';
 import {AddExistingEssayDialogComponent} from '../../utilities/add-existing-essay-dialog/add-existing-essay-dialog.component';
 import {AddEssayDialogComponent} from '../../utilities/add-essay-dialog/add-essay-dialog.component';
+import {AddExistingTimelineDialogComponent} from '../../utilities/add-existing-timeline-dialog/add-existing-timeline-dialog.component';
+import {AddEventDialogComponent} from '../../utilities/add-event-dialog/add-event-dialog.component';
+import {AddExistingEventDialogComponent} from '../../utilities/add-existing-event-dialog/add-existing-event-dialog.component';
 
 @Component({
   selector: 'app-project-details',
@@ -210,22 +212,21 @@ export class ProjectDetailsComponent implements OnInit {
     });
   }
 
-  addEvent() {
-    const dialogRef = this.dialog.open(QuickEventComponent, {
-      width: '750px',
-      data: {
-        showExisting: true,
-        showNew: true
-      }
+  addNewEvent() {
+    const dialogRef = this.dialog.open(AddEventDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(returnObject => {
-      if (returnObject) {
-        let isExisting = returnObject.isExisting;
-        let event = returnObject.event;
+    dialogRef.afterClosed().subscribe(event => {
+      if (event.label) {
+        this.eventService.createApiEvent(event).subscribe(response => {
+          event.id = response.data.id;
 
-        // IF ADDING AN EXISTING PERSON TO THE PROJECT
-        if (isExisting) {
+          event.formatDates();
+          event.formatYears();
+
+          this.eventService.setEvent(event);
+
           this.projectService.addApiEventToProject(this.project, event).subscribe((response) => {
             let projectEvent = new ProjectEvent();
             projectEvent.initializeNewProjectEvent();
@@ -235,31 +236,26 @@ export class ProjectDetailsComponent implements OnInit {
 
             this.project.events.unshift(projectEvent);
           });
-
-        } else { // IF ADDING A NEW PERSON TO THE PROJECT
-          // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
-          if (event.label) {
-            this.eventService.createApiEvent(event).subscribe(response => {
-              event.id = response.data.id;
-
-              event.formatDates();
-              event.formatYears();
-
-              this.eventService.setEvent(event);
-
-              this.projectService.addApiEventToProject(this.project, event).subscribe((response) => {
-                let projectEvent = new ProjectEvent();
-                projectEvent.initializeNewProjectEvent();
-
-                projectEvent.id = response.id;
-                projectEvent.event = event;
-
-                this.project.events.unshift(projectEvent);
-              });
-            });
-          }
-        }
+        });
       }
+    });
+  }
+
+  addExistingEvent() {
+    const dialogRef = this.dialog.open(AddExistingEventDialogComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(event => {
+      this.projectService.addApiEventToProject(this.project, event).subscribe((response) => {
+        let projectEvent = new ProjectEvent();
+        projectEvent.initializeNewProjectEvent();
+
+        projectEvent.id = response.id;
+        projectEvent.event = event;
+
+        this.project.events.unshift(projectEvent);
+      });
     });
   }
 
@@ -405,59 +401,55 @@ export class ProjectDetailsComponent implements OnInit {
     });
   }
 
-  addProjectTimeline() {
+  addNewTimeline() {
     const dialogRef = this.dialog.open(AddTimelineDialogComponent, {
-      width: '750px',
-      data: {
-        showExisting: true,
-        showNew: true
-      }
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(returnObject => {
-      if (returnObject) {
-        let isExisting = returnObject.isExisting;
-        let timeline = returnObject.timeline;
+    dialogRef.afterClosed().subscribe(timeline => {
+      // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
+      if (timeline.label) {
+        this.timelineService.createApiTimeline(timeline).subscribe(response => {
+          timeline.id = response.data.id;
 
-        // IF ADDING AN EXISTING TIMELINE TO THE PROJECT
-        if (isExisting) {
-          let projectTimeline = new ProjectTimeline();
-          projectTimeline.initializeNewProjectTimeline();
+          this.timelineService.setTimeline(timeline);
 
-          this.projectService.addApiTimelineToProject(this.project, timeline).subscribe(response => {
+          this.timelineService.addUserToTimeline(timeline, this.userId).subscribe(() => {});
+
+          this.projectService.addApiTimelineToProject(this.project, timeline).subscribe((response) => {
+            let projectTimeline = new ProjectTimeline();
+            projectTimeline.initializeNewProjectTimeline();
+
             projectTimeline.id = response.data.id;
+            projectTimeline.timeline = timeline;
 
-            // get the full timeline now that we have it to show on the card. The previous timeline was a
-            // truncated version for selection purposes only.
-            this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
-              projectTimeline.timeline = timeline;
-
-              this.project.timelines.unshift(projectTimeline);
-            });
+            this.project.timelines.unshift(projectTimeline);
           });
-        } else { // IF ADDING A NEW TIMELINE TO THE PROJECT
-          // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
-          if (timeline.label) {
-            this.timelineService.createApiTimeline(timeline).subscribe(response => {
-              timeline.id = response.data.id;
-
-              this.timelineService.setTimeline(timeline);
-
-              this.timelineService.addUserToTimeline(timeline, this.userId).subscribe(() => {});
-
-              this.projectService.addApiTimelineToProject(this.project, timeline).subscribe((response) => {
-                let projectTimeline = new ProjectTimeline();
-                projectTimeline.initializeNewProjectTimeline();
-
-                projectTimeline.id = response.data.id;
-                projectTimeline.timeline = timeline;
-
-                this.project.timelines.unshift(projectTimeline);
-              });
-            });
-          }
-        }
+        });
       }
+    });
+  }
+
+  addExistingTimeline() {
+    const dialogRef = this.dialog.open(AddExistingTimelineDialogComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(timeline => {
+      let projectTimeline = new ProjectTimeline();
+      projectTimeline.initializeNewProjectTimeline();
+
+      this.projectService.addApiTimelineToProject(this.project, timeline).subscribe(response => {
+        projectTimeline.id = response.data.id;
+
+        // get the full timeline now that we have it to show on the card. The previous timeline was a
+        // truncated version for selection purposes only.
+        this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
+          projectTimeline.timeline = timeline;
+
+          this.project.timelines.unshift(projectTimeline);
+        });
+      });
     });
   }
 

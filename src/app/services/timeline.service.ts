@@ -40,6 +40,7 @@ export class TimelineService {
 
   constructor(private http: HttpClient) {
     this.users = [];
+    this.timelines = [];
   }
 
   getApiTimelines(path,

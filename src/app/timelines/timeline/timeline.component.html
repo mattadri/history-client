@@ -27,6 +27,7 @@
     <button *ngIf="!isTimelineEditMode" mat-icon-button class="material-icons" (click)="activateTimelineEditMode()">
       edit
     </button>
+
     <button *ngIf="!isTimelineEditMode" mat-icon-button class="material-icons" type="button" (click)="removeTimeline()">delete</button>
   </div>
 
@@ -74,7 +75,11 @@
   <mat-tab-group>
     <mat-tab label="Events">
       <div class="grid-list">
-        <button mat-flat-button class="material-icons" color="primary" (click)="createEvent()">add</button>
+        <button mat-flat-button [matMenuTriggerFor]="menuEvents" class="material-icons" color="primary">add</button>
+        <mat-menu #menuEvents="matMenu">
+          <button mat-menu-item (click)="createNewEvent()">New Event</button>
+          <button mat-menu-item (click)="createExistingEvent()">Existing Event</button>
+        </mat-menu>
 
         <app-timeline-event-list
           *ngFor="let timelineEvent of timeline.events"

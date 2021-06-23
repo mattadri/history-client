@@ -19,10 +19,10 @@
     <div class="app-content-toolbar margin-top">
       <h2>Essays</h2>
       <button mat-flat-button [matMenuTriggerFor]="menuEssays" class="material-icons" color="primary" >add</button>
-        <mat-menu #menuEssays="matMenu">
-          <button mat-menu-item (click)="addNewEssay()">New Essay</button>
-          <button mat-menu-item (click)="addExistingEssay()">Existing Essay</button>
-        </mat-menu>
+      <mat-menu #menuEssays="matMenu">
+        <button mat-menu-item (click)="addNewEssay()">New Essay</button>
+        <button mat-menu-item (click)="addExistingEssay()">Existing Essay</button>
+      </mat-menu>
     </div>
     <div class="essay-container">
       <app-essay-card
@@ -37,7 +37,11 @@
 
     <div class="app-content-toolbar margin-top">
       <h2>Timelines</h2>
-      <button mat-flat-button class="material-icons" color="primary" (click)="addProjectTimeline()">add</button>
+      <button mat-flat-button [matMenuTriggerFor]="menuTimelines" class="material-icons" color="primary" >add</button>
+      <mat-menu #menuTimelines="matMenu">
+        <button mat-menu-item (click)="addNewTimeline()">New Timeline</button>
+        <button mat-menu-item (click)="addExistingTimeline()">Existing Timeline</button>
+      </mat-menu>
     </div>
     <div class="app-cards-container cards-xlarge">
       <app-timeline-card
@@ -53,7 +57,11 @@
 
     <div class="app-content-toolbar margin-top">
       <h2>Events</h2>
-      <button mat-flat-button class="material-icons" color="primary" (click)="addEvent()">add</button>
+      <button mat-flat-button [matMenuTriggerFor]="menuEvents" class="material-icons" color="primary" >add</button>
+      <mat-menu #menuEvents="matMenu">
+        <button mat-menu-item (click)="addNewEvent()">New Event</button>
+        <button mat-menu-item (click)="addExistingEvent()">Existing Event</button>
+      </mat-menu>
     </div>
 
     <div class="app-cards-container cards-medium">

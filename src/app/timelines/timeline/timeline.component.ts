@@ -15,7 +15,6 @@ import {Category} from '../../models/category';
 
 import {EventService} from '../../services/event.service';
 
-import {QuickEventComponent} from '../../manager/events/quick-event/quick-event.component';
 import {TimelineEvent} from '../../models/timelines/timeline-event';
 import {User} from '../../models/user';
 import {MessageDialogComponent} from '../../utilities/message-dialog/message-dialog.component';
@@ -23,6 +22,8 @@ import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-d
 import {UserService} from '../../services/user.service';
 import {TimelineDisplayComponent} from './timeline-display/timeline-display.component';
 import {ConfirmRemovalComponent} from '../../utilities/confirm-removal/confirm-removal.component';
+import {AddEventDialogComponent} from '../../utilities/add-event-dialog/add-event-dialog.component';
+import {AddExistingEventDialogComponent} from '../../utilities/add-existing-event-dialog/add-existing-event-dialog.component';
 
 @Component({
   selector: 'app-timeline',
@@ -268,27 +269,23 @@ export class TimelineComponent implements OnInit {
     });
   }
 
-  createEvent() {
-    const dialogRef = this.dialog.open(QuickEventComponent, {
-      width: '750px',
-      data: {
-        showExisting: true,
-        showNew: true
-      }
+  createNewEvent() {
+    const dialogRef = this.dialog.open(AddEventDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(eventObj => {
-      let event = eventObj.event;
-      const isExisting = eventObj.isExisting;
+    dialogRef.afterClosed().subscribe(event => {
+      if (event.label) {
+        this.eventService.createApiEvent(event).subscribe(newEventResponse => {
+          event.id = newEventResponse.data.id;
 
-      // IF ADDING AN EXISTING EVENT TO THE TIMELINE
-      if (isExisting) {
-        // get the full description
-        this.eventService.getApiEvent(event.id).subscribe((fullEvent) => {
+          event.formatYears();
+          event.formatDates();
+
           const timelineEvent = new TimelineEvent();
           timelineEvent.initializeNewTimelineEvent();
 
-          timelineEvent.event = fullEvent;
+          timelineEvent.event = event;
 
           this.timelineService.createEventApiTimeline(timelineEvent, this.timeline).subscribe(timelineEventResponse => {
             timelineEvent.id = timelineEventResponse.data.id;
@@ -297,10 +294,10 @@ export class TimelineComponent implements OnInit {
 
             for (const categoryEvent of this.categoryEvents) {
               if (categoryEvent.id === null) {
-                if (fullEvent.formattedStartYear === fullEvent.formattedEndYear) {
-                  categoryEvent.singlePointEvents.push(fullEvent);
+                if (event.formattedStartYear === event.formattedEndYear) {
+                  categoryEvent.singlePointEvents.push(event);
                 } else {
-                  categoryEvent.multiPointEvents.push(fullEvent);
+                  categoryEvent.multiPointEvents.push(event);
                 }
 
                 break;
@@ -313,46 +310,43 @@ export class TimelineComponent implements OnInit {
             this.timelineDisplayComponent.setTimelinePersonLocations();
           });
         });
-
-      } else { // IF ADDING A NEW EVENT TO THE TIMELINE
-        // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
-        if (event.label) {
-          this.eventService.createApiEvent(event).subscribe(newEventResponse => {
-            event.id = newEventResponse.data.id;
-
-            event.formatYears();
-            event.formatDates();
-
-            const timelineEvent = new TimelineEvent();
-            timelineEvent.initializeNewTimelineEvent();
-
-            timelineEvent.event = event;
-
-            this.timelineService.createEventApiTimeline(timelineEvent, this.timeline).subscribe(timelineEventResponse => {
-              timelineEvent.id = timelineEventResponse.data.id;
-
-              this.timeline.events.push(timelineEvent);
-
-              for (const categoryEvent of this.categoryEvents) {
-                if (categoryEvent.id === null) {
-                  if (event.formattedStartYear === event.formattedEndYear) {
-                    categoryEvent.singlePointEvents.push(event);
-                  } else {
-                    categoryEvent.multiPointEvents.push(event);
-                  }
-
-                  break;
-                }
-              }
-
-              this.timelineDisplayComponent.setTimelineStartAndEnd();
-              this.timelineDisplayComponent.setTimeframe();
-              this.timelineDisplayComponent.setTimelineEventLocations();
-              this.timelineDisplayComponent.setTimelinePersonLocations();
-            });
-          });
-        }
       }
+    });
+  }
+
+  createExistingEvent() {
+    const dialogRef = this.dialog.open(AddExistingEventDialogComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(event => {
+      const timelineEvent = new TimelineEvent();
+      timelineEvent.initializeNewTimelineEvent();
+
+      timelineEvent.event = event;
+
+      this.timelineService.createEventApiTimeline(timelineEvent, this.timeline).subscribe(timelineEventResponse => {
+        timelineEvent.id = timelineEventResponse.data.id;
+
+        this.timeline.events.push(timelineEvent);
+
+        for (const categoryEvent of this.categoryEvents) {
+          if (categoryEvent.id === null) {
+            if (event.formattedStartYear === event.formattedEndYear) {
+              categoryEvent.singlePointEvents.push(event);
+            } else {
+              categoryEvent.multiPointEvents.push(event);
+            }
+
+            break;
+          }
+        }
+
+        this.timelineDisplayComponent.setTimelineStartAndEnd();
+        this.timelineDisplayComponent.setTimeframe();
+        this.timelineDisplayComponent.setTimelineEventLocations();
+        this.timelineDisplayComponent.setTimelinePersonLocations();
+      });
     });
   }
 

@@ -1,9 +1,12 @@
-<mat-card routerLink="/timeline/{{timeline.id}}">
-  <mat-card-title>{{timeline.label}}</mat-card-title>
-  <app-timeline-display
-    *ngIf="timeline"
-    [timeline]="timeline">
-  </app-timeline-display>
+<mat-card>
+  <div routerLink="/timeline/{{timeline.id}}">
+    <mat-card-title>{{timeline.label}}</mat-card-title>
+    <app-timeline-display
+      *ngIf="timeline"
+      [timeline]="timeline">
+    </app-timeline-display>
+  </div>
+
   <mat-card-actions>
     <button *ngIf="canDelete" color="warn" mat-icon-button class="material-icons" (click)="doRemoveTimeline()">delete</button>
   </mat-card-actions>
