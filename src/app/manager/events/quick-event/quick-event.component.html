@@ -1,23 +1,18 @@
 <form #eventForm="ngForm">
   <div *ngIf="data.showExisting">
-    <div class="app-drawer-header">
-      <div class="app-drawer-title">
-        <div class="app-drawer-subheading">Existing Event</div>
-      </div>
-    </div>
-
-    <div class="app-add-object-overlay">
-      <section class="app-section">
-        <mat-form-field style="width: 100%">
-          <input
-            type="text"
-            placeholder="Name"
-            matInput
-            #existingEventTitleField
-            name="existing_event_title"
-            id="existing_event_title"
-            [formControl]="eventTitleAutocompleteControl"
-            [matAutocomplete]="existingEventTitleAutoComplete">
+    <h2 mat-dialog-title>Existing Event</h2>
+   
+    <mat-dialog-content class="mat-typography">
+      <mat-form-field style="width: 100%">
+        <input
+          type="text"
+          placeholder="Name"
+          matInput
+          #existingEventTitleField
+          name="existing_event_title"
+          id="existing_event_title"
+          [formControl]="eventTitleAutocompleteControl"
+          [matAutocomplete]="existingEventTitleAutoComplete">
 
           <mat-autocomplete autoActiveFirstOption #existingEventTitleAutoComplete="matAutocomplete" [displayWith]="displayEvent" (optionSelected)="saveExistingEvent($event.option.value)">
             <mat-option *ngFor="let event of eventTitleFilteredOptions | async" [value]="event">
@@ -25,8 +20,7 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-      </section>
-    </div>
+    </mat-dialog-content>
   </div>
 
   <div *ngIf="data.showNew && data.showExisting" class="app-add-object-overlay">
@@ -34,99 +28,90 @@
   </div>
 
   <div *ngIf="data.showNew">
-    <div class="app-drawer-header">
-      <div class="app-drawer-title">
-        <div class="app-drawer-subheading">New Event</div>
-      </div>
-      <div class="app-drawer-tools">
-        <button mat-icon-button type="button" class="material-icons" (click)="saveNewEvent()">save</button>
-        <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
-      </div>
-    </div>
+    <h2 mat-dialog-title>New Event</h2>
+    <mat-dialog-content class="mat-typography">
+      <mat-form-field style="width: 100%">
+        <input
+          type="text"
+          placeholder="Title"
+          matInput
+          #evenLabelField
+          name="event_label"
+          id="event_label"
+          (focusout)="saveEventTitle(evenLabelField.value)"
+          [formControl]="eventTitleAutocompleteControl"
+          [matAutocomplete]="eventTitleAutoComplete">
 
-    <div class="app-drawer-content">
-      <section class="app-section">
-        <mat-form-field style="width: 100%">
-          <input
-            type="text"
-            placeholder="Title"
-            matInput
-            #evenLabelField
-            name="event_label"
-            id="event_label"
-            (focusout)="saveEventTitle(evenLabelField.value)"
-            [formControl]="eventTitleAutocompleteControl"
-            [matAutocomplete]="eventTitleAutoComplete">
+        <mat-autocomplete #eventTitleAutoComplete="matAutocomplete" [displayWith]="displayEvent" (optionSelected)="saveEventTitle(null)">
+          <mat-option *ngFor="let event of eventTitleFilteredOptions | async" [value]="event">
+            {{event.label}}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
 
-          <mat-autocomplete #eventTitleAutoComplete="matAutocomplete" [displayWith]="displayEvent" (optionSelected)="saveEventTitle(null)">
-            <mat-option *ngFor="let event of eventTitleFilteredOptions | async" [value]="event">
-              {{event.label}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </section>
+      <mat-grid-list cols="2" rowHeight="60px">
+          <mat-grid-tile>
+            <mat-form-field style="width: 100%" class="margin-right">
+              <mat-label>Starting Era</mat-label>
+              <mat-select [(ngModel)]="event.startEra" name="event_start_era" required>
+                <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </mat-grid-tile>
+          <mat-grid-tile>
+            <mat-form-field style="width: 100%">
+              <input
+                matInput
+                placeholder="Starting Year"
+                name="event_start_year"
+                required
+                [(ngModel)]="event.startYear"/>
+            </mat-form-field>
+          </mat-grid-tile>
 
-      <section class="app-section inline">
-        <label>Beginning</label>
+          <mat-grid-tile>
+            <mat-form-field style="width: 100%" class="margin-right">
+                <mat-label>Ending Era</mat-label>
+                <mat-select [(ngModel)]="event.endEra" name="event_end_era">
+                  <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+          </mat-grid-tile>
 
-        <div class="app-field-group">
-          <mat-form-field class="app-field-era">
-            <mat-label>Era</mat-label>
-            <mat-select [(ngModel)]="event.startEra" name="event_start_era" required>
-              <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <mat-grid-tile>
+            <mat-form-field style="width: 100%" class="app-field-year">
+              <input
+                matInput
+                placeholder="ending Year"
+                name="event_end_year"
+                [(ngModel)]="event.endYear" />
+            </mat-form-field>
+          </mat-grid-tile>
 
-          <mat-form-field class="app-field-year">
-            <input
-              matInput
-              placeholder="Year"
-              name="event_start_year"
-              required
-              [(ngModel)]="event.startYear"/>
-          </mat-form-field>
-        </div>
+      </mat-grid-list>
 
-      </section>
+      <mat-form-field style="width: 100%">
+        <input
+          type="text"
+          placeholder="Source"
+          aria-label="Source"
+          matInput
+          [formControl]="sourcesAutocompleteControl"
+          [matAutocomplete]="auto">
 
-      <section class="app-section inline">
-        <label>Ending</label>
-        <div class="app-field-group">
-          <mat-form-field class="app-field-era">
-            <mat-label>Era</mat-label>
-            <mat-select [(ngModel)]="event.endEra" name="event_end_era">
-              <mat-option *ngFor="let era of eras" [value]="era">{{era.label}}</mat-option>
-            </mat-select>
-          </mat-form-field>
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
+          <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
+            {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </mat-dialog-content>
 
-          <mat-form-field class="app-field-year">
-            <input
-              matInput
-              placeholder="Year"
-              name="event_end_year"
-              [(ngModel)]="event.endYear" />
-          </mat-form-field>
-        </div>
-      </section>
+    <mat-dialog-actions align="end">
+      <button mat-flat-button color="primary" type="button" (click)="saveNewEvent()">Save</button>
+      <button mat-flat-button type="button" (click)="onNoClick()">Cancel</button>
+    </mat-dialog-actions>
 
-      <section class="app-section inline">
-        <label>Source</label>
-        <mat-form-field class="app-field-reference">
-          <input
-            type="text"
-            placeholder="Select..."
-            aria-label="Source"
-            matInput
-            [formControl]="sourcesAutocompleteControl"
-            [matAutocomplete]="auto">
 
-          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displaySource" (optionSelected)="saveSource()">
-            <mat-option *ngFor="let source of sourcesFilteredOptions | async" [value]="source">
-              {{source.title}} <span *ngIf="source.subTitle">: {{source.subTitle}}</span>
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </section>
-    </div>
   </div>
 </form>

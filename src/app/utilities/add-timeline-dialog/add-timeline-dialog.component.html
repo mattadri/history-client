@@ -34,22 +34,12 @@
   </div>
 
   <div *ngIf="data.showNew">
-    <div class="app-drawer-header">
-      <div class="app-drawer-title">
-        <div class="app-drawer-subheading">New Timeline</div>
-      </div>
-      <div class="app-drawer-tools">
-        <button mat-icon-button type="button" class="material-icons" (click)="saveNewTimeline()">save</button>
-        <button mat-icon-button type="button" class="material-icons" (click)="onNoClick()">close</button>
-      </div>
-    </div>
-
-    <div class="app-drawer-content">
-      <section class="app-section">
+      <h2 mat-dialog-title>New Timeline</h2>
+      <mat-dialog-content class="mat-typography">
         <mat-form-field style="width: 100%">
           <input
             type="text"
-            placeholder="New Timeline"
+            placeholder="Title"
             matInput
             #newTimelineTitleField
             name="new_timeline_title"
@@ -64,7 +54,12 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-      </section>
-    </div>
+      </mat-dialog-content>
+
+      <mat-dialog-actions align="end">
+        <button mat-flat-button color="primary" type="button" (click)="saveNewTimeline()">Save</button>
+        <button mat-flat-button type="button" (click)="onNoClick()">Cancel</button>
+      </mat-dialog-actions>
+    
   </div>
 </form>
