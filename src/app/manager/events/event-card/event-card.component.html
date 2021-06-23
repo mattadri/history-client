@@ -1,10 +1,12 @@
-<mat-card routerLink="/manager/events/{{event.id}}">
-    <mat-card-title>{{event.label}}</mat-card-title>
-    <mat-card-subtitle>
-        <span>{{event.formattedStartYear}}</span>
-        <span *ngIf="event.formattedStartYear != event.formattedEndYear"> - {{event.formattedEndYear}}</span>
-    </mat-card-subtitle>
-    <img class="event-image" src="{{event.image}}">
+<mat-card>
+    <div routerLink="/manager/events/{{event.id}}">
+        <mat-card-title>{{event.label}}</mat-card-title>
+        <mat-card-subtitle>
+            <span>{{event.formattedStartYear}}</span>
+            <span *ngIf="event.formattedStartYear != event.formattedEndYear"> - {{event.formattedEndYear}}</span>
+        </mat-card-subtitle>
+        <img class="event-image" src="{{event.image}}">
+    </div>
     <mat-card-actions>
         <button *ngIf="canDelete" color="warn" mat-icon-button class="material-icons" (click)="doRemoveEvent()">delete</button>
     </mat-card-actions>
