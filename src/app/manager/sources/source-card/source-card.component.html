@@ -1,23 +1,14 @@
 <mat-card>
-  <button *ngIf="canDelete" mat-icon-button class="material-icons" (click)="doRemoveSource()">delete</button>
-
   <div routerLink="/manager/sources/{{source.id}}">
-    <mat-card-title>
-      {{source.title}}
-
-      <span *ngIf="source.subTitle">
-        <h2>{{source.subTitle}}</h2>
-      </span>
-
-      <span *ngIf="source.authors.length">
-        <h3 *ngFor="let author of source.authors">{{author.firstName}} {{author.lastName}}</h3>
-      </span>
-    </mat-card-title>
-
-    <mat-card-content>
-      <div class="mat-card-subtitle">
-        Published {{source.publishedYear}}
+    <mat-card-title>{{source.title}}</mat-card-title>
+    <mat-card-subtitle>
+      {{source.subTitle}}
+      <div *ngIf="source.authors.length">
+        <i *ngFor="let author of source.authors">{{author.firstName}} {{author.lastName}}, {{source.publishedYear}}</i>
       </div>
-    </mat-card-content>
+    </mat-card-subtitle>
   </div>
+  <mat-card-actions>
+      <button *ngIf="canDelete" color="warn" mat-icon-button class="material-icons" (click)="doRemoveSource()">delete</button>
+  </mat-card-actions>
 </mat-card>
