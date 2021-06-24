@@ -38,8 +38,6 @@ export class SourcesComponent implements OnInit {
   public nextPage: string;
   public previousPage: string;
 
-  public sourceLink: string;
-
   constructor(private sourceService: SourceService,
               private eraService: EraService,
               public dialog: MatDialog) {

@@ -1,1 +1,23 @@
-<p>add-existing-brainstorm-dialog works!</p>
+<form>
+  <h2 mat-dialog-title>Existing Brainstorm</h2>
+
+  <mat-dialog-content class="mat-typography">
+    <mat-form-field style="width: 100%">
+      <input
+        type="text"
+        placeholder="Brainstorm"
+        matInput
+        #brainstormLabelField
+        name="existing_brainstorm_title"
+        id="existing_brainstorm_title"
+        [formControl]="brainstormNameAutocompleteControl"
+        [matAutocomplete]="brainstormNameAutoComplete">
+
+      <mat-autocomplete autoActiveFirstOption #brainstormNameAutoComplete="matAutocomplete" (optionSelected)="saveExistingBrainstorm($event.option.value)">
+        <mat-option *ngFor="let brainstorm of brainstormNameFilteredOptions | async" [value]="brainstorm">
+          {{brainstorm.title}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </mat-dialog-content>
+</form>

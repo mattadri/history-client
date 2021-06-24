@@ -112,7 +112,6 @@ import { ChartsComponent } from './manager/charts/charts.component';
 import { ChartComponent } from './manager/charts/chart/chart.component';
 import { ChartCardComponent } from './manager/charts/chart-card/chart-card.component';
 import { ChartDisplayComponent } from './manager/charts/chart-display/chart-display.component';
-import { QuickPersonComponent } from './manager/persons/quick-person/quick-person.component';
 import { PersonDetailsComponent } from './manager/persons/person-details/person-details.component';
 import { PersonDetailsNoteComponent } from './manager/persons/person-details/person-details-note/person-details-note.component';
 import { QuickBrainstormTopicComponent } from './brainstorms/brainstorm/quick-brainstorm-topic/quick-brainstorm-topic.component';
@@ -215,7 +214,6 @@ import { AddPersonDialogComponent } from './utilities/add-person-dialog/add-pers
     ChartComponent,
     ChartCardComponent,
     ChartDisplayComponent,
-    QuickPersonComponent,
     PersonDetailsComponent,
     PersonDetailsNoteComponent,
     QuickBrainstormTopicComponent,

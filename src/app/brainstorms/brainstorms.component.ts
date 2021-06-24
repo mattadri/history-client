@@ -95,16 +95,10 @@ export class BrainstormsComponent implements OnInit {
 
   createBrainstorm() {
     const dialogRef = this.dialog.open(AddBrainstormDialogComponent, {
-      width: '750px',
-      data: {
-        showExisting: false,
-        showNew: true
-      }
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(responseData => {
-      let brainstorm = responseData.brainstorm;
-
+    dialogRef.afterClosed().subscribe(brainstorm => {
       if (brainstorm) {
         this.brainstormService.createApiBrainstorm(brainstorm).subscribe(response => {
           brainstorm.id = response.data.id;

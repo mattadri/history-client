@@ -1,5 +1,5 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {Component, OnInit} from '@angular/core';
+import {MatDialogRef} from '@angular/material/dialog';
 import {FormControl} from '@angular/forms';
 
 import {Observable} from 'rxjs';
@@ -8,16 +8,6 @@ import {map, startWith} from 'rxjs/operators';
 import {Chart} from '../../models/chart';
 import {ChartService} from '../../services/chart.service';
 import {Sleep} from '../sleep';
-
-export interface DialogData {
-  showExisting: boolean;
-  showNew: boolean;
-}
-
-class QuickChartReturnData {
-  chart: Chart;
-  isExisting: boolean;
-}
 
 @Component({
   selector: 'app-add-chart-dialog',
@@ -33,13 +23,8 @@ export class AddChartDialogComponent implements OnInit {
   public chartNameAutocompleteControl = new FormControl();
   public chartNameFilteredOptions: Observable<Chart[]>;
 
-  private returnData: QuickChartReturnData;
-
   constructor(private chartService: ChartService,
-              public dialogRef: MatDialogRef<AddChartDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: DialogData) {
-
-    this.returnData = new QuickChartReturnData();
+              public dialogRef: MatDialogRef<AddChartDialogComponent>) {
 
     this.chart = new Chart();
     this.chart.initializeNewChart();
@@ -73,18 +58,8 @@ export class AddChartDialogComponent implements OnInit {
     }
   }
 
-  saveExistingChart(chart) {
-    this.returnData.chart = chart;
-    this.returnData.isExisting = true;
-
-    this.dialogRef.close(this.returnData);
-  }
-
   saveNewChart() {
-    this.returnData.chart = this.chart;
-    this.returnData.isExisting = false;
-
-    this.dialogRef.close(this.returnData);
+    this.dialogRef.close(this.chart);
   }
 
   private _filterChartsName(filterValue: any): Chart[] {
@@ -104,10 +79,6 @@ export class AddChartDialogComponent implements OnInit {
   async activateCreateForm() {
     await Sleep.wait(500);
 
-    try {
-      document.getElementById('existing_chart_title').focus();
-    } catch(e) {
-      document.getElementById('new_chart_title').focus();
-    }
+    document.getElementById('chart_title').focus();
   }
 }

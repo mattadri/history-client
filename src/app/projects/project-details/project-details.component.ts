@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ProjectService} from '../../services/project.service';
 import {Project} from '../../models/projects/project';
-import {QuickPersonComponent} from '../../manager/persons/quick-person/quick-person.component';
 import {MatDialog} from '@angular/material/dialog';
 import {PersonService} from '../../services/person.service';
 import {ProjectPerson} from '../../models/projects/project-person';
@@ -29,6 +28,10 @@ import {AddEssayDialogComponent} from '../../utilities/add-essay-dialog/add-essa
 import {AddExistingTimelineDialogComponent} from '../../utilities/add-existing-timeline-dialog/add-existing-timeline-dialog.component';
 import {AddEventDialogComponent} from '../../utilities/add-event-dialog/add-event-dialog.component';
 import {AddExistingEventDialogComponent} from '../../utilities/add-existing-event-dialog/add-existing-event-dialog.component';
+import {AddPersonDialogComponent} from '../../utilities/add-person-dialog/add-person-dialog.component';
+import {AddExistingPersonDialogComponent} from '../../utilities/add-existing-person-dialog/add-existing-person-dialog.component';
+import {AddExistingChartDialogComponent} from '../../utilities/add-existing-chart-dialog/add-existing-chart-dialog.component';
+import {AddExistingBrainstormDialogComponent} from '../../utilities/add-existing-brainstorm-dialog/add-existing-brainstorm-dialog.component';
 
 @Component({
   selector: 'app-project-details',
@@ -160,22 +163,20 @@ export class ProjectDetailsComponent implements OnInit {
     });
   }
 
-  addPerson() {
-    const dialogRef = this.dialog.open(QuickPersonComponent, {
-      width: '750px',
-      data: {
-        showExisting: true,
-        showNew: true
-      }
+  addNewPerson() {
+    const dialogRef = this.dialog.open(AddPersonDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(returnObject => {
-      if (returnObject) {
-        let isExisting = returnObject.isExisting;
-        let person = returnObject.person;
+    dialogRef.afterClosed().subscribe(person => {
+      if (person.firstName && person.birthYear) {
+        this.personService.createApiPerson(person).subscribe(response => {
+          person.id = response.data.id;
 
-        // IF ADDING AN EXISTING PERSON TO THE PROJECT
-        if (isExisting) {
+          person.formatYears();
+
+          this.personService.setPerson(person);
+
           this.projectService.addApiPersonToProject(this.project, person).subscribe((response) => {
             let projectPerson = new ProjectPerson();
             projectPerson.initializeNewProjectPerson();
@@ -185,30 +186,26 @@ export class ProjectDetailsComponent implements OnInit {
 
             this.project.persons.unshift(projectPerson);
           });
-
-        } else { // IF ADDING A NEW PERSON TO THE PROJECT
-          // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
-          if (person.firstName && person.birthYear) {
-            this.personService.createApiPerson(person).subscribe(response => {
-              person.id = response.data.id;
-
-              person.formatYears();
-
-              this.personService.setPerson(person);
-
-              this.projectService.addApiPersonToProject(this.project, person).subscribe((response) => {
-                let projectPerson = new ProjectPerson();
-                projectPerson.initializeNewProjectPerson();
-
-                projectPerson.id = response.id;
-                projectPerson.person = person;
-
-                this.project.persons.unshift(projectPerson);
-              });
-            });
-          }
-        }
+        });
       }
+    });
+  }
+
+  addExistingPerson() {
+    const dialogRef = this.dialog.open(AddExistingPersonDialogComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(person => {
+      this.projectService.addApiPersonToProject(this.project, person).subscribe((response) => {
+        let projectPerson = new ProjectPerson();
+        projectPerson.initializeNewProjectPerson();
+
+        projectPerson.id = response.id;
+        projectPerson.person = person;
+
+        this.project.persons.unshift(projectPerson);
+      });
     });
   }
 
@@ -259,22 +256,58 @@ export class ProjectDetailsComponent implements OnInit {
     });
   }
 
-  addChart() {
+  addNewChart() {
     const dialogRef = this.dialog.open(AddChartDialogComponent, {
-      width: '750px',
-      data: {
-        showExisting: true,
-        showNew: true
-      }
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(returnObject => {
-      if (returnObject) {
-        let isExisting = returnObject.isExisting;
-        let chart = returnObject.chart;
+    dialogRef.afterClosed().subscribe(chart => {
+      if (chart.options.title.text) {
+        this.chartService.createApiChart(chart).subscribe(response => {
+          chart.id = response.data.id;
 
-        // IF ADDING AN EXISTING CHART TO THE PROJECT
-        if (isExisting) {
+          for (const label of chart.labels) {
+            this.chartService.createApiChartLabel(chart, label).subscribe(labelResponse => {
+              label.id = labelResponse.data.id;
+            });
+          }
+
+          for (const dataset of chart.datasets) {
+            this.chartService.createApiChartDataset(chart, dataset).subscribe(datasetResponse => {
+              dataset.id = datasetResponse.data.id;
+
+              for (const data of dataset.data) {
+                this.chartService.createApiChartDatasetData(dataset, data).subscribe(dataResponse => {
+                  data.id = dataResponse.data.id;
+                });
+              }
+            });
+          }
+
+          this.chartService.createApiChartOptions(chart, chart.options).subscribe(optionsResponse => {
+            chart.options.id = optionsResponse.data.id;
+
+            // make the title options
+            this.chartService.createApiChartTitleOptions(chart.options, chart.options.title).subscribe(titleOptionsResponse => {
+              chart.options.title.id = titleOptionsResponse.data.id;
+            });
+
+            // make the legend options
+            this.chartService.createApiChartLegendOptions(chart.options, chart.options.legend).subscribe(legendOptionsResponse => {
+              chart.options.legend.id = legendOptionsResponse.data.id;
+
+              this.chartService.createApiChartLegendLabelOptions(chart.options.legend, chart.options.legend.labels)
+                .subscribe(legendLabelOptionsResponse => {
+                  chart.options.legend.labels.id = legendLabelOptionsResponse.data.id;
+                });
+            });
+
+            // make the tooltip options
+            this.chartService.createApiChartTooltipOptions(chart.options, chart.options.tooltips).subscribe(tooltipOptionsResponse => {
+              chart.options.tooltips.id = tooltipOptionsResponse.data.id;
+            });
+          });
+
           this.projectService.addApiChartToProject(this.project, chart).subscribe((response) => {
             let projectChart = new ProjectChart();
             projectChart.initializeNewProjectChart();
@@ -284,87 +317,41 @@ export class ProjectDetailsComponent implements OnInit {
 
             this.project.charts.unshift(projectChart);
           });
-
-        } else { // IF ADDING A NEW CHART TO THE PROJECT
-          // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
-          if (chart.options.title.text) {
-            this.chartService.createApiChart(chart).subscribe(response => {
-              chart.id = response.data.id;
-
-              for (const label of chart.labels) {
-                this.chartService.createApiChartLabel(chart, label).subscribe(labelResponse => {
-                  label.id = labelResponse.data.id;
-                });
-              }
-
-              for (const dataset of chart.datasets) {
-                this.chartService.createApiChartDataset(chart, dataset).subscribe(datasetResponse => {
-                  dataset.id = datasetResponse.data.id;
-
-                  for (const data of dataset.data) {
-                    this.chartService.createApiChartDatasetData(dataset, data).subscribe(dataResponse => {
-                      data.id = dataResponse.data.id;
-                    });
-                  }
-                });
-              }
-
-              this.chartService.createApiChartOptions(chart, chart.options).subscribe(optionsResponse => {
-                chart.options.id = optionsResponse.data.id;
-
-                // make the title options
-                this.chartService.createApiChartTitleOptions(chart.options, chart.options.title).subscribe(titleOptionsResponse => {
-                  chart.options.title.id = titleOptionsResponse.data.id;
-                });
-
-                // make the legend options
-                this.chartService.createApiChartLegendOptions(chart.options, chart.options.legend).subscribe(legendOptionsResponse => {
-                  chart.options.legend.id = legendOptionsResponse.data.id;
-
-                  this.chartService.createApiChartLegendLabelOptions(chart.options.legend, chart.options.legend.labels)
-                    .subscribe(legendLabelOptionsResponse => {
-                      chart.options.legend.labels.id = legendLabelOptionsResponse.data.id;
-                    });
-                });
-
-                // make the tooltip options
-                this.chartService.createApiChartTooltipOptions(chart.options, chart.options.tooltips).subscribe(tooltipOptionsResponse => {
-                  chart.options.tooltips.id = tooltipOptionsResponse.data.id;
-                });
-              });
-
-              this.projectService.addApiChartToProject(this.project, chart).subscribe((response) => {
-                let projectChart = new ProjectChart();
-                projectChart.initializeNewProjectChart();
-
-                projectChart.id = response.data.id;
-                projectChart.chart = chart;
-
-                this.project.charts.unshift(projectChart);
-              });
-            });
-          }
-        }
+        });
       }
     });
   }
 
-  addBrainstorm() {
-    const dialogRef = this.dialog.open(AddBrainstormDialogComponent, {
-      width: '750px',
-      data: {
-        showExisting: true,
-        showNew: true
-      }
+  addExistingChart() {
+    const dialogRef = this.dialog.open(AddExistingChartDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(returnObject => {
-      if (returnObject) {
-        let isExisting = returnObject.isExisting;
-        let brainstorm = returnObject.brainstorm;
+    dialogRef.afterClosed().subscribe(chart => {
+      this.projectService.addApiChartToProject(this.project, chart).subscribe((response) => {
+        let projectChart = new ProjectChart();
+        projectChart.initializeNewProjectChart();
 
-        // IF ADDING AN EXISTING BRAINSTORM TO THE PROJECT
-        if (isExisting) {
+        projectChart.id = response.data.id;
+        projectChart.chart = chart;
+
+        this.project.charts.unshift(projectChart);
+      });
+    });
+  }
+
+  addNewBrainstorm() {
+    const dialogRef = this.dialog.open(AddBrainstormDialogComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(brainstorm => {
+      if (brainstorm.title) {
+        this.brainstormService.createApiBrainstorm(brainstorm).subscribe(response => {
+          brainstorm.id = response.data.id;
+
+          this.brainstormService.setBrainstorm(brainstorm);
+
           this.projectService.addApiBrainstormToProject(this.project, brainstorm).subscribe((response) => {
             let projectBrainstorm = new ProjectBrainstorm();
             projectBrainstorm.initializeNewProjectBrainstorm();
@@ -375,29 +362,27 @@ export class ProjectDetailsComponent implements OnInit {
             this.project.brainstorms.unshift(projectBrainstorm);
           });
 
-        } else { // IF ADDING A NEW BRAINSTORM TO THE PROJECT
-          // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
-          if (brainstorm.title) {
-            this.brainstormService.createApiBrainstorm(brainstorm).subscribe(response => {
-              brainstorm.id = response.data.id;
-
-              this.brainstormService.setBrainstorm(brainstorm);
-
-              this.projectService.addApiBrainstormToProject(this.project, brainstorm).subscribe((response) => {
-                let projectBrainstorm = new ProjectBrainstorm();
-                projectBrainstorm.initializeNewProjectBrainstorm();
-
-                projectBrainstorm.id = response.data.id;
-                projectBrainstorm.brainstorm = brainstorm;
-
-                this.project.brainstorms.unshift(projectBrainstorm);
-              });
-
-              this.brainstormService.addUserToBrainstorm(brainstorm, this.userId).subscribe(() => {});
-            });
-          }
-        }
+          this.brainstormService.addUserToBrainstorm(brainstorm, this.userId).subscribe(() => {});
+        });
       }
+    });
+  }
+
+  addExistingBrainstorm() {
+    const dialogRef = this.dialog.open(AddExistingBrainstormDialogComponent, {
+      width: '750px'
+    });
+
+    dialogRef.afterClosed().subscribe(brainstorm => {
+      this.projectService.addApiBrainstormToProject(this.project, brainstorm).subscribe((response) => {
+        let projectBrainstorm = new ProjectBrainstorm();
+        projectBrainstorm.initializeNewProjectBrainstorm();
+
+        projectBrainstorm.id = response.data.id;
+        projectBrainstorm.brainstorm = brainstorm;
+
+        this.project.brainstorms.unshift(projectBrainstorm);
+      });
     });
   }
 

@@ -5,12 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 
 import {Observable} from 'rxjs';
 
-import {QuickPersonComponent} from './quick-person/quick-person.component';
-
 import { Person } from '../../models/persons/person';
 import { Source } from '../../models/source';
 
 import { PersonService } from '../../services/person.service';
+import {AddPersonDialogComponent} from '../../utilities/add-person-dialog/add-person-dialog.component';
 
 @Component({
   selector: 'app-persons',
@@ -30,8 +29,6 @@ export class PersonsComponent implements OnInit {
 
   public sourcesAutocompleteControl = new FormControl();
   public sourcesFilteredOptions: Observable<Source[]>;
-
-  public personLink: string;
 
   constructor(private personService: PersonService,
               public dialog: MatDialog) {
@@ -70,33 +67,21 @@ export class PersonsComponent implements OnInit {
   }
 
   createPerson() {
-    const dialogRef = this.dialog.open(QuickPersonComponent, {
-      width: '750px',
-      data: {
-        showExisting: false,
-        showNew: true
-      }
+    const dialogRef = this.dialog.open(AddPersonDialogComponent, {
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(returnObject => {
-      if (returnObject) {
-        let isExisting = returnObject.isExisting;
-        let person = returnObject.person;
+    dialogRef.afterClosed().subscribe(person => {
+      if (person.firstName && person.birthYear) {
+        this.personService.createApiPerson(person).subscribe(response => {
+          person.id = response.data.id;
 
-        if (!isExisting) {
-          // THE USER CAN CLOSE DIALOG WITHOUT ENTERING INFO. CHECK TO MAKE SURE REQUIRED FIELDS ARE PRESENT.
-          if (person.firstName && person.birthYear) {
-            this.personService.createApiPerson(person).subscribe(response => {
-              person.id = response.data.id;
+          person.formatYears();
 
-              person.formatYears();
+          this.personService.setPerson(person);
 
-              this.personService.setPerson(person);
-
-              this.persons.unshift(person);
-            });
-          }
-        }
+          this.persons.unshift(person);
+        });
       }
     });
   }

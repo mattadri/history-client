@@ -44,17 +44,11 @@ export class ChartsComponent implements OnInit {
 
   createNewChart() {
     const dialogRef = this.dialog.open(AddChartDialogComponent, {
-      width: '750px',
-      data: {
-        showExisting: false,
-        showNew: true
-      }
+      width: '750px'
     });
 
-    dialogRef.afterClosed().subscribe(chartResponse => {
-      if (chartResponse.chart.title) {
-        let chart = chartResponse.chart;
-
+    dialogRef.afterClosed().subscribe(chart => {
+      if (chart.title) {
         this.chartService.createApiChart(chart).subscribe(response => {
           chart.id = response.data.id;
 

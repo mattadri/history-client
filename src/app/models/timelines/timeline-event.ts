@@ -1,5 +1,4 @@
 import { Event } from '../events/event';
-import { Timeline } from './timeline';
 
 export class TimelineEvent {
   id: number;

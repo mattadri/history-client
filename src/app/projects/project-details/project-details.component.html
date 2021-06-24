@@ -78,7 +78,11 @@
 
     <div class="app-content-toolbar margin-top">
       <h2>People</h2>
-      <button mat-flat-button class="material-icons" color="primary" (click)="addPerson()">add</button>
+      <button mat-flat-button [matMenuTriggerFor]="menuPersons" class="material-icons" color="primary" >add</button>
+      <mat-menu #menuPersons="matMenu">
+        <button mat-menu-item (click)="addNewPerson()">New Person</button>
+        <button mat-menu-item (click)="addExistingPerson()">Existing Person</button>
+      </mat-menu>
     </div>
 
     <div class="app-cards-container cards-medium">
@@ -94,7 +98,11 @@
 
     <div class="app-content-toolbar margin-top">
       <h2>Charts</h2>
-      <button mat-flat-button class="material-icons" color="primary" (click)="addChart()">add</button>
+      <button mat-flat-button [matMenuTriggerFor]="menuCharts" class="material-icons" color="primary" >add</button>
+      <mat-menu #menuCharts="matMenu">
+        <button mat-menu-item (click)="addNewChart()">New Chart</button>
+        <button mat-menu-item (click)="addExistingChart()">Existing Chart</button>
+      </mat-menu>
     </div>
 
     <div class="app-cards-container cards-large">
@@ -111,7 +119,11 @@
 
     <div class="app-content-toolbar margin-top">
       <h2>Brainstorms</h2>
-      <button mat-flat-button class="material-icons" color="primary" (click)="addBrainstorm()">add</button>
+      <button mat-flat-button [matMenuTriggerFor]="menuBrainstorms" class="material-icons" color="primary" >add</button>
+      <mat-menu #menuBrainstorms="matMenu">
+        <button mat-menu-item (click)="addNewBrainstorm()">New Brainstorm</button>
+        <button mat-menu-item (click)="addExistingBrainstorm()">Existing Brainstorm</button>
+      </mat-menu>
     </div>
 
     <div class="app-cards-container cards-medium">

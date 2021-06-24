@@ -1,58 +1,20 @@
 <form #brainstormForm="ngForm">
-  <div *ngIf="data.showExisting">
-    
-    <div class="app-drawer-header">
-      <div class="app-drawer-title">
-        <div class="app-drawer-subheading">Brainstorms</div>
-      </div>
-    </div>
+  <h2 mat-dialog-title>New Brainstorm</h2>
 
-    <div class="app-add-object-overlay">
-      <section class="app-section">
-        <mat-form-field style="width: 100%">
-          <input
-            type="text"
-            placeholder="Brainstorm"
-            matInput
-            #brainstormLabelField
-            name="existing_brainstorm_title"
-            id="existing_brainstorm_title"
-            [formControl]="brainstormNameAutocompleteControl"
-            [matAutocomplete]="brainstormNameAutoComplete">
+  <mat-dialog-content class="mat-typography">
+    <mat-form-field style="width: 100%">
+      <input
+        matInput
+        placeholder="Title"
+        name="new_brainstorm_title"
+        id="new_brainstorm_title"
+        #brainstormTitle="ngModel"
+        [(ngModel)]="brainstorm.title" />
+    </mat-form-field>
+  </mat-dialog-content>
 
-          <mat-autocomplete autoActiveFirstOption #brainstormNameAutoComplete="matAutocomplete" (optionSelected)="saveExistingBrainstorm($event.option.value)">
-            <mat-option *ngFor="let brainstorm of brainstormNameFilteredOptions | async" [value]="brainstorm">
-              {{brainstorm.title}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-      </section>
-    </div>
-  </div>
-
-  <div *ngIf="data.showNew && data.showExisting" class="app-add-object-overlay">
-    <div>OR</div>
-  </div>
-
-  <div *ngIf="data.showNew">
-    <h2 mat-dialog-title>New Brainstorm</h2>
-
-    <mat-dialog-content class="mat-typography">
-      <mat-form-field style="width: 100%">
-        <input
-          matInput
-          placeholder="Title"
-          name="new_brainstorm_title"
-          id="new_brainstorm_title"
-          #brainstormTitle="ngModel"
-          [(ngModel)]="brainstorm.title" />
-      </mat-form-field>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end">
-      <button mat-flat-button color="primary" type="button" (click)="saveNewBrainstorm()">Save</button>
-      <button mat-flat-button type="button" (click)="onNoClick()">Cancel</button>
-    </mat-dialog-actions>
-
-  </div>
+  <mat-dialog-actions align="end">
+    <button mat-flat-button color="primary" type="button" (click)="saveNewBrainstorm()">Save</button>
+    <button mat-flat-button type="button" (click)="onNoClick()">Cancel</button>
+  </mat-dialog-actions>
 </form>

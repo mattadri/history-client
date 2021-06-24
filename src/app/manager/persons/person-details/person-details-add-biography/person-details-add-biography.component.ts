@@ -16,8 +16,6 @@ import {EssayService} from '../../../../services/essay.service';
   styleUrls: ['./person-details-add-biography.component.scss']
 })
 export class PersonDetailsAddBiographyComponent implements OnInit {
-  public biographies: PersonBiography[];
-
   public searchBiographies: Essay[] = [];
 
   public biographyTitleAutocompleteControl = new FormControl();

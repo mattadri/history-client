@@ -1,1 +1,23 @@
-<p>add-existing-person-dialog works!</p>
+<form>
+  <h2 mat-dialog-title>Existing Person</h2>
+
+  <mat-dialog-content class="mat-typography">
+    <mat-form-field style="width: 100%">
+      <input
+        type="text"
+        placeholder="Name"
+        matInput
+        #personNameField
+        name="person_name"
+        id="person_name"
+        [formControl]="personNameAutocompleteControl"
+        [matAutocomplete]="personNameAutoComplete">
+
+      <mat-autocomplete autoActiveFirstOption #personNameAutoComplete="matAutocomplete" [displayWith]="displayPersonName" (optionSelected)="saveExistingPerson($event.option.value)">
+        <mat-option *ngFor="let personOption of personNameFilteredOptions | async" [value]="personOption">
+          <span *ngIf="personOption.firstName">{{personOption.firstName}} </span><span *ngIf="personOption.lastName">{{personOption.lastName}}</span>
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </mat-dialog-content>
+</form>

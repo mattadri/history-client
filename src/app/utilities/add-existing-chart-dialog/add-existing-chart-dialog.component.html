@@ -1,1 +1,23 @@
-<p>add-existing-chart-dialog works!</p>
+<form>
+  <h2 mat-dialog-title>Existing Chart</h2>
+
+  <mat-dialog-content class="mat-typography">
+    <mat-form-field style="width: 100%">
+      <input
+        type="text"
+        placeholder="Chart"
+        matInput
+        #chartLabelField
+        name="chart_title"
+        id="chart_title"
+        [formControl]="chartNameAutocompleteControl"
+        [matAutocomplete]="chartNameAutoComplete">
+
+      <mat-autocomplete autoActiveFirstOption #chartNameAutoComplete="matAutocomplete" (optionSelected)="saveExistingChart($event.option.value)">
+        <mat-option *ngFor="let chart of chartNameFilteredOptions | async" [value]="chart">
+          {{chart.options.title.text}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </mat-dialog-content>
+</form>
