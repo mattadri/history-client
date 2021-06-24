@@ -70,6 +70,8 @@ export class TimelineComponent implements OnInit {
   public showReturnHeader: boolean;
   public returnPath: string;
 
+  public timelineLoaded: boolean;
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private timelineService: TimelineService,
@@ -90,12 +92,18 @@ export class TimelineComponent implements OnInit {
 
     this.timelineSpanInYears = 0;
 
+    this.timelineLoaded = false;
+
     this._setReturnHeader();
 
-    const timelineId = this.route.snapshot.paramMap.get('id');
+    const timelineId = parseInt(this.route.snapshot.paramMap.get('id'));
 
-    this.timelineService.getApiTimeline(timelineId).subscribe(timeline => {
-      this.timeline = timeline;
+    // the timeline passed in is not a full timeline. Get the full timeline and mark loaded.
+    let loadedTimeline = this.timelineService.getTimeline(timelineId);
+
+    if (loadedTimeline) {
+      this.timeline = loadedTimeline;
+      this.timelineLoaded = true;
 
       if (!this.timeline.categories) {
         this.timeline.categories = [];
@@ -106,7 +114,29 @@ export class TimelineComponent implements OnInit {
       });
 
       this.setPersons();
-    });
+
+      console.log('Found Timeline');
+
+    } else {
+      this.timelineService.getApiTimeline(timelineId).subscribe((responseTimeline) => {
+        this.timeline = responseTimeline;
+        this.timelineLoaded = true;
+
+        this.timelineService.setTimeline(this.timeline);
+
+        if (!this.timeline.categories) {
+          this.timeline.categories = [];
+        }
+
+        this.timelineService.getApiTimelineUsers(null, this.timeline).subscribe((response) => {
+          this.timelineUsers = response.users;
+        });
+
+        this.setPersons();
+
+        console.log('Loaded Timeline');
+      });
+    }
   }
 
   // If the era is BC then make the number a negative

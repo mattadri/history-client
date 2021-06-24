@@ -12,7 +12,7 @@
     <button mat-flat-button class="material-icons" color="primary" (click)="createTimeline()">add</button>
   </div>
 
-  <div class="app-cards-container cards-xlarge">
+  <div *ngIf="timelines" class="app-cards-container cards-xlarge">
     <app-timeline-card
       *ngFor="let timeline of timelines" [timeline]="timeline" [canDelete]="false"
       class="app-card">

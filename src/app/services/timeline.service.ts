@@ -52,9 +52,6 @@ export class TimelineService {
                   sortDescending: boolean,
                   additionalFilters: Array<Object>,
                   isAnotherPage: boolean): Observable<TimelineResponse> {
-
-    this.timelines = [];
-
     let type = 'timelines';
 
     // if a next of previous page is being retrieved just all the path as is
@@ -313,6 +310,14 @@ export class TimelineService {
 
   getTimelines() {
     return this.timelines;
+  }
+
+  getTimeline(timelineId: number): Timeline {
+    for (let i = 0; i < this.timelines.length; i++) {
+      if (this.timelines[i].id.toString() === timelineId.toString()) {
+        return this.timelines[i];
+      }
+    }
   }
 
   removeTimeline(timeline: Timeline) {

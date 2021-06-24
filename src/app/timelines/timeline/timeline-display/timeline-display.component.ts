@@ -7,6 +7,7 @@ import {Person} from '../../../models/persons/person';
 import {Event} from '../../../models/events/event';
 import {Era} from '../../../models/era';
 import {Timeline} from '../../../models/timelines/timeline';
+import {TimelineService} from '../../../services/timeline.service';
 
 @Component({
   selector: 'app-timeline-display',
@@ -30,6 +31,8 @@ export class TimelineDisplayComponent implements OnInit {
   public timelineEnd: number;
   public timelineSpanInYears: number;
   public categoryEvents: Category[];
+
+  public timelineLoaded: boolean;
 
   private timelineLength: number;
   private  minYearToMonths = 11;
@@ -59,7 +62,7 @@ export class TimelineDisplayComponent implements OnInit {
     '#c39c3b',
   ];
 
-  constructor() {
+  constructor(private timelineService: TimelineService) {
     this.returnTimelineSpan = new EventEmitter();
     this.returnTimelineStartEndYears = new EventEmitter();
     this.returnCategoryEvents = new EventEmitter();
@@ -68,6 +71,8 @@ export class TimelineDisplayComponent implements OnInit {
     this.cursorLineDatePosition = 'above';
 
     this.persons = [];
+
+    this.timelineLoaded = false;
   }
 
   private static padTimelineDate(yearToPad: number, timelineLength: number, increase: boolean) {
@@ -95,6 +100,28 @@ export class TimelineDisplayComponent implements OnInit {
   }
 
   ngOnInit() {
+    // the timeline passed in is not a full timeline. Get the full timeline and mark loaded.
+    let loadedTimeline = this.timelineService.getTimeline(this.timeline.id);
+
+    if (loadedTimeline) {
+      this.timeline = loadedTimeline;
+      this.timelineLoaded = true;
+
+      this.fullTimelineInit();
+
+    } else {
+      this.timelineService.getApiTimeline(this.timeline.id).subscribe((responseTimeline) => {
+        this.timeline = responseTimeline;
+        this.timelineLoaded = true;
+
+        this.timelineService.setTimeline(this.timeline);
+
+        this.fullTimelineInit();
+      });
+    }
+  }
+
+  fullTimelineInit() {
     for (const timelinePerson of this.timeline.persons) {
       this.persons.push(timelinePerson.person);
     }

@@ -1,4 +1,4 @@
-<div id="timeline-container" class="timeline-container" (dblclick)="showCursorLine($event)">
+<div *ngIf="timelineLoaded" id="timeline-container" class="timeline-container" (dblclick)="showCursorLine($event)">
   <app-category
     *ngFor="let category of categoryEvents"
     [category]="category"
@@ -20,4 +20,8 @@
        [matTooltipPosition]="cursorLineDatePosition"
        (mouseout)="showCursorTooltip(tooltip).then()">
   </div>
+</div>
+
+<div *ngIf="!timelineLoaded">
+  <mat-spinner></mat-spinner>
 </div>
