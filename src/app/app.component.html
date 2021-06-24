@@ -9,22 +9,22 @@
 
       <div matSubheader>My Content</div>
       <mat-nav-list role="list">
-        <a mat-list-item href="/projects">
+        <a mat-list-item routerLink="/projects">
           <mat-icon class="icon-pre" matListIcon>folder_special</mat-icon>
           Projects
         </a>
 
-        <a mat-list-item href="/timelines">
+        <a mat-list-item routerLink="/timelines">
           <mat-icon class="icon-pre" matListIcon>timeline</mat-icon>
           Timelines
         </a>
 
-        <a mat-list-item href="/essays">
+        <a mat-list-item routerLink="/essays">
           <mat-icon class="icon-pre" matListIcon>subject</mat-icon>
           Essays
         </a>
 
-        <a mat-list-item href="/brainstorming">
+        <a mat-list-item routerLink="/brainstorming">
           <mat-icon class="icon-pre" matListIcon>bubble_chart</mat-icon>
           Brainstorms
         </a>
@@ -33,27 +33,27 @@
       <mat-divider></mat-divider>
       <div mat-subheader>Library</div>
       <mat-nav-list role="list">
-        <a mat-list-item href="/manager/events">
+        <a mat-list-item routerLink="/manager/events">
           <mat-icon class="icon-pre" matListIcon>event</mat-icon>
           Events
         </a>
 
-        <a mat-list-item href="/manager/persons">
+        <a mat-list-item routerLink="/manager/persons">
           <mat-icon class="icon-pre" matListIcon>people</mat-icon>
           People
         </a>
 
-        <a mat-list-item href="/manager/charts">
+        <a mat-list-item routerLink="/manager/charts">
           <mat-icon class="icon-pre" matListIcon>equalizer</mat-icon>
           Charts
         </a>
 
-        <a mat-list-item href="/manager/sources">
+        <a mat-list-item routerLink="/manager/sources">
           <mat-icon class="icon-pre" matListIcon>bookmark_border</mat-icon>
           Sources
         </a>
 
-        <a mat-list-item href="/manager/authors">
+        <a mat-list-item routerLink="/manager/authors">
           <mat-icon class="icon-pre" matListIcon>account_box</mat-icon>
           Authors
         </a>
@@ -62,7 +62,7 @@
       <mat-divider></mat-divider>
       <div mat-subheader>Settings</div>
       <mat-nav-list>
-        <a mat-list-item href="user">
+        <a mat-list-item routerLink="user">
           <mat-icon class="icon-pre" matListIcon>people_outlined</mat-icon>
           Users
         </a>
@@ -71,11 +71,9 @@
           <mat-icon class="icon-pre" matListIcon>power_settings_new_icon</mat-icon>
           Log Out
         </a>
-
-
       </mat-nav-list>
-
   </mat-sidenav>
+
   <mat-sidenav-content>
     <div class="main-content">
       <router-outlet></router-outlet>

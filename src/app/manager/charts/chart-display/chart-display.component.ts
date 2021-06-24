@@ -9,6 +9,7 @@ import {Chart} from '../../../models/chart';
 import {ChartType} from '../../../enums/chart-types';
 
 import {ChartService} from '../../../services/chart.service';
+import {Sleep} from '../../../utilities/sleep';
 
 @Component({
   selector: 'app-chart-display',
@@ -75,7 +76,13 @@ export class ChartDisplayComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
+    this.startChart().then();
+  }
+
+  async startChart() {
+    await Sleep.wait(1000);
+
     this.makeChart();
   }
 
@@ -144,7 +151,9 @@ export class ChartDisplayComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.makeChartConfig();
 
-    this.renderedChart = new RenderedChart(context, this.chartConfig);
+    if (context) {
+      this.renderedChart = new RenderedChart(context, this.chartConfig);
+    }
   }
 
   setChartCallbacks() {
