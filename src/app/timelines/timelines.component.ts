@@ -72,13 +72,11 @@ export class TimelinesComponent implements OnInit {
 
   getAllTimelines(path: string, isAnotherPage: boolean) {
     if (!this.allTimelines.length || isAnotherPage) {
-      this.timelineService.getApiTimelines(path, null, '5', '1', null, null, null, null, isAnotherPage).subscribe(response => {
-        for (const timeline of response.timelines) {
-          this.timelineService.setTimeline(timeline);
-        }
+      this.timelineService.getApiTimelines(
+        path, null, '5', '1', ['label'], null, null, null, isAnotherPage).subscribe(response => {
 
-        this.timelines = this.timelineService.getTimelines();
-        this.allTimelines = this.timelineService.getTimelines();
+        this.timelines = response.timelines;
+        this.allTimelines = response.timelines;
 
         this.totalResults = response.total;
         this.nextPage = response.links.next;
