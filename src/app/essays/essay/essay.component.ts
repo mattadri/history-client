@@ -170,22 +170,10 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
         this.essayService.setEssay(this.essay);
 
-        this.essayService.getApiEssayUsers(null, this.essay).subscribe((response) => {
-          for (const user of response.users) {
-            this.essayUsers.push(user);
-          }
-        });
-
-        this.essayNotes = essay.essayNotes;
-
-        this.setEssayContent();
-
-        // once the raw content has been retrieved tokenize the content
-        this.tokenizeReferences();
-        this.tokenizeEvents();
-        this.tokenizePeople();
-        this.tokenizeTimelines();
+        this.setupEssayContent();
       });
+    } else {
+      this.setupEssayContent();
     }
 
     this.essayTypes = this.essayService.getEssayTypes();
@@ -320,6 +308,24 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
   async ngAfterViewInit() {
     this.addClickEvents().then();
+  }
+
+  setupEssayContent() {
+    this.essayService.getApiEssayUsers(null, this.essay).subscribe((response) => {
+      for (const user of response.users) {
+        this.essayUsers.push(user);
+      }
+    });
+
+    this.essayNotes = this.essay.essayNotes;
+
+    this.setEssayContent();
+
+    // once the raw content has been retrieved tokenize the content
+    this.tokenizeReferences();
+    this.tokenizeEvents();
+    this.tokenizePeople();
+    this.tokenizeTimelines();
   }
 
   public initializeEssayEditor(initControls) {
