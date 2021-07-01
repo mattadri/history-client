@@ -44,6 +44,7 @@ export class EssayService {
   constructor(private http: HttpClient) {
     this.essays = [];
     this.users = [];
+    this.essayTypes = [];
   }
 
   static removeNote(essay: Essay, essayNote: EssayNote) {
@@ -107,8 +108,6 @@ export class EssayService {
       if (!pageSize) {
         pageSize = '20';
       }
-
-      this.essays = [];
 
       if (!path) {
         path = '/essays';

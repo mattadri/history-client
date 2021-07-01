@@ -188,18 +188,22 @@ export class EssayComponent implements OnInit, AfterViewInit {
       });
     }
 
-    this.essayService.getApiEssayTypes().subscribe((response) => {
-      for (const type of response.data) {
-        const newType = new EssayType();
-        newType.initializeNewEssayType();
+    this.essayTypes = this.essayService.getEssayTypes();
 
-        newType.mapEssayType(type);
+    if (!this.essayTypes.length) {
+      this.essayService.getApiEssayTypes().subscribe((response) => {
+        for (const type of response.data) {
+          const newType = new EssayType();
+          newType.initializeNewEssayType();
 
-        this.essayService.setEssayType(newType);
-      }
+          newType.mapEssayType(type);
 
-      this.essayTypes = this.essayService.getEssayTypes();
-    });
+          this.essayService.setEssayType(newType);
+        }
+
+        this.essayTypes = this.essayService.getEssayTypes();
+      });
+    }
 
     this.sourceService.getApiSources(null, '0', null, null, ['title', 'sub_title'], null, false, null, false).subscribe(response => {
       this.sources = response.sources;
