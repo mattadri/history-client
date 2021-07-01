@@ -162,25 +162,31 @@ export class EssayComponent implements OnInit, AfterViewInit {
 
     this.initializeNewEssayNote();
 
-    this.essayService.getApiEssay(essayId).subscribe(essay => {
-      this.essay = essay;
+    this.essay = this.essayService.getEssay(essayId);
 
-      this.essayService.getApiEssayUsers(null, this.essay).subscribe((response) => {
-        for (const user of response.users) {
-          this.essayUsers.push(user);
-        }
+    if (!this.essay) {
+      this.essayService.getApiEssay(essayId).subscribe(essay => {
+        this.essay = essay;
+
+        this.essayService.setEssay(this.essay);
+
+        this.essayService.getApiEssayUsers(null, this.essay).subscribe((response) => {
+          for (const user of response.users) {
+            this.essayUsers.push(user);
+          }
+        });
+
+        this.essayNotes = essay.essayNotes;
+
+        this.setEssayContent();
+
+        // once the raw content has been retrieved tokenize the content
+        this.tokenizeReferences();
+        this.tokenizeEvents();
+        this.tokenizePeople();
+        this.tokenizeTimelines();
       });
-
-      this.essayNotes = essay.essayNotes;
-
-      this.setEssayContent();
-
-      // once the raw content has been retrieved tokenize the content
-      this.tokenizeReferences();
-      this.tokenizeEvents();
-      this.tokenizePeople();
-      this.tokenizeTimelines();
-    });
+    }
 
     this.essayService.getApiEssayTypes().subscribe((response) => {
       for (const type of response.data) {
@@ -195,7 +201,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
       this.essayTypes = this.essayService.getEssayTypes();
     });
 
-    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(response => {
+    this.sourceService.getApiSources(null, '0', null, null, ['title', 'sub_title'], null, false, null, false).subscribe(response => {
       this.sources = response.sources;
 
       this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
@@ -204,7 +210,7 @@ export class EssayComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label', null, null, false).subscribe(response => {
+    this.eventService.getApiEvents(null, '0', null, null, ['label'], null, false, null, false).subscribe(response => {
       this.events = response.events;
 
       this.eventsFilteredOptions = this.eventsAutocompleteControl.valueChanges.pipe(
@@ -213,8 +219,8 @@ export class EssayComponent implements OnInit, AfterViewInit {
       );
     });
 
-    this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,middle_name,last_name', null, null, false)
-      .subscribe(response => {
+    this.personService.getApiPersons(
+      null, '0', null, null, ['first_name', 'middle_name', 'last_name'], null, false, null, false).subscribe(response => {
 
       this.persons = response.persons;
 

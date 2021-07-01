@@ -173,7 +173,7 @@
       <div class="app-cards-container cards-xlarge">
         <app-essay-card
           class="app-card"
-          *ngFor="let personBiography of personBiographies"
+          *ngFor="let personBiography of person.personBiographies"
           [essay]="personBiography.biography"
           [canDelete]="true"
           (removeEssay)="deleteBiography($event)">
@@ -189,7 +189,7 @@
       <div class="app-cards-container cards-xlarge">
         <app-timeline-card
           class="app-card"
-          *ngFor="let personTimeline of personTimelines"
+          *ngFor="let personTimeline of person.personTimelines"
           [timeline]="personTimeline.timeline"
           [canDelete]="true"
           (removeTimeline)="deleteTimeline($event)">

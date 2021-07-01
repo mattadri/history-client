@@ -41,30 +41,48 @@ export class AddPersonDialogComponent implements OnInit {
     this.person = new Person();
     this.person.initializeNewPerson();
 
-    this.eraService.getEras().subscribe(eras => {
-      for (const era of eras.data) {
-        const newEra = new Era().mapEra(era);
+    this.eras = this.eraService.getCachedEras();
 
-        // set to AD so that drop-downs auto populate with the value.
-        if (newEra.label === 'AD') {
-          this.person.birthEra = newEra;
-          this.person.deathEra = newEra;
+    if (!this.eras.length) {
+      this.eraService.getEras().subscribe(eras => {
+        for (const returnedEra of eras.data) {
+          const era: Era = new Era();
+          era.initializeNewEra();
+          era.mapEra(returnedEra);
+
+          this.eraService.setEra(era);
         }
 
-        this.eras.push(newEra);
-      }
-    });
+        this.eras = this.eraService.getCachedEras();
+      });
+    }
 
-    this.monthService.getMonths().subscribe(months => {
-      for (const month of months.data) {
-        this.months.push(new Month().mapMonth(month));
-      }
-    });
+    this.months = this.monthService.getCachedMonths();
+
+    if (!this.months.length) {
+      this.monthService.getMonths().subscribe(months => {
+        for (const returnedMonth of months.data) {
+          const month: Month = new Month();
+          month.initializeNewMonth();
+          month.mapMonth(returnedMonth);
+
+          this.monthService.setMonth(month);
+        }
+
+        this.months = this.monthService.getCachedMonths();
+      });
+    }
 
     this.personService.getApiPersons(
-      '/persons?page[size]=0&fields[person]=first_name,last_name,birth_year,birth_era,death_year,death_era&sort=last_name',
-      null, null, false)
-      .subscribe(response => {
+      null,
+      '0',
+      null,
+      null,
+      ['first_name', 'last_name', 'birth_year', 'birth_era', 'death_year', 'death_era'],
+      null,
+      false,
+      null,
+      false).subscribe(response => {
 
       this.searchPersons = response.persons;
 

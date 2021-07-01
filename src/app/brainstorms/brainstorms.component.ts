@@ -47,13 +47,9 @@ export class BrainstormsComponent implements OnInit {
 
   getUserBrainstorms(path: string, isAnotherPage: boolean) {
     if (!this.userBrainstorms.length || isAnotherPage) {
-      this.brainstormService.getApiBrainstorms(path, this.userId, null, '1', ['title', 'description'], null, null, null, isAnotherPage).subscribe(response => {
-        for (const brainstorm of response.brainstorms) {
-          this.brainstormService.setBrainstorm(brainstorm);
-        }
-
-        this.brainstorms = this.brainstormService.getBrainstorms();
-        this.userBrainstorms = this.brainstormService.getBrainstorms();
+      this.brainstormService.getApiBrainstorms(path, this.userId, null, '1', null, ['title', 'description'], null, null, null, isAnotherPage).subscribe(response => {
+        this.brainstorms = response.brainstorms;
+        this.userBrainstorms = response.brainstorms;
 
         this.totalResults = response.total;
         this.nextPage = response.links.next;
@@ -67,13 +63,9 @@ export class BrainstormsComponent implements OnInit {
 
   getAllBrainstorms(path: string, isAnotherPage: boolean) {
     if (!this.allBrainstorms.length || isAnotherPage) {
-      this.brainstormService.getApiBrainstorms(path, null, null, '1', ['title', 'description'], null, null, null, isAnotherPage).subscribe(response => {
-        for (const brainstorm of response.brainstorms) {
-          this.brainstormService.setBrainstorm(brainstorm);
-        }
-
-        this.brainstorms = this.brainstormService.getBrainstorms();
-        this.allBrainstorms = this.brainstormService.getBrainstorms();
+      this.brainstormService.getApiBrainstorms(path, null, null, '1', null, ['title', 'description'], null, null, null, isAnotherPage).subscribe(response => {
+        this.brainstorms = response.brainstorms;
+        this.allBrainstorms = response.brainstorms;
 
         this.totalResults = response.total;
         this.nextPage = response.links.next;

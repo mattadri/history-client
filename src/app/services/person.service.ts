@@ -5,13 +5,13 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 
-import { PersonPost } from '../models/posts/person-post';
+import { PersonPost } from '../models/persons/posts/person-post';
 import { Person } from '../models/persons/person';
 import { PersonNote } from '../models/persons/person-note';
-import { PersonNotePost } from '../models/posts/person-note-post';
+import { PersonNotePost } from '../models/persons/posts/person-note-post';
 import {PersonBiographiesResponse, PersonResponse, PersonTimelinesResponse} from '../models/responses/person-response';
 import {PersonBiography} from '../models/persons/person-biography';
-import {PersonBiographyPost} from '../models/posts/person-biography-post';
+import {PersonBiographyPost} from '../models/persons/posts/person-biography-post';
 import {PersonTimeline} from '../models/persons/person-timeline';
 import {Timeline} from '../models/timelines/timeline';
 
@@ -87,79 +87,98 @@ export class PersonService {
     });
   }
 
-  getApiPersons(path, filterTerm, dateFilter, isPageLink): Observable<PersonResponse> {
-    this.filterObject = [];
+  getApiPersons(path,
+                pageSize: string,
+                pageNumber: string,
+                include: Array<string>,
+                fields: Array<string>,
+                sort: Array<string>,
+                sortDescending: boolean,
+                additionalFilters: Array<Object>,
+                isAnotherPage: boolean): Observable<PersonResponse> {
+    let type = 'persons';
 
-    this.persons = [];
-
-    // if this is a page link the path is already fully formed. as such skip.
-    if (!isPageLink) {
+    // if a next or previous page is being retrieved just leave the path as is
+    if (!isAnotherPage) {
       if (!path) {
         path = '/persons';
-
-        if ((filterTerm) || (!filterTerm && dateFilter)) {
-          path = path + '?';
-        }
-      } else {
-        if (filterTerm || dateFilter) {
-          path = path + '&';
-        }
       }
 
-      if (filterTerm) {
-        const searchFilter = {
-          or: [
-            {
-              name: 'description',
-              op: 'ilike',
-              val: '%' + filterTerm + '%'
-            },
-            {
-              name: 'first_name',
-              op: 'ilike',
-              val: '%' + filterTerm + '%'
-            },
-            {
-              name: 'last_name',
-              op: 'ilike',
-              val: '%' + filterTerm + '%'
-            }
-          ]
-        };
-
-        this.filterObject.push(searchFilter);
+      // default page size is 20 records per page
+      if (!pageSize) {
+        pageSize = '20';
       }
 
-      if (dateFilter) {
-        if (dateFilter.length === 2) {
-          const startDateFilter = {
-            name: 'birth_year',
-            op: 'gt',
-            val: dateFilter[0]
-          };
+      // default page number to 1
+      if (!pageNumber) {
+        pageNumber = '1';
+      }
 
-          const endDateFilter = {
-            name: 'birth_year',
-            op: 'lt',
-            val: dateFilter[1]
-          };
+      let filter = [];
 
-          this.filterObject.push(startDateFilter);
-          this.filterObject.push(endDateFilter);
+      path = path + '?page[size]=' + pageSize;
+
+      path = path + '&page[number]=' + pageNumber;
+
+      // include any related objects
+      if (include && include.length) {
+        path = path + '&include=';
+
+        for (let i = 0; i < include.length; i++) {
+          path = path + include[i];
+
+          if (i < include.length - 1) {
+            path = path + ',';
+          }
         }
       }
 
-      if (this.filterObject.length) {
-        const filterQuery = JSON.stringify(this.filterObject);
+      // add any fields filter to the path
+      if (fields && fields.length) {
+        path = path + '&fields[person]=';
 
-        path = path + 'filter=' + filterQuery;
+        for (let i = 0; i < fields.length; i++) {
+          path = path + fields[i];
+
+          if (i < fields.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // add any sorting if requested
+      if (sort && sort.length) {
+        path = path + '&sort=';
+
+        if (sortDescending) {
+          path = path + '-';
+        }
+
+        for (let i = 0; i < sort.length; i++) {
+          path = path + sort[i];
+
+          if (i < sort.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // lastly tack on any additional filters passed
+      if (additionalFilters && additionalFilters.length) {
+        for (const additionalFilter of additionalFilters) {
+          filter.push(additionalFilter);
+        }
+      }
+
+      if (filter.length) {
+        path = path + '&filter=' + JSON.stringify(filter);
       }
     }
 
     return this.http.get<PersonResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
-        .set('Type', 'persons')
+        .set('Type', type)
     });
   }
 
@@ -176,7 +195,7 @@ export class PersonService {
 
     this.personTimelines = [];
 
-    let path = '/timeline_persons';
+    let path = '/person_timelines';
 
     const personFilter = {
       name: 'person_rel',
@@ -196,37 +215,7 @@ export class PersonService {
 
     path = path + '&page[size]=0';
 
-    return this.http.get<PersonTimelinesResponse>(environment.apiUrl + path, {
-      headers: new HttpHeaders()
-        .set('Accept', 'application/vnd.api+json')
-        .set('Type', 'person_timelines')
-    });
-  }
-
-  getApiTimelinePersons(timeline: Timeline): Observable<PersonTimelinesResponse> {
-    this.filterObject = [];
-
-    this.personTimelines = [];
-
-    let path = '/timeline_persons';
-
-    const personFilter = {
-      name: 'timeline_rel',
-      op: 'has',
-      val: {
-        name: 'id',
-        op: 'eq',
-        val: timeline.id.toString()
-      }
-    };
-
-    this.filterObject.push(personFilter);
-
-    const filterQuery = JSON.stringify(this.filterObject);
-
-    path = path + '?filter=' + filterQuery;
-
-    path = path + '&page[size]=0';
+    path = path + '&include=timeline_rel&fields[timeline]=id,label';
 
     return this.http.get<PersonTimelinesResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
@@ -260,6 +249,8 @@ export class PersonService {
 
     path = path + '&page[size]=0';
 
+    path = path + '&include=essay_rel&fields[essay]=id,title';
+
     return this.http.get<PersonBiographiesResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
@@ -282,9 +273,9 @@ export class PersonService {
     });
   }
 
-  createPersonBiography(personBiography: PersonBiography): Observable<any> {
+  createPersonBiography(personBiography: PersonBiography, person: Person): Observable<any> {
     this.personBiographyPost = new PersonBiographyPost();
-    this.personBiographyPost.mapToPersonBiographyPost(personBiography);
+    this.personBiographyPost.mapToPersonBiographyPost(personBiography, person);
 
     return this.http.post(environment.apiUrl + '/person_biographies', this.personBiographyPost, {
       headers: new HttpHeaders()
@@ -315,6 +306,14 @@ export class PersonService {
 
   setPerson(person: Person) {
     this.persons.push(person);
+  }
+
+  getPerson(personId: string) {
+    for (let i = 0; i < this.persons.length; i++) {
+      if (this.persons[i].id.toString() === personId.toString()) {
+        return this.persons[i];
+      }
+    }
   }
 
   getPersons() {

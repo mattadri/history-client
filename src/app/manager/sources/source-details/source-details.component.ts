@@ -57,43 +57,22 @@ export class SourceDetailsComponent implements OnInit {
 
     this.isAddNoteMode = false;
     this.isEditSourceMode = false;
-    this.isAddAuthorMode = true;
+    this.isAddAuthorMode = false;
 
     this.eras = [];
     this.months = [];
 
-    this.authorService.getApiAuthors('/authors?page[size]=0&fields[author]=first_name,last_name').subscribe(authors => {
-        for (const author of authors.authors) {
-          this.authorService.setAuthor(author);
-        }
+    this.source = this.sourceService.getSource(sourceId);
 
-        this.authors = this.authorService.getAuthors();
+    if (!this.source) {
+      this.sourceService.getApiSource(sourceId).subscribe(source => {
+        this.source = source;
 
-        this.authorsFilteredOptions = this.authorsAutocompleteControl.valueChanges.pipe(
-          startWith(''),
-          map(author => this._filterAuthors(author))
-        );
+        this.sourceService.setSource(this.source);
+
+        this.makeAuthorsDisplay();
       });
-
-    this.eraService.getEras().subscribe(eras => {
-      for (const era of eras.data) {
-        this.eras.push(new Era().mapEra(era));
-      }
-    });
-
-    this.monthService.getMonths().subscribe(months => {
-      for (const month of months.data) {
-        this.months.push(new Month().mapMonth(month));
-      }
-    });
-
-    this.sourceService.getApiSource(Number.parseInt(sourceId, 10)).subscribe(source => {
-      this.source = source;
-
-      this.sourceService.setSource(this.source);
-
-      this.makeAuthorsDisplay();
-    });
+    }
   }
 
   ngOnInit() { }
@@ -134,6 +113,38 @@ export class SourceDetailsComponent implements OnInit {
   }
 
   activateEditSourceMode() {
+    this.eras = this.eraService.getCachedEras();
+
+    if (!this.eras.length) {
+      this.eraService.getEras().subscribe(eras => {
+        for (const returnedEra of eras.data) {
+          const era: Era = new Era();
+          era.initializeNewEra();
+          era.mapEra(returnedEra);
+
+          this.eraService.setEra(era);
+        }
+
+        this.eras = this.eraService.getCachedEras();
+      });
+    }
+
+    this.months = this.monthService.getCachedMonths();
+
+    if (!this.months.length) {
+      this.monthService.getMonths().subscribe(months => {
+        for (const returnedMonth of months.data) {
+          const month: Month = new Month();
+          month.initializeNewMonth();
+          month.mapMonth(returnedMonth);
+
+          this.monthService.setMonth(month);
+        }
+
+        this.months = this.monthService.getCachedMonths();
+      });
+    }
+
     this.isEditSourceMode = true;
   }
 
@@ -154,6 +165,19 @@ export class SourceDetailsComponent implements OnInit {
   }
 
   activateAddAuthorMode() {
+    this.authorService.getApiAuthors(null, '0', null, null, ['first_name', 'last_name'], ['last_name'], false, null, false).subscribe(authors => {
+      for (const author of authors.authors) {
+        this.authorService.setAuthor(author);
+      }
+
+      this.authors = this.authorService.getAuthors();
+
+      this.authorsFilteredOptions = this.authorsAutocompleteControl.valueChanges.pipe(
+        startWith(''),
+        map(author => this._filterAuthors(author))
+      );
+    });
+
     this.isAddAuthorMode = true;
   }
 

@@ -5,6 +5,7 @@ import { Month } from '../month';
 import { Era } from '../era';
 import { PersonNote } from './person-note';
 import { PersonBiography } from './person-biography';
+import {PersonTimeline} from './person-timeline';
 
 export class Person {
   id: number;
@@ -23,6 +24,8 @@ export class Person {
   deathEra: Era;
   source: Source;
   notes: PersonNote[];
+  personTimelines: PersonTimeline[];
+  personBiographies: PersonBiography[];
 
   timelinePersonId: number;
 
@@ -59,6 +62,8 @@ export class Person {
     this.deathEra = new Era();
     this.source = new Source();
     this.notes = [];
+    this.personTimelines = [];
+    this.personBiographies = [];
 
     this.timelineStartLocation = null;
     this.listEventIsHighlighted = false;
@@ -82,6 +87,14 @@ export class Person {
 
     const source = new Source();
 
+    birthMonth.initializeNewMonth();
+    deathMonth.initializeNewMonth();
+
+    birthEra.initializeNewEra();
+    deathEra.initializeNewEra();
+
+    source.initializeSource();
+
     self.id = person.id;
     self.firstName = person.attributes.first_name;
 
@@ -91,7 +104,9 @@ export class Person {
     }
 
     if (person.attributes.birth_era) {
-      self.birthEra = birthEra.mapEra(person.attributes.birth_era.data);
+      birthEra.mapEra(person.attributes.birth_era.data);
+
+      self.birthEra = birthEra;
     }
 
     if (person.attributes.description) {
@@ -115,7 +130,9 @@ export class Person {
     }
 
     if (person.attributes.birth_month) {
-      self.birthMonth = birthMonth.mapMonth(person.attributes.birth_month.data);
+      birthMonth.mapMonth(person.attributes.birth_month.data);
+
+      this.birthMonth = birthMonth;
     }
 
     if (person.attributes.death_day) {
@@ -123,7 +140,9 @@ export class Person {
     }
 
     if (person.attributes.death_month) {
-      self.deathMonth = deathMonth.mapMonth(person.attributes.death_month.data);
+      deathMonth.mapMonth(person.attributes.death_month.data);
+
+      self.deathMonth = deathMonth;
     }
 
     if (person.attributes.death_year) {
@@ -131,7 +150,9 @@ export class Person {
     }
 
     if (person.attributes.death_era) {
-      self.deathEra = deathEra.mapEra(person.attributes.death_era.data);
+      deathEra.mapEra(person.attributes.death_era.data);
+
+      self.deathEra = deathEra;
     }
 
     if (person.attributes.reference) {

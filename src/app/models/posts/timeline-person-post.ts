@@ -1,9 +1,10 @@
 import {PersonTimeline} from '../persons/person-timeline';
+import {Person} from '../persons/person';
 
 export class TimelinePersonPost {
   data;
 
-  mapToPost(personTimeline: PersonTimeline, isPatch: boolean) {
+  mapToPost(personTimeline: PersonTimeline, person: Person, isPatch: boolean) {
     this.data = {
       type: 'timeline_person',
       attributes: {
@@ -16,7 +17,7 @@ export class TimelinePersonPost {
         person_rel: {
           data: {
             type: 'person',
-            id: personTimeline.person.id
+            id: person.id
           }
         }
       }

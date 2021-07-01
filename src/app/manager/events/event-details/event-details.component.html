@@ -165,10 +165,10 @@
       </div>
 
 <!-- TIMELINES -->
-      <div class="app-cards-container cards-xlarge" *ngIf="eventTimelines && eventTimelines.length">
+      <div class="app-cards-container cards-xlarge" *ngIf="event.eventTimelines && event.eventTimelines.length">
         <app-timeline-card
           class="app-card"
-          *ngFor="let timelineEvent of eventTimelines"
+          *ngFor="let timelineEvent of event.eventTimelines"
           [timeline]="timelineEvent.timeline"
           [canDelete]="true"
           (removeTimeline)="deleteTimeline(timelineEvent.timeline)"></app-timeline-card>

@@ -44,118 +44,98 @@ export class EventService {
     }
   }
 
-  getApiEvents(path, filterTerm, dateFilter, isPageLink): Observable<EventResponse> {
-    this.filterObject = [];
+  getApiEvents(path,
+               pageSize: string,
+               pageNumber: string,
+               include: Array<string>,
+               fields: Array<string>,
+               sort: Array<string>,
+               sortDescending: boolean,
+               additionalFilters: Array<Object>,
+               isAnotherPage: boolean): Observable<EventResponse> {
+    let type = 'events';
 
-    this.events = [];
-
-    // if this is a page link the path is already fully formed. as such skip.
-    if (!isPageLink) {
+    // if a next or previous page is being retrieved just leave the path as is
+    if (!isAnotherPage) {
       if (!path) {
         path = '/events';
-
-        if ((filterTerm) || (!filterTerm && dateFilter)) {
-          path = path + '?';
-        }
-      } else {
-        if (filterTerm || dateFilter) {
-          path = path + '&';
-        }
       }
 
-      if (filterTerm) {
-        const searchFilter = {
-          or: [
-            {
-              name: 'description',
-              op: 'ilike',
-              val: '%' + filterTerm + '%'
-            },
-            {
-              name: 'label',
-              op: 'ilike',
-              val: '%' + filterTerm + '%'
-            }
-          ]
-        };
-
-        this.filterObject.push(searchFilter);
+      // default page size is 20 records per page
+      if (!pageSize) {
+        pageSize = '20';
       }
 
-      if (dateFilter) {
-        if (dateFilter.length === 2) {
-          let addEraFilter = true;
+      // default page number to 1
+      if (!pageNumber) {
+        pageNumber = '1';
+      }
 
-          let startDateOperator = 'gt';
+      let filter = [];
 
-          if (dateFilter[0][1].toUpperCase() === 'BC') {
-            startDateOperator = 'lt';
-          }
+      path = path + '?page[size]=' + pageSize;
 
-          let endDateOperator = 'lt';
+      path = path + '&page[number]=' + pageNumber;
 
-          if (dateFilter[1][1].toUpperCase() === 'BC') {
-            endDateOperator = 'gt';
-          }
+      // include any related objects
+      if (include && include.length) {
+        path = path + '&include=';
 
-          // In the case that the search is between BC and AD
-          if (dateFilter[0][1].toUpperCase() === 'BC' && dateFilter[1][1].toUpperCase() === 'AD') {
-            addEraFilter = false;
-          }
+        for (let i = 0; i < include.length; i++) {
+          path = path + include[i];
 
-          const startDateFilter = {
-            name: 'event_start_year',
-            op: startDateOperator,
-            val: dateFilter[0][0]
-          };
-
-          const endDateFilter = {
-            name: 'event_end_year',
-            op: endDateOperator,
-            val: dateFilter[1][0]
-          };
-
-          const startDateEraFilter = {
-            name: 'event_start_era_rel',
-            op: 'has',
-            val: {
-              name: 'label',
-              op: 'eq',
-              val: dateFilter[0][1]
-            }
-          };
-
-          const endDateEraFilter = {
-            name: 'event_end_era_rel',
-            op: 'has',
-            val: {
-              name: 'label',
-              op: 'eq',
-              val: dateFilter[1][1]
-            }
-          };
-
-          this.filterObject.push(startDateFilter);
-          this.filterObject.push(endDateFilter);
-
-          if (addEraFilter) {
-            this.filterObject.push(startDateEraFilter);
-            this.filterObject.push(endDateEraFilter);
+          if (i < include.length - 1) {
+            path = path + ',';
           }
         }
       }
 
-      if (this.filterObject.length) {
-        const filterQuery = JSON.stringify(this.filterObject);
+      // add any fields filter to the path
+      if (fields && fields.length) {
+        path = path + '&fields[event]=';
 
-        path = path + 'filter=' + filterQuery;
+        for (let i = 0; i < fields.length; i++) {
+          path = path + fields[i];
+
+          if (i < fields.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // add any sorting if requested
+      if (sort && sort.length) {
+        path = path + '&sort=';
+
+        if (sortDescending) {
+          path = path + '-';
+        }
+
+        for (let i = 0; i < sort.length; i++) {
+          path = path + sort[i];
+
+          if (i < sort.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // lastly tack on any additional filters passed
+      if (additionalFilters && additionalFilters.length) {
+        for (const additionalFilter of additionalFilters) {
+          filter.push(additionalFilter);
+        }
+      }
+
+      if (filter.length) {
+        path = path + '&filter=' + JSON.stringify(filter);
       }
     }
 
     return this.http.get<EventResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
-        .set('Type', 'events')
+        .set('Type', type)
     });
   }
 
@@ -322,5 +302,13 @@ export class EventService {
 
   getEvents() {
     return this.events;
+  }
+
+  getEvent(eventId: string): Event {
+    for (const event of this.events) {
+      if (eventId.toString() === event.id.toString()) {
+        return event;
+      }
+    }
   }
 }

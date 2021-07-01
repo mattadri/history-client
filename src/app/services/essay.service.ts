@@ -347,9 +347,9 @@ export class EssayService {
     this.essays.push(essay);
   }
 
-  getEssay(essayId: number) {
+  getEssay(essayId: string): Essay {
     for (const essay of this.essays) {
-      if (essay.id === essayId) {
+      if (essay.id.toString() === essayId) {
         return essay;
       }
     }

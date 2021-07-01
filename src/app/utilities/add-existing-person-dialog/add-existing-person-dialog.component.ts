@@ -21,9 +21,15 @@ export class AddExistingPersonDialogComponent implements OnInit {
 
   constructor(private personService: PersonService, public dialogRef: MatDialogRef<AddExistingPersonDialogComponent>,) {
     this.personService.getApiPersons(
-      '/persons?page[size]=0&fields[person]=first_name,last_name,birth_year,birth_era,death_year,death_era&sort=last_name',
-      null, null, false)
-      .subscribe(response => {
+      null,
+      '0',
+      null,
+      null,
+      ['first_name', 'last_name', 'birth_year', 'birth_era', 'death_year', 'death_era'],
+      null,
+      false,
+      null,
+      false).subscribe(response => {
 
       this.searchPersons = response.persons;
 

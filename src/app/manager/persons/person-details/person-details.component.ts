@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-import {map, startWith} from 'rxjs/operators';
-
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {FormControl} from '@angular/forms';
@@ -34,7 +32,6 @@ export class PersonDetailsComponent implements OnInit {
   public person: Person;
   public note: PersonNote;
   public timeline: Timeline;
-  public personTimelines: PersonTimeline[];
   public personBiographies: PersonBiography[];
   public biography: Essay;
   public personBiography: PersonBiography;
@@ -84,7 +81,6 @@ export class PersonDetailsComponent implements OnInit {
 
     this.userId = localStorage.getItem('user.id');
 
-    this.personTimelines = [];
     this.personBiographies = [];
 
     this.isSavingImage = false;
@@ -94,63 +90,31 @@ export class PersonDetailsComponent implements OnInit {
 
     this._setReturnHeader();
 
-    this.personService.getApiPerson(personId).subscribe(person => {
-      this.person = person;
+    this.person = this.personService.getPerson(personId);
 
-      if (!this.person.description.length) {
-        this.person.description = 'This person needs a description.';
-      }
+    if (!this.person) {
+      this.personService.getApiPerson(personId).subscribe(person => {
+        this.person = person;
 
-      this.personService.setPerson(this.person);
+        this.personService.setPerson(this.person);
 
-      this.sourcesAutocompleteControl.setValue(this.person.source);
-
-      // GET THE TIMELINES THE PERSON IS ATTACHED TO
-      this.personService.getApiPersonTimelines(this.person).subscribe((response) => {
-        this.personTimelines = response.personTimelines;
-      });
-
-      // GET THE BIOGRAPHIES THE PERSON IS ATTACHED TO
-      this.personService.getApiPersonBiographies(this.person).subscribe((response) => {
-        this.personBiographies = response.personBiographies;
-      });
-
-      // LOAD REMAINING DATA AFTER THE INITIAL PERSON HAS BEEN RETRIEVED
-      this.eraService.getEras().subscribe(eras => {
-        for (const era of eras.data) {
-          this.eras.push(new Era().mapEra(era));
-        }
-      });
-
-      this.monthService.getMonths().subscribe(months => {
-        for (const month of months.data) {
-          this.months.push(new Month().mapMonth(month));
-        }
-      });
-
-      this.personService.getApiPersons('/persons?page[size]=0&fields[person]=first_name,last_name&sort=last_name', null, null, false)
-      .subscribe(response => {
-        this.searchPersons = response.persons;
-
-        this.personFirstNameFilteredOptions = this.personFirstNameAutocompleteControl.valueChanges.pipe(
-          startWith(''),
-          map(filteredPerson => this._filterPersonsFirstName(filteredPerson))
-        );
-
-        this.personLastNameFilteredOptions = this.personLastNameAutocompleteControl.valueChanges.pipe(
-          startWith(''),
-          map(filteredPerson => this._filterPersonsLastName(filteredPerson))
-        );
-      });
-
-      this.timelineService.getApiTimelines('/timelines', null, '0', null, ['label'], ['modified'], false, null, false).subscribe(response => {
-        for (const timeline of response.timelines) {
-          this.timelineService.setTimeline(timeline);
+        if (!this.person.description.length) {
+          this.person.description = 'This person needs a description.';
         }
 
-        this.timelines = this.timelineService.getTimelines();
+        this.sourcesAutocompleteControl.setValue(this.person.source);
+
+        // GET THE TIMELINES THE PERSON IS ATTACHED TO
+        this.personService.getApiPersonTimelines(this.person).subscribe((response) => {
+          this.person.personTimelines = response.personTimelines;
+        });
+
+        // GET THE BIOGRAPHIES THE PERSON IS ATTACHED TO
+        this.personService.getApiPersonBiographies(this.person).subscribe((response) => {
+          this.person.personBiographies = response.personBiographies;
+        });
       });
-    });
+    }
 
     this.isEditPersonMode = false;
     this.isAddNoteMode = false;
@@ -186,6 +150,38 @@ export class PersonDetailsComponent implements OnInit {
   }
 
   activateEditPersonMode() {
+    this.eras = this.eraService.getCachedEras();
+
+    if (!this.eras.length) {
+      this.eraService.getEras().subscribe(eras => {
+        for (const returnedEra of eras.data) {
+          const era: Era = new Era();
+          era.initializeNewEra();
+          era.mapEra(returnedEra);
+
+          this.eraService.setEra(era);
+        }
+
+        this.eras = this.eraService.getCachedEras();
+      });
+    }
+
+    this.months = this.monthService.getCachedMonths();
+
+    if (!this.months.length) {
+      this.monthService.getMonths().subscribe(months => {
+        for (const returnedMonth of months.data) {
+          const month: Month = new Month();
+          month.initializeNewMonth();
+          month.mapMonth(returnedMonth);
+
+          this.monthService.setMonth(month);
+        }
+
+        this.months = this.monthService.getCachedMonths();
+      });
+    }
+
     this.isEditPersonMode = true;
   }
 
@@ -243,19 +239,10 @@ export class PersonDetailsComponent implements OnInit {
       let personTimeline = new PersonTimeline();
       personTimeline.initializeNewPersonTimeline();
 
-      personTimeline.person = this.person;
-      personTimeline.timeline = timeline;
+      personTimeline.timeline.id = timeline.id;
 
-      this.timelineService.createPersonApiTimeline(personTimeline).subscribe(response => {
+      this.timelineService.createPersonApiTimeline(personTimeline, this.person).subscribe(response => {
         personTimeline.id = response.data.id;
-
-        // get the full timeline now that we have it to show on the card. The previous timeline was a
-        // truncated version for selection purposes only.
-        this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
-          personTimeline.timeline = timeline;
-
-          this.personTimelines.unshift(personTimeline);
-        });
       });
     });
   }
@@ -267,12 +254,11 @@ export class PersonDetailsComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(biography => {
       let personBiography = new PersonBiography();
-      personBiography.initializeBiography();
+      personBiography.initializeNewBiography();
 
       personBiography.biography = biography;
-      personBiography.person = this.person;
 
-      this.personService.createPersonBiography(personBiography).subscribe(response => {
+      this.personService.createPersonBiography(personBiography, this.person).subscribe(response => {
         personBiography.id = response.data.id;
 
         // get the full timeline now that we have it to show on the card. The previous timeline was a
@@ -280,7 +266,7 @@ export class PersonDetailsComponent implements OnInit {
         this.essayService.getApiEssay(biography.id).subscribe(essay => {
           personBiography.biography = essay;
 
-          this.personBiographies.unshift(personBiography);
+          this.person.personBiographies.unshift(personBiography);
         });
       });
     });
@@ -353,8 +339,8 @@ export class PersonDetailsComponent implements OnInit {
       if (doClose) {
         let personTimelineToDelete: PersonTimeline = null;
 
-        for (const personTimeline of this.personTimelines) {
-          if (personTimeline.timeline.id === timeline.id) {
+        for (const personTimeline of this.person.personTimelines) {
+          if (personTimeline.timeline.id.toString() === timeline.id.toString()) {
             personTimelineToDelete = personTimeline;
             break;
           }
@@ -362,9 +348,9 @@ export class PersonDetailsComponent implements OnInit {
 
         if (personTimelineToDelete) {
           this.personService.removeApiPersonTimeline(personTimelineToDelete).subscribe(() => {
-            for (let i = 0; i < this.personTimelines.length; i++) {
-              if (this.personTimelines[i].id === personTimelineToDelete.id) {
-                this.personTimelines.splice(i, 1);
+            for (let i = 0; i < this.person.personTimelines.length; i++) {
+              if (this.person.personTimelines[i].id === personTimelineToDelete.id) {
+                this.person.personTimelines.splice(i, 1);
               }
             }
           });
@@ -385,7 +371,7 @@ export class PersonDetailsComponent implements OnInit {
       if (doClose) {
         let personBiographyToDelete: PersonBiography = null;
 
-        for (const personBiography of this.personBiographies) {
+        for (const personBiography of this.person.personBiographies) {
           if (personBiography.biography.id === biography.id) {
             personBiographyToDelete = personBiography;
             break;
@@ -394,9 +380,9 @@ export class PersonDetailsComponent implements OnInit {
 
         if (personBiographyToDelete) {
           this.personService.removeApiPersonBiography(personBiographyToDelete).subscribe(() => {
-            for (let i = 0; i < this.personBiographies.length; i++) {
-              if (this.personBiographies[i].id === personBiographyToDelete.id) {
-                this.personBiographies.splice(i, 1);
+            for (let i = 0; i < this.person.personBiographies.length; i++) {
+              if (this.person.personBiographies[i].id === personBiographyToDelete.id) {
+                this.person.personBiographies.splice(i, 1);
               }
             }
           });
@@ -427,34 +413,6 @@ export class PersonDetailsComponent implements OnInit {
     }
 
     return this.personLastNameFieldDisplayValue;
-  }
-
-  private _filterPersonsFirstName(filterValue: any): Person[] {
-    if (filterValue && typeof filterValue === 'string') {
-      filterValue = filterValue.toLowerCase();
-
-      return this.searchPersons.filter(person => {
-        if (person.firstName) {
-          return person.firstName.toLowerCase().includes(filterValue);
-        } else {
-          return '';
-        }
-      });
-    }
-  }
-
-  private _filterPersonsLastName(filterValue: any): Person[] {
-    if (filterValue && typeof filterValue === 'string') {
-      filterValue = filterValue.toLowerCase();
-
-      return this.searchPersons.filter(person => {
-        if (person.lastName) {
-          return person.lastName.toLowerCase().includes(filterValue);
-        } else {
-          return '';
-        }
-      });
-    }
   }
 
   private _setReturnHeader() {

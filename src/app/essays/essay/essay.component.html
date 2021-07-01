@@ -1,4 +1,4 @@
-<mat-sidenav-container>
+<mat-sidenav-container *ngIf="essay">
   <div class="app-body-content">
     <div *ngIf="showReturnHeader" style="cursor: pointer" routerLink="{{returnPath}}">
       Return To Project

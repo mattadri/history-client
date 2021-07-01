@@ -30,18 +30,14 @@ export class AuthorsComponent implements OnInit {
 
     this.authorLink = '';
 
-    this.getAuthors('/authors?sort=last_name&page%5Bnumber%5D=1');
+    this.getAuthors(null, ['last_name'], false);
   }
 
   ngOnInit() { }
 
-  getAuthors(path) {
-    this.authorService.getApiAuthors(path).subscribe(response => {
-      for (const author of response.authors) {
-        this.authorService.setAuthor(author);
-      }
-
-      this.authors = this.authorService.getAuthors();
+  getAuthors(path, sort, isAnotherPage) {
+    this.authorService.getApiAuthors(path, null, null, null, null, sort, false, null, isAnotherPage).subscribe(response => {
+      this.authors = response.authors;
 
       this.totalResults = response.total;
       this.nextPage = response.links.next;
@@ -85,9 +81,9 @@ export class AuthorsComponent implements OnInit {
 
   turnPage(author) {
     if (author.pageIndex < author.previousPageIndex) {
-      this.getAuthors(this.previousPage);
+      this.getAuthors(this.previousPage, null, true);
     } else if (author.pageIndex > author.previousPageIndex) {
-      this.getAuthors(this.nextPage);
+      this.getAuthors(this.nextPage, null, true);
     }
   }
 }

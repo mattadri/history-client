@@ -26,7 +26,7 @@ export class AddExistingBrainstormDialogComponent implements OnInit {
     this.brainstorm = new Brainstorm();
     this.brainstorm.initializeNewBrainstorm();
 
-    this.brainstormService.getApiBrainstorms(null, null, '0', null, null, null, false, null, false).subscribe(response => {
+    this.brainstormService.getApiBrainstorms(null, null, '0', null, null, null, null, false, null, false).subscribe(response => {
 
       this.searchBrainstorms = response.brainstorms;
 

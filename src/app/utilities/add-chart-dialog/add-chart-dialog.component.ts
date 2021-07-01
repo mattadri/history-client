@@ -29,7 +29,7 @@ export class AddChartDialogComponent implements OnInit {
     this.chart = new Chart();
     this.chart.initializeNewChart();
 
-    this.chartService.getApiCharts('/charts?page[size]=0').subscribe(response => {
+    this.chartService.getApiCharts(null, '0', null, null, null, null, false, null, false).subscribe(response => {
 
       this.searchCharts = response.charts;
 

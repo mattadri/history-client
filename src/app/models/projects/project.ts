@@ -16,73 +16,95 @@ export class Project {
   events: ProjectEvent[];
   charts: ProjectChart[];
 
-  mapProject(project) {
+  mapProject(project, included) {
     this.id = project.id;
     this.label = project.attributes.label;
 
     // map essays if they exist
-    if (project.attributes.project_essay && project.attributes.project_essay.data && project.attributes.project_essay.data.length) {
-      for (const projectEssay of project.attributes.project_essay.data) {
-        let essay = new ProjectEssay();
-        essay.initializeNewProjectEssay();
-        essay.mapProjectEssay(projectEssay);
+    if (project.relationships) {
+      if (project.relationships.project_essay && project.relationships.project_essay.data && project.relationships.project_essay.data.length) {
+        for (const projectEssay of project.relationships.project_essay.data) {
+          let projectEssayId = projectEssay.id;
+          let projectEssayType = projectEssay.type;
 
-        this.essays.push(essay);
+          let returnedEssay = this.objectLookup(projectEssayId, projectEssayType, included);
+
+          let essay = new ProjectEssay();
+          essay.initializeNewProjectEssay();
+          essay.mapProjectEssay(returnedEssay);
+
+          this.essays.push(essay);
+        }
       }
-    }
 
-    // map timelines if they exist
-    if (project.attributes.project_timeline && project.attributes.project_timeline.data && project.attributes.project_timeline.data.length) {
-      for (const projectTimeline of project.attributes.project_timeline.data) {
-        let timeline = new ProjectTimeline();
-        timeline.initializeNewProjectTimeline();
-        timeline.mapProjectTimeline(projectTimeline);
+      // map timelines if they exist
+      if (project.relationships.project_timeline && project.relationships.project_timeline.data && project.relationships.project_timeline.data.length) {
+        for (const projectTimeline of project.relationships.project_timeline.data) {
+          let projectTimelineId = projectTimeline.id;
+          let projectTimelineType = projectTimeline.type;
 
-        this.timelines.push(timeline);
+          let returnedTimeline = this.objectLookup(projectTimelineId, projectTimelineType, included);
+
+          let timeline = new ProjectTimeline();
+          timeline.initializeNewProjectTimeline();
+          timeline.mapProjectTimeline(returnedTimeline);
+
+          this.timelines.push(timeline);
+        }
       }
-    }
 
-    // map brainstorms if they exist
-    if (project.attributes.project_brainstorm && project.attributes.project_brainstorm.data && project.attributes.project_brainstorm.data.length) {
-      for (const projectBrainstorm of project.attributes.project_brainstorm.data) {
-        let brainstorm = new ProjectBrainstorm();
-        brainstorm.initializeNewProjectBrainstorm();
-        brainstorm.mapProjectBrainstorm(projectBrainstorm);
+      // map brainstorms if they exist
+      if (project.relationships.project_brainstorm && project.relationships.project_brainstorm.data && project.relationships.project_brainstorm.data.length) {
+        for (const projectBrainstorm of project.relationships.project_brainstorm.data) {
+          let projectBrainstormId = projectBrainstorm.id;
+          let projectBrainstormType = projectBrainstorm.type;
 
-        this.brainstorms.push(brainstorm);
+          let returnedBrainstorm = this.objectLookup(projectBrainstormId, projectBrainstormType, included);
+
+          let brainstorm = new ProjectBrainstorm();
+          brainstorm.initializeNewProjectBrainstorm();
+          brainstorm.mapProjectBrainstorm(returnedBrainstorm);
+
+          this.brainstorms.push(brainstorm);
+        }
       }
-    }
 
-    // map persons if they exist
-    if (project.attributes.project_person && project.attributes.project_person.data && project.attributes.project_person.data.length) {
-      for (const projectPerson of project.attributes.project_person.data) {
-        let person = new ProjectPerson();
-        person.initializeNewProjectPerson();
-        person.mapProjectPerson(projectPerson);
+      // map persons if they exist
+      if (project.relationships.project_person && project.relationships.project_person.data && project.relationships.project_person.data.length) {
+        for (const projectPerson of project.relationships.project_person.data) {
+          let projectPersonId = projectPerson.id;
+          let projectPersonType = projectPerson.type;
 
-        this.persons.push(person);
+          let returnedPerson = this.objectLookup(projectPersonId, projectPersonType, included);
+
+          let person = new ProjectPerson();
+          person.initializeNewProjectPerson();
+          person.mapProjectPerson(returnedPerson);
+
+          this.persons.push(person);
+        }
       }
-    }
 
-    // map events if they exist
-    if (project.attributes.project_event && project.attributes.project_event.data && project.attributes.project_event.data.length) {
-      for (const projectEvent of project.attributes.project_event.data) {
-        let event = new ProjectEvent();
-        event.initializeNewProjectEvent();
-        event.mapProjectEvent(projectEvent);
+      // map events if they exist
+      if (project.attributes.project_event && project.attributes.project_event.data && project.attributes.project_event.data.length) {
+        for (const projectEvent of project.attributes.project_event.data) {
+          let event = new ProjectEvent();
+          event.initializeNewProjectEvent();
+          event.mapProjectEvent(projectEvent);
 
-        this.events.push(event);
+          this.events.push(event);
+        }
       }
-    }
 
-    // map charts if they exist
-    if (project.attributes.project_chart && project.attributes.project_chart.data && project.attributes.project_chart.data.length) {
-      for (const projectChart of project.attributes.project_chart.data) {
-        let chart = new ProjectChart();
-        chart.initializeNewProjectChart();
-        chart.mapProjectChart(projectChart);
+      // map charts if they exist
+      if (project.attributes.project_chart && project.attributes.project_chart.data && project.attributes.project_chart.data.length) {
+        for (const projectChart of project.attributes.project_chart.data) {
+          let chart = new ProjectChart();
+          chart.initializeNewProjectChart();
+          chart.mapProjectChart(projectChart);
 
-        this.charts.push(chart);
+          this.charts.push(chart);
+        }
       }
     }
   }
@@ -96,5 +118,18 @@ export class Project {
     this.persons = [];
     this.events = [];
     this.charts = [];
+  }
+
+  objectLookup(id, type, included) {
+    let foundItem = null;
+
+    for (const item of included) {
+      if (item.id.toString() === id.toString() && item.type.toLowerCase() === type.toLowerCase()) {
+        foundItem = item;
+        break;
+      }
+    }
+
+    return foundItem;
   }
 }

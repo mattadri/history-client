@@ -33,12 +33,8 @@ export class EditorSelectChartComponent implements OnInit {
 
     this.loadAutoComplete = false;
 
-    this.chartService.getApiCharts('/charts?page[size]=0').subscribe(charts => {
-      for (const chart of charts.charts) {
-        this.chartService.setChart(chart);
-      }
-
-      this.charts = this.chartService.getCharts();
+    this.chartService.getApiCharts(null, '0', null, null, null, null, false, null, false).subscribe(charts => {
+      this.charts = charts.charts;
 
       this.chartsFilteredOptions = this.chartsAutocompleteControl.valueChanges.pipe(
         startWith(''),

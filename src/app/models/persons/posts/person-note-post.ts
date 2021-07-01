@@ -1,5 +1,5 @@
-import {PersonNote} from '../persons/person-note';
-import {Person} from '../persons/person';
+import {PersonNote} from '../person-note';
+import {Person} from '../person';
 
 export class PersonNotePost {
   data;

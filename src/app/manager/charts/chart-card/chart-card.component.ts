@@ -17,7 +17,9 @@ export class ChartCardComponent implements OnInit {
     this.removeChart = new EventEmitter<Chart>();
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    console.log(this.chart);
+  }
 
   doRemoveChart() {
     this.removeChart.emit(this.chart);

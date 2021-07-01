@@ -39,7 +39,7 @@ export class ProjectInterceptor implements HttpInterceptor {
           for (const data of event.body.data) {
             this.project = new Project();
             this.project.initializeNewProject();
-            this.project.mapProject(data);
+            this.project.mapProject(data, null);
 
             this.projects.push(this.project);
           }
@@ -56,7 +56,7 @@ export class ProjectInterceptor implements HttpInterceptor {
           for (const data of event.body.included) {
             this.project = new Project();
             this.project.initializeNewProject();
-            this.project.mapProject(data);
+            this.project.mapProject(data, null);
 
             this.projects.push(this.project);
           }
@@ -70,7 +70,7 @@ export class ProjectInterceptor implements HttpInterceptor {
         } else if ((req.headers.get('type') === 'project')) {
           this.project = new Project();
           this.project.initializeNewProject();
-          this.project.mapProject(event.body.data);
+          this.project.mapProject(event.body.data, event.body.included);
 
           event.body = this.project;
         }

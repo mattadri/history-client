@@ -1,9 +1,10 @@
-import {PersonBiography} from '../persons/person-biography';
+import {PersonBiography} from '../person-biography';
+import {Person} from '../person';
 
 export class PersonBiographyPost {
   data;
 
-  mapToPersonBiographyPost(personBiography: PersonBiography) {
+  mapToPersonBiographyPost(personBiography: PersonBiography, person: Person) {
     this.data = {
       type: 'person_biography',
       attributes: {
@@ -16,7 +17,7 @@ export class PersonBiographyPost {
         person_rel: {
           data: {
             type: 'person',
-            id: personBiography.person.id
+            id: person.id
           }
         }
       }

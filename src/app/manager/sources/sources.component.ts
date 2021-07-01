@@ -55,7 +55,7 @@ export class SourcesComponent implements OnInit {
       }
     });
 
-    this.getSources('/references?sort=-created');
+    this.getSources(null, ['created'], true, false);
   }
 
   ngOnInit() { }
@@ -65,13 +65,9 @@ export class SourcesComponent implements OnInit {
     this.source.initializeSource();
   }
 
-  getSources(path) {
-    this.sourceService.getApiSources(path).subscribe(response => {
-      for (const source of response.sources) {
-        this.sourceService.setSource(source);
-      }
-
-      this.sources = this.sourceService.getSources();
+  getSources(path: string, sort: Array<string>, sortDescending: boolean, isAnotherPage: boolean) {
+    this.sourceService.getApiSources(path, null, null, null, ['title', 'sub_title'], sort, sortDescending, null, isAnotherPage).subscribe(response => {
+      this.sources = response.sources;
 
       this.totalResults = response.total;
       this.nextPage = response.links.next;
@@ -125,9 +121,9 @@ export class SourcesComponent implements OnInit {
 
   turnPage(source) {
     if (source.pageIndex < source.previousPageIndex) {
-      this.getSources(this.previousPage);
+      this.getSources(this.previousPage, null, false, true);
     } else if (source.pageIndex > source.previousPageIndex) {
-      this.getSources(this.nextPage);
+      this.getSources(this.nextPage, null, false, true);
     }
   }
 }

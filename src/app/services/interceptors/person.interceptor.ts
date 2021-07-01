@@ -67,7 +67,7 @@ export class PersonInterceptor implements HttpInterceptor {
           for (const data of event.body.data) {
             this.personTimeline = new PersonTimeline();
             this.personTimeline.initializeNewPersonTimeline();
-            this.personTimeline.mapPersonTimeline(data);
+            this.personTimeline.mapPersonTimeline(data, event.body.included);
 
             this.personTimelines.push(this.personTimeline);
           }
@@ -88,8 +88,8 @@ export class PersonInterceptor implements HttpInterceptor {
 
           for (const data of event.body.data) {
             this.personBiography = new PersonBiography();
-            this.personBiography.initializeBiography();
-            this.personBiography.mapBiography(data);
+            this.personBiography.initializeNewBiography();
+            this.personBiography.mapBiography(data, event.body.included);
 
             this.personBiographies.push(this.personBiography);
           }

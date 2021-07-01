@@ -49,24 +49,17 @@ export class EventsComponent implements OnInit {
 
     this.timelines = [];
 
-    this.getEvents(
-      '/events?sort=-created&page%5Bnumber%5D=1&fields[event]=label,description,image,event_start_day,event_start_month,event_start_year,' +
-      'event_start_era,event_end_day,event_end_month,event_end_year,event_end_era,reference',
-      null, null);
+    this.getEvents(null, null, null, ['created'], true, false);
 
     this.timelineService.getApiTimelines('/timelines', null, '0', null, ['label'], ['label'], true, null, false).subscribe((response) => {
-      for (const timeline of response.timelines) {
-        this.timelineService.setTimeline(timeline);
-      }
-
-      this.timelines = this.timelineService.getTimelines();
+      this.timelines = response.timelines;
     });
   }
 
   ngOnInit() {
   }
 
-  getEvents(path, filterTerm, dateFilter) {
+  getEvents(path, filterTerm: string, dateFilter: Array<string>, sort: Array<string>, sortDescending: boolean, isAnotherPage: boolean) {
     if (this.selectedEvents.length) {
       if (!this.staticSelectedEvents.length) {
         this.staticSelectedEvents = [...this.selectedEvents];
@@ -77,12 +70,102 @@ export class EventsComponent implements OnInit {
       }
     }
 
-    this.eventService.getApiEvents(path, filterTerm, dateFilter, false).subscribe(response => {
-      for (const event of response.events) {
-        this.eventService.setEvent(event);
-      }
+    let additionalFilters = [];
 
-      this.events = this.eventService.getEvents();
+    if (filterTerm) {
+      const searchFilter = {
+        or: [
+          {
+            name: 'description',
+            op: 'ilike',
+            val: '%' + filterTerm + '%'
+          },
+          {
+            name: 'label',
+            op: 'ilike',
+            val: '%' + filterTerm + '%'
+          }
+        ]
+      };
+
+      additionalFilters.push(searchFilter);
+    }
+
+    if (dateFilter) {
+      if (dateFilter.length === 2) {
+        let addEraFilter = true;
+
+        let startDateOperator = 'gt';
+
+        if (dateFilter[0][1].toUpperCase() === 'BC') {
+          startDateOperator = 'lt';
+        }
+
+        let endDateOperator = 'lt';
+
+        if (dateFilter[1][1].toUpperCase() === 'BC') {
+          endDateOperator = 'gt';
+        }
+
+        // In the case that the search is between BC and AD
+        if (dateFilter[0][1].toUpperCase() === 'BC' && dateFilter[1][1].toUpperCase() === 'AD') {
+          addEraFilter = false;
+        }
+
+        const startDateFilter = {
+          name: 'event_start_year',
+          op: startDateOperator,
+          val: dateFilter[0][0]
+        };
+
+        const endDateFilter = {
+          name: 'event_end_year',
+          op: endDateOperator,
+          val: dateFilter[1][0]
+        };
+
+        const startDateEraFilter = {
+          name: 'event_start_era_rel',
+          op: 'has',
+          val: {
+            name: 'label',
+            op: 'eq',
+            val: dateFilter[0][1]
+          }
+        };
+
+        const endDateEraFilter = {
+          name: 'event_end_era_rel',
+          op: 'has',
+          val: {
+            name: 'label',
+            op: 'eq',
+            val: dateFilter[1][1]
+          }
+        };
+
+        additionalFilters.push(startDateFilter);
+        additionalFilters.push(endDateFilter);
+
+        if (addEraFilter) {
+          additionalFilters.push(startDateEraFilter);
+          additionalFilters.push(endDateEraFilter);
+        }
+      }
+    }
+
+    this.eventService.getApiEvents(
+      path,
+      null,
+      null,
+      null,
+      ['label', 'description', 'image', 'event_start_year', 'event_start_era', 'event_end_year', 'event_end_era'],
+      sort,
+      sortDescending,
+      additionalFilters,
+      isAnotherPage).subscribe(response => {
+
+      this.events = response.events;
 
       this.totalResults = response.total;
       this.nextPage = response.links.next;
@@ -113,9 +196,9 @@ export class EventsComponent implements OnInit {
 
   turnPage(event) {
     if (event.pageIndex < event.previousPageIndex) {
-      this.getEvents(this.previousPage, null, null);
+      this.getEvents(this.previousPage, null, null, null, false, true);
     } else if (event.pageIndex > event.previousPageIndex) {
-      this.getEvents(this.nextPage, null, null);
+      this.getEvents(this.nextPage, null, null, null, false, true);
     }
   }
 
@@ -168,7 +251,7 @@ export class EventsComponent implements OnInit {
       stringFilter = this.filterQuery;
     }
 
-    this.getEvents('/events?sort=-created', stringFilter, dateFilter);
+    this.getEvents(null, stringFilter, dateFilter, ['created'], true, false);
   }
 
   addToTimeline() {

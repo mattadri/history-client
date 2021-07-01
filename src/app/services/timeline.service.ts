@@ -23,6 +23,7 @@ import {PersonTimeline} from '../models/persons/person-timeline';
 import {TimelineUserPost} from '../models/timelines/posts/timeline-user-post';
 import {UserResponse} from '../models/users/responses/user-response';
 import {User} from '../models/user';
+import {Person} from '../models/persons/person';
 
 @Injectable({
   providedIn: 'root'
@@ -219,9 +220,9 @@ export class TimelineService {
     });
   }
 
-  createPersonApiTimeline(personTimeline: PersonTimeline): Observable<any> {
+  createPersonApiTimeline(personTimeline: PersonTimeline, person: Person): Observable<any> {
     this.timelinePersonPost = new TimelinePersonPost();
-    this.timelinePersonPost.mapToPost(personTimeline, false);
+    this.timelinePersonPost.mapToPost(personTimeline, person, false);
 
     return this.http.post(environment.apiUrl + '/timeline_persons', this.timelinePersonPost, {
       headers: new HttpHeaders()

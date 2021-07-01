@@ -2,6 +2,7 @@ import { environment } from '../../environments/environment';
 
 import {BrainstormTopic} from './brainstorm-topic';
 import {BrainstormThought} from './brainstorm-thought';
+import {User} from './user';
 
 export class Brainstorm {
   id: number;
@@ -11,6 +12,8 @@ export class Brainstorm {
 
   topics: BrainstormTopic[];
   thoughts: BrainstormThought[];
+
+  users: User[];
 
   initializeNewBrainstorm() {
     this.title = '';

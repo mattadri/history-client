@@ -59,13 +59,8 @@ export class EssaysComponent implements OnInit {
   getAllEssays(path: string, isAnotherPage: boolean) {
     if (!this.allEssays.length || isAnotherPage) {
       this.essayService.getApiEssays(path, null, null, ['title', 'abstract', 'banner'], null, false, null, isAnotherPage).subscribe(response => {
-
-        for (const essay of response.essays) {
-          this.essayService.setEssay(essay);
-        }
-
-        this.essays = this.essayService.getEssays();
-        this.allEssays = this.essayService.getEssays();
+        this.essays = response.essays;
+        this.allEssays = response.essays;
 
         this.totalResults = response.total;
         this.nextPage = response.links.next;
@@ -80,12 +75,8 @@ export class EssaysComponent implements OnInit {
   getUserEssays(path: string, isAnotherPage: boolean) {
     if (!this.userEssays.length || isAnotherPage) {
       this.essayService.getApiEssays(path, this.loggedInUser.id, null, ['title', 'abstract', 'banner'], null, false, null, isAnotherPage).subscribe(response => {
-        for (const essay of response.essays) {
-          this.essayService.setEssay(essay);
-        }
-
-        this.essays = this.essayService.getEssays();
-        this.userEssays = this.essayService.getEssays();
+        this.essays = response.essays
+        this.userEssays = response.essays
 
         this.totalResults = response.total;
         this.nextPage = response.links.next;

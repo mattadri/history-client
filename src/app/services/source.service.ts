@@ -43,6 +43,14 @@ export class SourceService {
     return this.sources;
   }
 
+  getSource(sourceId: string) {
+    for (const source of this.sources) {
+      if (source.id.toString() === sourceId.toString()) {
+        return source;
+      }
+    }
+  }
+
   setSource(source: Source) {
     this.sources.push(source);
   }
@@ -67,21 +75,102 @@ export class SourceService {
     }
   }
 
-  getApiSources(path): Observable<SourceResponse> {
-    this.sources = [];
+  getApiSources(path,
+                pageSize: string,
+                pageNumber: string,
+                include: Array<string>,
+                fields: Array<string>,
+                sort: Array<string>,
+                sortDescending: boolean,
+                additionalFilters: Array<Object>,
+                isAnotherPage: boolean): Observable<SourceResponse> {
+    let type = 'sources';
 
-    if (!path) {
-      path = '/references';
+    // if a next or previous page is being retrieved just leave the path as is
+    if (!isAnotherPage) {
+      if (!path) {
+        path = '/references';
+      }
+
+      // default page size is 20 records per page
+      if (!pageSize) {
+        pageSize = '20';
+      }
+
+      // default page number to 1
+      if (!pageNumber) {
+        pageNumber = '1';
+      }
+
+      let filter = [];
+
+      path = path + '?page[size]=' + pageSize;
+
+      path = path + '&page[number]=' + pageNumber;
+
+      // include any related objects
+      if (include && include.length) {
+        path = path + '&include=';
+
+        for (let i = 0; i < include.length; i++) {
+          path = path + include[i];
+
+          if (i < include.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // add any fields filter to the path
+      if (fields && fields.length) {
+        path = path + '&fields[reference]=';
+
+        for (let i = 0; i < fields.length; i++) {
+          path = path + fields[i];
+
+          if (i < fields.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // add any sorting if requested
+      if (sort && sort.length) {
+        path = path + '&sort=';
+
+        if (sortDescending) {
+          path = path + '-';
+        }
+
+        for (let i = 0; i < sort.length; i++) {
+          path = path + sort[i];
+
+          if (i < sort.length - 1) {
+            path = path + ',';
+          }
+        }
+      }
+
+      // lastly tack on any additional filters passed
+      if (additionalFilters && additionalFilters.length) {
+        for (const additionalFilter of additionalFilters) {
+          filter.push(additionalFilter);
+        }
+      }
+
+      if (filter.length) {
+        path = path + '&filter=' + JSON.stringify(filter);
+      }
     }
 
     return this.http.get<SourceResponse>(environment.apiUrl + path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
-        .set('Type', 'sources')
+        .set('Type', type)
     });
   }
 
-  getApiSource(sourceId): Observable<Source> {
+  getApiSource(sourceId: string): Observable<Source> {
     return this.http.get<Source>(environment.apiUrl + '/references/' + sourceId, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')

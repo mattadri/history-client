@@ -5,8 +5,6 @@ export class Era {
   mapEra(eraData) {
     this.id = eraData.id;
     this.label = eraData.attributes.label;
-
-    return this;
   }
 
   initializeNewEra() {

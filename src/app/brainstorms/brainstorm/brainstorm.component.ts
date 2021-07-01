@@ -9,7 +9,6 @@ import {BrainstormService} from '../../services/brainstorm.service';
 import {Brainstorm} from '../../models/brainstorm';
 import {BrainstormThought} from '../../models/brainstorm-thought';
 import {QuickBrainstormTopicComponent} from './quick-brainstorm-topic/quick-brainstorm-topic.component';
-import {User} from '../../models/user';
 import {AddUserDialogComponent} from '../../utilities/add-user-dialog/add-user-dialog.component';
 import {MessageDialogComponent} from '../../utilities/message-dialog/message-dialog.component';
 
@@ -25,8 +24,6 @@ export class BrainstormComponent implements OnInit {
   public isAddThoughtMode: boolean;
   public isAddBrainstormThoughtMode: boolean;
 
-  public brainstormUsers: User[];
-
   constructor(private route: ActivatedRoute,
               private brainstormService: BrainstormService,
               public dialog: MatDialog) {
@@ -34,19 +31,23 @@ export class BrainstormComponent implements OnInit {
     this.isAddThoughtMode = false;
     this.isAddBrainstormThoughtMode = false;
 
-    this.brainstormUsers = [];
-
-    const brainstormId = parseInt(this.route.snapshot.paramMap.get('id'), 10);
+    const brainstormId = this.route.snapshot.paramMap.get('id');
 
     this.initializeNewBrainstormThought();
 
-    this.brainstormService.getApiBrainstorm(brainstormId).subscribe(brainstorm => {
-      this.brainstorm = brainstorm;
+    this.brainstorm = this.brainstormService.getBrainstorm(brainstormId);
 
-      this.brainstormService.getApiBrainstormUsers(null, this.brainstorm).subscribe((response) => {
-        this.brainstormUsers = response.users;
+    if (!this.brainstorm) {
+      this.brainstormService.getApiBrainstorm(brainstormId).subscribe(brainstorm => {
+        this.brainstorm = brainstorm;
+
+        this.brainstormService.setBrainstorm(this.brainstorm);
+
+        this.brainstormService.getApiBrainstormUsers(null, this.brainstorm).subscribe((response) => {
+          this.brainstorm.users = response.users;
+        });
       });
-    });
+    }
   }
 
   ngOnInit() { }
@@ -72,7 +73,7 @@ export class BrainstormComponent implements OnInit {
     dialogRef.afterClosed().subscribe(user => {
       let userExists = false;
 
-      for (const currentUser of this.brainstormUsers) {
+      for (const currentUser of this.brainstorm.users) {
         if (user.id === currentUser.id) {
           userExists = true;
           break;
@@ -89,7 +90,7 @@ export class BrainstormComponent implements OnInit {
         });
       } else {
         this.brainstormService.addUserToBrainstorm(this.brainstorm, user.id).subscribe(() => {
-          this.brainstormUsers.push(user);
+          this.brainstorm.users.push(user);
         });
       }
     });

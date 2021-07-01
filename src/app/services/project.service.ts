@@ -93,7 +93,7 @@ export class ProjectService {
                  isAnotherPage: boolean): Observable<ProjectResponse> {
     let type = 'projects';
 
-    // if a next of previous page is being retrieved just all the path as is
+    // if a next or previous page is being retrieved just leave the path as is
     if (!isAnotherPage) {
       if (!path) {
         path = '/projects';
@@ -230,8 +230,22 @@ export class ProjectService {
     });
   }
 
-  getApiProject(projectId: string): Observable<Project> {
-    return this.http.get<Project>(environment.apiUrl + '/projects/' + projectId, {
+  getApiProject(projectId: string, include: Array<string>): Observable<Project> {
+    let path = environment.apiUrl + '/projects/' + projectId;
+
+    if (include.length) {
+      path = path + '?include=';
+
+      for (let i = 0; i < include.length; i++) {
+        path = path + include[i];
+
+        if (i < include.length - 1) {
+          path = path + ',';
+        }
+      }
+    }
+
+    return this.http.get<Project>(path, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
         .set('Type', 'project')

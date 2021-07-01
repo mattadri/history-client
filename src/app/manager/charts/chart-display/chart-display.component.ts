@@ -10,6 +10,7 @@ import {ChartType} from '../../../enums/chart-types';
 
 import {ChartService} from '../../../services/chart.service';
 import {Sleep} from '../../../utilities/sleep';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-chart-display',
@@ -53,15 +54,17 @@ export class ChartDisplayComponent implements OnInit, OnDestroy, AfterViewInit {
     '#c39c3b',
   ];
 
-  constructor(private chartService: ChartService) {
+  constructor(private route: ActivatedRoute, private chartService: ChartService) {
+    const chartId = this.route.snapshot.paramMap.get('id');
+
     this.chartConfig = {};
+
+    if (!this.chart && chartId) {
+      this.chart = this.chartService.getChart(chartId);
+    }
   }
 
   ngOnInit() {
-    if (!this.chart) {
-      this.chart = this.chartService.getChart();
-    }
-
     this.chartCanvasId = 'chart_canvas_' + this.chart.id;
 
     // listens for request from the parent component to update that chart
@@ -228,8 +231,6 @@ export class ChartDisplayComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   rerenderChart(doDestroy: boolean) {
-    this.chart = this.chartService.getChart();
-
     if (doDestroy) {
       this.chartConfig = {};
 

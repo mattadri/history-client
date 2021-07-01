@@ -11,6 +11,7 @@ export class EventTimeline {
 
   mapEventTimeline(eventTimeline) {
     this.id = eventTimeline.id;
+
     this.timeline.mapTimeline(eventTimeline.attributes.timeline.data);
   }
 }

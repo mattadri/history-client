@@ -38,22 +38,26 @@ export class ChartComponent implements OnInit {
               public dialog: MatDialog) {
     const chartId = this.route.snapshot.paramMap.get('id');
 
-    this.chartService.getApiChart(chartId).subscribe(chart => {
-      this.chart = chart;
+    this.chart = this.chartService.getChart(chartId);
 
-      this.chart.labels.sort(this.sortById);
+    if (!this.chart) {
+      this.chartService.getApiChart(chartId).subscribe(chart => {
+        this.chart = chart;
 
-      for (const dataset of this.chart.datasets) {
-        dataset.data.sort(this.sortById);
-      }
+        this.chartService.setChart(this.chart);
 
-      this.chartService.setChart(chart);
-    });
+        this.chart.labels.sort(this.sortById);
+
+        for (const dataset of this.chart.datasets) {
+          dataset.data.sort(this.sortById);
+        }
+      });
+    }
 
     this.chartScreenSize = 'fullscreen_exit';
   }
 
-  ngOnInit() { }
+  ngOnInit() {}
 
   private sortById(a, b) {
     if (a.id > b.id) {
@@ -181,8 +185,6 @@ export class ChartComponent implements OnInit {
   }
 
   callUpdateChart() {
-    this.chartService.setChart(this.chart);
-
     this.updateChartNotifier.next();
   }
 

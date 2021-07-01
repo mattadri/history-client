@@ -4,6 +4,7 @@ import { Source } from '../source';
 import { Month } from '../month';
 import { Era } from '../era';
 import { EventNote } from './event-note';
+import {EventTimeline} from './event-timeline';
 
 export class Event {
   id: number;
@@ -25,6 +26,7 @@ export class Event {
   source: Source;
   notes: EventNote[];
   colorClass: string;
+  eventTimelines: EventTimeline[];
 
   timelineStartLocation: number;
   timelineEndLocation: number;
@@ -72,6 +74,14 @@ export class Event {
 
     const newSource = new Source();
 
+    startMonth.initializeNewMonth();
+    endMonth.initializeNewMonth();
+
+    startEra.initializeNewEra();
+    endEra.initializeNewEra();
+
+    newSource.initializeSource();
+
     self.id = event.id;
     self.label = event.attributes.label;
 
@@ -84,7 +94,9 @@ export class Event {
     }
 
     if (event.attributes.event_start_era) {
-      self.startEra = startEra.mapEra(event.attributes.event_start_era.data);
+      startEra.mapEra(event.attributes.event_start_era.data);
+
+      this.startEra = startEra;
     }
 
     // optional fields
@@ -97,7 +109,9 @@ export class Event {
     }
 
     if (event.attributes.event_start_month) {
-      self.startMonth = startMonth.mapMonth(event.attributes.event_start_month.data);
+      startMonth.mapMonth(event.attributes.event_start_month.data);
+
+      self.startMonth = startMonth;
     }
 
     if (event.attributes.event_end_day) {
@@ -105,7 +119,9 @@ export class Event {
     }
 
     if (event.attributes.event_end_month) {
-      self.endMonth = endMonth.mapMonth(event.attributes.event_end_month.data);
+      endMonth.mapMonth(event.attributes.event_end_month.data);
+
+      this.endMonth = endMonth;
     }
 
     if (event.attributes.event_end_year) {
@@ -113,7 +129,9 @@ export class Event {
     }
 
     if (event.attributes.event_end_era) {
-      self.endEra = endEra.mapEra(event.attributes.event_end_era.data);
+      endEra.mapEra(event.attributes.event_end_era.data);
+
+      this.endEra = endEra;
     }
 
     if (event.attributes.reference) {

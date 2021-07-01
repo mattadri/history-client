@@ -20,8 +20,7 @@ export class AddExistingEventDialogComponent implements OnInit {
   public eventTitleFieldDisplayValue: string;
 
   constructor(private eventService: EventService, public dialogRef: MatDialogRef<AddExistingEventDialogComponent>) {
-    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label',
-      null, null, false).subscribe(response => {
+    this.eventService.getApiEvents(null, '0', null, null, ['label'], null, false, null, false).subscribe(response => {
       this.searchEvents = response.events;
 
       this.eventTitleFilteredOptions = this.eventTitleAutocompleteControl.valueChanges.pipe(

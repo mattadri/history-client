@@ -63,7 +63,11 @@ export class ProjectDetailsComponent implements OnInit {
     this.project = this.projectService.getProject(projectId);
 
     if (!this.project) {
-      this.projectService.getApiProject(projectId).subscribe((project) => {
+      this.projectService.getApiProject(
+        projectId,
+        ['project_timeline', 'project_essay', 'project_event', 'project_person', 'project_chart', 'project_brainstorm'])
+        .subscribe((project) => {
+
         this.project = project;
 
         this.projectService.getApiProjectUsers('/project_users', this.project).subscribe((response) => {

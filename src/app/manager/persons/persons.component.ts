@@ -37,11 +37,7 @@ export class PersonsComponent implements OnInit {
 
     this.initializeNewPerson();
 
-    this.getPersons(
-      '/persons?sort=-created&page%5Bnumber%5D=1' +
-      '&fields[person]=first_name,middle_name,last_name,image,description,birth_day,birth_month,birth_year,' +
-      'birth_era,death_day,death_month,death_year,death_era,reference',
-      null, null);
+    this.getPersons(null, null, null, null, false, false);
   }
 
   ngOnInit() { }
@@ -52,13 +48,64 @@ export class PersonsComponent implements OnInit {
     this.person.initializeNewPerson();
   }
 
-  getPersons(path, filterTerm, dateFilter) {
-    this.personService.getApiPersons(path, filterTerm, dateFilter, false).subscribe(response => {
-      for (const person of response.persons) {
-        this.personService.setPerson(person);
-      }
+  getPersons(path, filterTerm: string, dateFilter: Array<string>, sort: Array<string>, sortDescending: boolean, isAnotherPage: boolean) {
+    let additionalFilters = [];
 
-      this.persons = this.personService.getPersons();
+    if (filterTerm) {
+      const searchFilter = {
+        or: [
+          {
+            name: 'description',
+            op: 'ilike',
+            val: '%' + filterTerm + '%'
+          },
+          {
+            name: 'first_name',
+            op: 'ilike',
+            val: '%' + filterTerm + '%'
+          },
+          {
+            name: 'last_name',
+            op: 'ilike',
+            val: '%' + filterTerm + '%'
+          }
+        ]
+      };
+
+      additionalFilters.push(searchFilter);
+    }
+
+    if (dateFilter) {
+      if (dateFilter.length === 2) {
+        const startDateFilter = {
+          name: 'birth_year',
+          op: 'gt',
+          val: dateFilter[0]
+        };
+
+        const endDateFilter = {
+          name: 'birth_year',
+          op: 'lt',
+          val: dateFilter[1]
+        };
+
+        additionalFilters.push(startDateFilter);
+        additionalFilters.push(endDateFilter);
+      }
+    }
+
+    this.personService.getApiPersons(
+      path,
+      null,
+      null,
+      null,
+      ['first_name', 'middle_name', 'last_name', 'image', 'birth_year', 'birth_era', 'death_year', 'death_era'],
+      sort,
+      sortDescending,
+      additionalFilters,
+      isAnotherPage).subscribe(response => {
+
+      this.persons = response.persons;
 
       this.totalResults = response.total;
       this.nextPage = response.links.next;
@@ -98,14 +145,14 @@ export class PersonsComponent implements OnInit {
       stringFilter = this.filterQuery;
     }
 
-    this.getPersons('/persons?sort=-created', stringFilter, dateFilter);
+    this.getPersons('/persons', stringFilter, dateFilter, ['created'], true, false);
   }
 
   turnPage(person) {
     if (person.pageIndex < person.previousPageIndex) {
-      this.getPersons(this.previousPage, null, null);
+      this.getPersons(this.previousPage, null, null, null, false, true);
     } else if (person.pageIndex > person.previousPageIndex) {
-      this.getPersons(this.nextPage, null, null);
+      this.getPersons(this.nextPage, null, null, null, false, true);
     }
   }
 }

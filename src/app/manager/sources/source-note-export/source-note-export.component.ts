@@ -13,7 +13,7 @@ export class SourceNoteExportComponent implements OnInit {
   public brainstorms: Brainstorm[];
 
   constructor(private brainstormService: BrainstormService, public dialogRef: MatDialogRef<SourceNoteExportComponent>) {
-    this.brainstormService.getApiBrainstorms(null, null, '0', null, ['title'], null, false, null, false).subscribe((response) => {
+    this.brainstormService.getApiBrainstorms(null, null, '0', null, null, ['title'], null, false, null, false).subscribe((response) => {
       this.brainstorms = response.brainstorms;
     });
   }

@@ -21,15 +21,17 @@ export class ChartsComponent implements OnInit {
   constructor(private chartService: ChartService,
               private router: Router,
               public dialog: MatDialog) {
-    this.getCharts('/charts');
+    this.getCharts(null, null, ['created'], true, false);
   }
 
   ngOnInit() {
 
   }
 
-  getCharts(path) {
-    this.chartService.getApiCharts(path).subscribe((response) => {
+  getCharts(path, fields, sort, sortDescending, isAnotherPage) {
+    this.chartService.getApiCharts(path, null, null, null, fields, sort, sortDescending, null, isAnotherPage).subscribe((response) => {
+      this.chartService.clearCharts();
+
       for (const chart of response.charts) {
         this.chartService.setChart(chart);
       }
@@ -102,9 +104,9 @@ export class ChartsComponent implements OnInit {
 
   turnPage(chart) {
     if (chart.pageIndex < chart.previousPageIndex) {
-      this.getCharts(this.previousPage);
+      this.getCharts(this.previousPage, null, null, false, true);
     } else if (chart.pageIndex > chart.previousPageIndex) {
-      this.getCharts(this.nextPage);
+      this.getCharts(this.nextPage, null, null, false, true);
     }
   }
 }

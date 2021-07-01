@@ -35,10 +35,16 @@ export class BrainstormService {
     this.brainstorms = [];
   }
 
-  getApiBrainstorms(path: string, userId, pageSize: string, pageNumber: string, fields: Array<string>, sort: Array<string>,
-                    sortDescending: boolean, additionalFilters: Array<Object>, isAnotherPage: boolean): Observable<BrainstormResponse> {
-    this.brainstorms = [];
-
+  getApiBrainstorms(path,
+                    userId,
+                    pageSize: string,
+                    pageNumber: string,
+                    include: Array<string>,
+                    fields: Array<string>,
+                    sort: Array<string>,
+                    sortDescending: boolean,
+                    additionalFilters: Array<Object>,
+                    isAnotherPage: boolean): Observable<BrainstormResponse> {
     let type = 'brainstorms';
 
     // if a next of previous page is being retrieved just all the path as is
@@ -55,6 +61,19 @@ export class BrainstormService {
       // default page number to 1
       if (!pageNumber) {
         pageNumber = '1';
+      }
+
+      // include any related objects
+      if (include && include.length) {
+        path = path + '&include=';
+
+        for (let i = 0; i < include.length; i++) {
+          path = path + include[i];
+
+          if (i < include.length - 1) {
+            path = path + ',';
+          }
+        }
       }
 
       let filter = [];
@@ -135,7 +154,7 @@ export class BrainstormService {
     });
   }
 
-  getApiBrainstorm(brainstormId: number) {
+  getApiBrainstorm(brainstormId: string) {
     return this.http.get<Brainstorm>(environment.apiUrl + '/brainstorms/' + brainstormId, {
       headers: new HttpHeaders()
         .set('Accept', 'application/vnd.api+json')
@@ -279,6 +298,14 @@ export class BrainstormService {
 
   getBrainstorms() {
     return this.brainstorms;
+  }
+
+  getBrainstorm(brainstormId: string): Brainstorm {
+    for (const brainstorm of this.brainstorms) {
+      if (brainstorm.id.toString() === brainstormId) {
+        return brainstorm;
+      }
+    }
   }
 
   removeBrainstormThought(brainstorm: Brainstorm, thought: BrainstormThought) {

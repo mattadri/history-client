@@ -31,7 +31,6 @@ import {AddExistingTimelineDialogComponent} from '../../../utilities/add-existin
 export class EventDetailsComponent implements OnInit {
   public event: Event;
   public note: EventNote;
-  public eventTimelines: EventTimeline[];
 
   public sources: Source[] = [];
 
@@ -63,8 +62,6 @@ export class EventDetailsComponent implements OnInit {
 
     const eventId = this.route.snapshot.paramMap.get('id');
 
-    this.eventTimelines = [];
-
     this.isSavingImage = false;
 
     this.showReturnHeader = false;
@@ -72,48 +69,26 @@ export class EventDetailsComponent implements OnInit {
 
     this._setReturnHeader();
 
-    this.eventService.getApiEvent(eventId).subscribe(event => {
-      this.event = event;
+    this.event = this.eventService.getEvent(eventId);
 
-      if (!this.event.description.length) {
-        this.event.description = 'Needs a description.';
-      }
+    if (!this.event) {
+      this.eventService.getApiEvent(eventId).subscribe(event => {
+        this.event = event;
 
-      this.eventService.setEvent(this.event);
-
-      this.sourcesAutocompleteControl.setValue(this.event.source);
-
-      // LOAD REMAINING DATA AFTER THE INITIAL EVENT HAS BEEN RETRIEVED
-      this.eraService.getEras().subscribe(eras => {
-        for (const era of eras.data) {
-          this.eras.push(new Era().mapEra(era));
-        }
-      });
-
-      this.monthService.getMonths().subscribe(months => {
-        for (const month of months.data) {
-          this.months.push(new Month().mapMonth(month));
-        }
-      });
-
-      // GET THE TIMELINES THE EVENT IS ATTACHED TO
-      this.eventService.getApiEventTimelines(this.event).subscribe((response) => {
-        this.eventTimelines = response.eventTimelines;
-      });
-
-      this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
-        for (const source of sources.sources) {
-          this.sourceService.setSource(source);
+        if (!this.event.description.length) {
+          this.event.description = 'Needs a description.';
         }
 
-        this.sources = this.sourceService.getSources();
+        this.eventService.setEvent(this.event);
 
-        this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
-          startWith(''),
-          map(source => this._filterSources(source))
-        );
+        this.sourcesAutocompleteControl.setValue(this.event.source);
+
+        // GET THE TIMELINES THE EVENT IS ATTACHED TO
+        this.eventService.getApiEventTimelines(this.event).subscribe((response) => {
+          this.event.eventTimelines = response.eventTimelines;
+        });
       });
-    });
+    }
 
     this.isEditEventMode = false;
     this.isAddNoteMode = false;
@@ -144,6 +119,51 @@ export class EventDetailsComponent implements OnInit {
   }
 
   activateEditEventMode() {
+    this.sourceService.getApiSources(null, '0', null, null, ['title', 'sub_title'], null, false, null, false).subscribe(sources => {
+      for (const source of sources.sources) {
+        this.sourceService.setSource(source);
+      }
+
+      this.sources = this.sourceService.getSources();
+
+      this.sourcesFilteredOptions = this.sourcesAutocompleteControl.valueChanges.pipe(
+        startWith(''),
+        map(source => this._filterSources(source))
+      );
+    });
+
+    this.eras = this.eraService.getCachedEras();
+
+    if (!this.eras.length) {
+      this.eraService.getEras().subscribe(eras => {
+        for (const returnedEra of eras.data) {
+          const era: Era = new Era();
+          era.initializeNewEra();
+          era.mapEra(returnedEra);
+
+          this.eraService.setEra(era);
+        }
+
+        this.eras = this.eraService.getCachedEras();
+      });
+    }
+
+    this.months = this.monthService.getCachedMonths();
+
+    if (!this.months.length) {
+      this.monthService.getMonths().subscribe(months => {
+        for (const returnedMonth of months.data) {
+          const month: Month = new Month();
+          month.initializeNewMonth();
+          month.mapMonth(returnedMonth);
+
+          this.monthService.setMonth(month);
+        }
+
+        this.months = this.monthService.getCachedMonths();
+      });
+    }
+
     this.isEditEventMode = true;
   }
 
@@ -217,7 +237,7 @@ export class EventDetailsComponent implements OnInit {
         this.timelineService.getApiTimeline(timeline.id).subscribe(timeline => {
           eventTimeline.timeline = timeline;
 
-          this.eventTimelines.unshift(eventTimeline);
+          this.event.eventTimelines.unshift(eventTimeline);
         });
       });
     });
@@ -270,7 +290,7 @@ export class EventDetailsComponent implements OnInit {
       if (doClose) {
         let eventTimelineToDelete: EventTimeline = null;
 
-        for (const eventTimeline of this.eventTimelines) {
+        for (const eventTimeline of this.event.eventTimelines) {
           if (eventTimeline.timeline.id === timeline.id) {
             eventTimelineToDelete = eventTimeline;
             break;
@@ -279,9 +299,9 @@ export class EventDetailsComponent implements OnInit {
 
         if (eventTimelineToDelete) {
           this.eventService.removeTimelineApiEvent(eventTimelineToDelete).subscribe(() => {
-            for (let i = 0; i < this.eventTimelines.length; i++) {
-              if (this.eventTimelines[i].id === eventTimelineToDelete.id) {
-                this.eventTimelines.splice(i, 1);
+            for (let i = 0; i < this.event.eventTimelines.length; i++) {
+              if (this.event.eventTimelines[i].id === eventTimelineToDelete.id) {
+                this.event.eventTimelines.splice(i, 1);
               }
             }
           });

@@ -1,21 +1,42 @@
 import {Timeline} from '../timelines/timeline';
-import {Person} from './person';
 
 export class PersonTimeline {
   id: number;
   timeline: Timeline;
-  person: Person;
 
   initializeNewPersonTimeline() {
     this.id = null;
+
     this.timeline = new Timeline();
-    this.person = new Person();
+    this.timeline.initializeNewTimeline();
   }
 
-  mapPersonTimeline(personTimeline) {
+  mapPersonTimeline(personTimeline, included) {
     this.id = personTimeline.id;
 
-    this.timeline.mapTimeline(personTimeline.attributes.timeline.data);
-    this.person.mapPerson(personTimeline.attributes.person.data);
+    let timelineId = personTimeline.relationships.timeline_rel.data.id;
+    let timelineType = personTimeline.relationships.timeline_rel.data.type;
+
+    let returnedPersonTimeline = this.objectLookup(timelineId, timelineType, included);
+
+    let timeline = new Timeline();
+    timeline.initializeNewTimeline();
+
+    timeline.mapTimeline(returnedPersonTimeline);
+
+    this.timeline = timeline;
+  }
+
+  objectLookup(id, type, included) {
+    let foundItem = null;
+
+    for (const item of included) {
+      if (item.id.toString() === id.toString() && item.type.toLowerCase() === type.toLowerCase()) {
+        foundItem = item;
+        break;
+      }
+    }
+
+    return foundItem;
   }
 }

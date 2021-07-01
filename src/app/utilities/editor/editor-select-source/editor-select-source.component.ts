@@ -38,7 +38,7 @@ export class EditorSelectSourceComponent implements OnInit {
 
     this.loadAutoComplete = false;
 
-    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title&sort=title').subscribe(sources => {
+    this.sourceService.getApiSources(null, '0', null, null, ['title', 'sub_title'], null, false, null, false).subscribe(sources => {
       for (const source of sources.sources) {
         this.sourceService.setSource(source);
       }

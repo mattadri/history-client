@@ -1,4 +1,4 @@
-import { Person } from '../persons/person';
+import { Person } from '../person';
 
 export class PersonPost {
   data;

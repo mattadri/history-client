@@ -23,6 +23,9 @@ export class Source {
 
     const self = this;
 
+    month.initializeNewMonth();
+    era.initializeNewEra();
+
     self.id = source.id;
     self.title = source.attributes.title;
 
@@ -31,7 +34,9 @@ export class Source {
     }
 
     if (source.attributes.published_era) {
-      self.publishedEra = era.mapEra(source.attributes.published_era.data);
+      era.mapEra(source.attributes.published_era.data);
+
+      self.publishedEra = era;
     }
 
     // optional fields
@@ -44,7 +49,9 @@ export class Source {
     }
 
     if (source.attributes.published_month) {
-      self.publishedMonth = month.mapMonth(source.attributes.published_month.data);
+      month.mapMonth(source.attributes.published_month.data);
+
+      self.publishedMonth = month;
     }
 
     self.authors = [];

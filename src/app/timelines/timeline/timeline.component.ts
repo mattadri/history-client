@@ -115,8 +115,6 @@ export class TimelineComponent implements OnInit {
 
       this.setPersons();
 
-      console.log('Found Timeline');
-
     } else {
       this.timelineService.getApiTimeline(timelineId).subscribe((responseTimeline) => {
         this.timeline = responseTimeline;
@@ -133,8 +131,6 @@ export class TimelineComponent implements OnInit {
         });
 
         this.setPersons();
-
-        console.log('Loaded Timeline');
       });
     }
   }
@@ -227,7 +223,7 @@ export class TimelineComponent implements OnInit {
     }
   }
 
-  getRelatedEvents(path, isPageLink) {
+  getRelatedEvents(path, isAnotherPage) {
     let timelineStartEra = 'AD';
     let timelineEndEra = 'AD';
 
@@ -239,7 +235,82 @@ export class TimelineComponent implements OnInit {
       timelineEndEra = 'BC';
     }
 
-    this.eventService.getApiEvents(path, null, [[this.timelineStart, timelineStartEra], [this.timelineEnd, timelineEndEra]], isPageLink).subscribe(response => {
+    let additionalFilters = [];
+
+    let dateFilter = [[this.timelineStart.toString(), timelineStartEra], [this.timelineEnd.toString() , timelineEndEra]];
+
+    if (dateFilter.length === 2) {
+      let addEraFilter = true;
+
+      let startDateOperator = 'gt';
+
+      if (dateFilter[0][1].toUpperCase() === 'BC') {
+        startDateOperator = 'lt';
+      }
+
+      let endDateOperator = 'lt';
+
+      if (dateFilter[1][1].toUpperCase() === 'BC') {
+        endDateOperator = 'gt';
+      }
+
+      // In the case that the search is between BC and AD
+      if (dateFilter[0][1].toUpperCase() === 'BC' && dateFilter[1][1].toUpperCase() === 'AD') {
+        addEraFilter = false;
+      }
+
+      const startDateFilter = {
+        name: 'event_start_year',
+        op: startDateOperator,
+        val: dateFilter[0][0]
+      };
+
+      const endDateFilter = {
+        name: 'event_end_year',
+        op: endDateOperator,
+        val: dateFilter[1][0]
+      };
+
+      const startDateEraFilter = {
+        name: 'event_start_era_rel',
+        op: 'has',
+        val: {
+          name: 'label',
+          op: 'eq',
+          val: dateFilter[0][1]
+        }
+      };
+
+      const endDateEraFilter = {
+        name: 'event_end_era_rel',
+        op: 'has',
+        val: {
+          name: 'label',
+          op: 'eq',
+          val: dateFilter[1][1]
+        }
+      };
+
+      additionalFilters.push(startDateFilter);
+      additionalFilters.push(endDateFilter);
+
+      if (addEraFilter) {
+        additionalFilters.push(startDateEraFilter);
+        additionalFilters.push(endDateEraFilter);
+      }
+    }
+
+    this.eventService.getApiEvents(
+      path,
+      null,
+      null,
+      null,
+      ['label', 'event_start_year', 'event_start_era', 'event_end_year', 'event_end_era'],
+      null,
+      false,
+      additionalFilters,
+      isAnotherPage).subscribe(response => {
+
       this.relatedEvents = response.events;
 
       this.relatedEventsTotalResults = response.total;

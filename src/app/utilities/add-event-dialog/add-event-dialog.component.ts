@@ -42,27 +42,39 @@ export class AddEventDialogComponent implements OnInit {
     this.event = new Event();
     this.event.initializeNewEvent();
 
-    this.eraService.getEras().subscribe(eras => {
-      for (const era of eras.data) {
-        const newEra = new Era().mapEra(era);
+    this.eras = this.eraService.getCachedEras();
 
-        // set to AD so that drop-downs auto populate with the value.
-        if (newEra.label === 'AD') {
-          this.event.startEra = newEra;
-          this.event.endEra = newEra;
+    if (!this.eras.length) {
+      this.eraService.getEras().subscribe(eras => {
+        for (const returnedEra of eras.data) {
+          const era: Era = new Era();
+          era.initializeNewEra();
+          era.mapEra(returnedEra);
+
+          this.eraService.setEra(era);
         }
 
-        this.eras.push(newEra);
-      }
-    });
+        this.eras = this.eraService.getCachedEras();
+      });
+    }
 
-    this.monthService.getMonths().subscribe(months => {
-      for (const month of months.data) {
-        this.months.push(new Month().mapMonth(month));
-      }
-    });
+    this.months = this.monthService.getCachedMonths();
 
-    this.sourceService.getApiSources('/references?page[size]=0&fields[reference]=title,sub_title').subscribe(sources => {
+    if (!this.months.length) {
+      this.monthService.getMonths().subscribe(months => {
+        for (const returnedMonth of months.data) {
+          const month: Month = new Month();
+          month.initializeNewMonth();
+          month.mapMonth(returnedMonth);
+
+          this.monthService.setMonth(month);
+        }
+
+        this.months = this.monthService.getCachedMonths();
+      });
+    }
+
+    this.sourceService.getApiSources(null, '0', null, null, ['title', 'sub_title'], null, false, null, false).subscribe(sources => {
       for (const source of sources.sources) {
         this.sourceService.setSource(source);
       }
@@ -75,9 +87,10 @@ export class AddEventDialogComponent implements OnInit {
       );
     });
 
-    this.eventService.getApiEvents('/events?page[size]=0&fields[event]=label',
-      null, null, false).subscribe(response => {
-      this.searchEvents = response.events;
+    this.eventService.getApiEvents(
+      null, '0', null, null, ['label'], null, false, null, false).subscribe(response => {
+
+        this.searchEvents = response.events;
 
       this.eventTitleFilteredOptions = this.eventTitleAutocompleteControl.valueChanges.pipe(
         startWith(''),
